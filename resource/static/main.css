@@ -75,6 +75,10 @@ a {
   background:rgb(255 255 255 / 50%);
 }
 
+.ui.segment {
+  background: #ffffff45 !important;
+}
+
 /**信息卡片透明**/
 .ui.four.cards>.card {
     position: relative;
