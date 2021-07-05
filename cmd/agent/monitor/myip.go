@@ -17,13 +17,13 @@ type geoIP struct {
 
 var (
 	ipv4Servers = []string{
-		"https://api-ipv4.ip.sb/geoip",
-		"https://ip4.seeip.org/geoip",
+		"https://api.ip.sb/geoip",
+		"https://ip.seeip.org/geoip",
 		"https://ipapi.co/json",
 	}
 	ipv6Servers = []string{
-		"https://ip6.seeip.org/geoip",
-		"https://api-ipv6.ip.sb/geoip",
+		"https://api.ip.sb/geoip",
+		"https://ip.seeip.org/geoip",
 		"https://ipapi.co/json",
 	}
 	cachedIP, cachedCountry string
@@ -35,7 +35,7 @@ func UpdateIP() {
 	for {
 		ipv4 := fetchGeoIP(ipv4Servers, false)
 		ipv6 := fetchGeoIP(ipv6Servers, true)
-		cachedIP = fmt.Sprintf("ip(v4:%s,v6:[%s])", ipv4.IP, ipv6.IP)
+		cachedIP = fmt.Sprintf("IPs(IPv4:%s,IPv6:[%s])", ipv4.IP, ipv6.IP)
 		if ipv4.CountryCode != "" {
 			cachedCountry = ipv4.CountryCode
 		} else if ipv6.CountryCode != "" {

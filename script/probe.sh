@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.1.12"
+VERSION="v2.1.15"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -133,6 +133,11 @@ install_dashboard() {
     install_base
 
     echo -e "> 安装面板"
+
+    if [[ $(uname -m | grep 'arm') != "" ]]; then
+        echo "面板目前不支持在 ARM 环境下安装"
+        exit 1
+    fi
 
     # 楠格探针文件夹
     mkdir -p $DASHBOARD_PATH

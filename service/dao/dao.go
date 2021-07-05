@@ -13,12 +13,7 @@ import (
 	pb "github.com/xos/probe/proto"
 )
 
-var Version = "v2.1.15"
-
-const (
-	SnapshotDelay = 3
-	ReportDelay   = 2
-)
+var Version = "v2.1.16"
 
 var (
 	Conf  *model.Config

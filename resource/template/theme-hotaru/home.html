@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>{{.Title}}</title>
-    <link rel="shortcut icon" type="image/png" href="/static/logo.png" />
+    <link rel="shortcut icon" type="image/png" href="/static/logo.png?v20210320" />
 
     <!-- Fix chrome language detection -->
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
@@ -69,9 +69,9 @@
                         <td>@#server.Host?server.Host.Platform:'-'#@</td>
                         <td>@#server.Host?server.Host.CountryCode:'-'#@</td>
                         <td>@#server.State?secondToDate(server.State.Uptime):'-'#@</td>
-                        <td>@#server.State?formatByteSize(server.State.NetInSpeed)+'/s|'+formatByteSize(server.State.NetOutSpeed)+'/s':'-'#@
+                        <td>@#server.State?readableBytes(server.State.NetInSpeed)+'/s|'+readableBytes(server.State.NetOutSpeed)+'/s':'-'#@
                         </td>
-                        <td>@#server.State?formatByteSize(server.State.NetInTransfer)+'|'+formatByteSize(server.State.NetOutTransfer):'-'#@
+                        <td>@#server.State?readableBytes(server.State.NetInTransfer)+'|'+readableBytes(server.State.NetOutTransfer):'-'#@
                         </td>
                         <td>
                             <div v-if="server.State" :class="formatPercent(server.live,server.State.CPU, 100).class">
@@ -140,7 +140,7 @@
         </ul>
     </div>
     <footer>
-        <p style="text-align:center;padding: 15px;">Powered by <a href="https://github.com/xos/probe">哪吒监控</a> build ·
+        <p style="text-align:center;padding: 15px;">Powered by <a href="https://github.com/naiba/nezha">哪吒监控</a> build ·
             {{.Version}}
             <a href="/service">服务状态</a>
             <a href="/server">管理后台</a>
@@ -204,9 +204,12 @@
                     return this.cache[percent]
                 },
                 readableBytes(bytes) {
+                    if (!bytes) {
+                        return '0B'
+                    }
                     var i = Math.floor(Math.log(bytes) / Math.log(1024)),
-                        sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-                    return (bytes / Math.pow(1024, i)).toFixed(0) + ' ' + sizes[i];
+                        sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+                    return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + sizes[i];
                 },
                 troggleDarkMode() {
                     const hour = new Date(Date.now()).getHours()
@@ -226,10 +229,6 @@
                 },
                 formatTimestamp(t) {
                     return new Date(t * 1000).toLocaleString()
-                },
-                formatByteSize(bs) {
-                    const x = this.readableBytes(bs)
-                    return x != "NaN undefined" ? x : '0 KB'
                 }
             }
         })
