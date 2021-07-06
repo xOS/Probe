@@ -116,6 +116,11 @@ a {
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
+/**信息透明弹框边宽**/
+.ui.content {
+  margin: 0;
+  padding: 1em !important;
+}
 
 /**背景图片**/
 #bg {
