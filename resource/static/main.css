@@ -346,7 +346,9 @@ color: #ff5722;
 .status.cards .outline.icon {
   margin-right: -4px !important;
 }
-
+i.s {
+  margin-right: 0px !important;
+}
 .ui.progress .bar {
   min-width: 1.75em !important;
   text-align: right;
