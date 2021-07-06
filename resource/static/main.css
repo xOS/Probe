@@ -122,6 +122,10 @@ a {
   padding: 1em !important;
 }
 
+i.icon {
+  width: 1em !important;
+}
+
 /**背景图片**/
 #bg {
   content: " ";
@@ -340,7 +344,7 @@ color: #ff5722;
 }
 
 .status.cards .outline.icon {
-  margin-right: 0 !important;
+  margin-right: -4 !important;
 }
 
 .ui.progress .bar {
