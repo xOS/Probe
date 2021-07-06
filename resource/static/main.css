@@ -344,7 +344,7 @@ color: #ff5722;
 }
 
 .status.cards .outline.icon {
-  margin-right: -4px !important;
+  margin-right: -4px;
 }
 i.s {
   margin-right: 0px !important;
