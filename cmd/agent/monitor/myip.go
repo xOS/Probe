@@ -41,7 +41,7 @@ func UpdateIP() {
 		} else if ipv6.CountryCode != "" {
 			cachedCountry = ipv6.CountryCode
 		}
-		time.Sleep(time.Minute * 10)
+		time.Sleep(time.Minute * 60)
 	}
 }
 
