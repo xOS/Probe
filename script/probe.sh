@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.1.16"
+VERSION="v2.1.17"
 
 red='\033[0;31m'
 green='\033[0;32m'
