@@ -296,7 +296,7 @@ func doSelfUpdate() {
 	}()
 	v := semver.MustParse(version)
 	println("Check update", v)
-	latest, err := selfupdate.UpdateSelf(v, "")
+	latest, err := selfupdate.UpdateSelf(v, "xOS/Probe")
 	if err != nil {
 		println("Binary update failed:", err)
 		return
