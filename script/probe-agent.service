@@ -1,7 +1,7 @@
 [Unit]
 Description=Probe Agent
 After=syslog.target
-After=network.target
+#After=network.target
 #After=probe-dashboard.service
 
 [Service]

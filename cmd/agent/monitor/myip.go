@@ -19,12 +19,12 @@ var (
 	ipv4Servers = []string{
 		"https://api.ip.sb/geoip",
 		"https://ip.seeip.org/geoip",
-		"https://ipapi.co/json",
+		"https://ip.nan.ge/json",
 	}
 	ipv6Servers = []string{
 		"https://api.ip.sb/geoip",
 		"https://ip.seeip.org/geoip",
-		"https://ipapi.co/json",
+		"https://ip.nan.ge/json",
 	}
 	cachedIP, cachedCountry string
 	httpClientV4            = utils.NewSingleStackHTTPClient(time.Second*20, time.Second*5, time.Second*10, false)
