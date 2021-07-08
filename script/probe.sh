@@ -212,7 +212,7 @@ install_agent() {
 }
 
 update_agent() {
-    echo -e "> 手动更新 Agent"
+    echo -e "> 更新Agent"
 
     echo -e "正在获取探针Agent版本号"
 
@@ -241,8 +241,6 @@ update_agent() {
         chmod +x probe-agent &&
         mv probe-agent $AGENT_PATH &&
         rm -rf probe-agent_linux_${os_arch}.tar.gz README.md
-
-    modify_agent_config 0
 
     if [[ $# == 0 ]]; then
         before_show_menu
