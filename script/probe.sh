@@ -177,10 +177,14 @@ install_agent() {
 
     echo -e "正在获取探针Agent版本号"
 
-    local version=$(curl -sL "https://api.github.com/repos/xos/probe/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
+    local version=$(curl -m 10 -sL "https://api.github.com/repos/xOS/Probe/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
+    if [ ! -n "$version" ]; then
+        version=$(curl -m 10 -sL "https://cdn.jsdelivr.net/gh/xOS/Probe/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/xOS\/Probe@/v/g')
+    fi
 
     if [ ! -n "$version" ]; then
-        echo -e "获取版本号失败，请检查本机能否链接 https://api.github.com/repos/xos/probe/releases/latest"
+        echo -e "获取版本号失败，请检查本机能否链接 https://api.github.com/repos/xOS/Probe/releases/latest"
+        return 0
     else
         echo -e "当前最新版本为: ${version}"
     fi
