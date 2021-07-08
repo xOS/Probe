@@ -476,6 +476,7 @@ show_usage() {
     echo "./probe.sh uninstall_dashboard        - 卸载管理面板"
     echo "--------------------------------------------------------"
     echo "./probe.sh install_agent              - 安装探针Agent"
+    echo "./probe.sh update_agent              - 更新探针Agent"
     echo "./probe.sh modify_agent_config        - 修改Agent配置"
     echo "./probe.sh show_agent_log             - 查看Agent日志"
     echo "./probe.sh uninstall_agent            - 卸载Agen"
@@ -498,7 +499,7 @@ show_menu() {
     —————————————————
     ${green}8.${plain}  安装探针Agent
     ${green}9.${plain}  更新探针Agent
-    ${green}10.${plain}  修改Agent配置
+    ${green}10.${plain} 修改Agent配置
     ${green}11.${plain} 查看Agent日志
     ${green}12.${plain} 卸载Agent
     ${green}13.${plain} 重启Agent
