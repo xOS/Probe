@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.1.17"
+VERSION="v2.1.18"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -200,6 +200,45 @@ install_agent() {
         return 0
     fi
     tar xf probe-agent_linux_${os_arch}.tar.gz &&
+        chmod +x probe-agent &&
+        mv probe-agent $AGENT_PATH &&
+        rm -rf probe-agent_linux_${os_arch}.tar.gz README.md
+
+    modify_agent_config 0
+
+    if [[ $# == 0 ]]; then
+        before_show_menu
+    fi
+}
+
+update_agent() {
+    echo -e "> 手动更新 Agent"
+
+    echo -e "正在获取探针Agent版本号"
+
+    local version=$(curl -m 10 -sL "https://api.github.com/repos/xOS/Probe/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
+    if [ ! -n "$version" ]; then
+        version=$(curl -m 10 -sL "https://cdn.jsdelivr.net/gh/xOS/Probe/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/xOS\/Probe@/v/g')
+    fi
+
+    if [ ! -n "$version" ]; then
+        echo -e "获取版本号失败，请检查本机能否链接 https://api.github.com/repos/xOS/Probe/releases/latest"
+        return 0
+    else
+        echo -e "当前最新版本为: ${version}"
+    fi
+
+    # 楠格探针文件夹
+    chmod 777 -R $AGENT_PATH
+
+    echo -e "正在下载最新版探针端"
+    wget -O probe-agent_linux_${os_arch}.tar.gz https://${GITHUB_URL}/xos/probe/releases/download/${version}/probe-agent_linux_${os_arch}.tar.gz >/dev/null 2>&1
+    if [[ $? != 0 ]]; then
+        echo -e "${red}Release 下载失败，请检查本机能否连接 ${GITHUB_URL}${plain}"
+        return 0
+    fi
+    tar xf probe-agent_linux_${os_arch}.tar.gz &&
+        chmod +x probe-agent &&
         mv probe-agent $AGENT_PATH &&
         rm -rf probe-agent_linux_${os_arch}.tar.gz README.md
 
@@ -458,16 +497,17 @@ show_menu() {
     ${green}7.${plain}  卸载管理面板
     —————————————————
     ${green}8.${plain}  安装探针Agent
-    ${green}9.${plain}  修改Agent配置
-    ${green}10.${plain} 查看Agent日志
-    ${green}11.${plain} 卸载Agent
-    ${green}12.${plain} 重启Agent
+    ${green}9.${plain}  更新探针Agent
+    ${green}10.${plain}  修改Agent配置
+    ${green}11.${plain} 查看Agent日志
+    ${green}12.${plain} 卸载Agent
+    ${green}13.${plain} 重启Agent
     —————————————————
-    ${green}13.${plain} 更新脚本
+    ${green}14.${plain} 更新脚本
     —————————————————
     ${green}0.${plain}  退出脚本
     "
-    echo && read -p "请输入选择 [0-13]: " num
+    echo && read -p "请输入选择 [0-14]: " num
 
     case "${num}" in
     0)
@@ -498,24 +538,28 @@ show_menu() {
         install_agent
         ;;
     9)
-        modify_agent_config
+        update_agent
         ;;
     10)
-        show_agent_log
+        modify_agent_config
         ;;
     11)
-        uninstall_agent
+        show_agent_log
         ;;
     12)
-        restart_agent
+        uninstall_agent
         ;;
     13)
+        restart_agent
+        ;;
+    14)
         update_script
         ;;
     *)
-        echo -e "${red}请输入正确的数字 [0-13]${plain}"
+        echo -e "${red}请输入正确的数字 [0-14]${plain}"
         ;;
     esac
+    show_menu
 }
 
 pre_check
