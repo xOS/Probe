@@ -240,9 +240,11 @@ update_agent() {
     tar xf probe-agent_linux_${os_arch}.tar.gz &&
         chmod +x probe-agent &&
         mv probe-agent $AGENT_PATH &&
+        systemctl restart probe-agent
         rm -rf probe-agent_linux_${os_arch}.tar.gz README.md
 
     if [[ $# == 0 ]]; then
+        echo -e "更新完成！"
         before_show_menu
     fi
 }
@@ -558,7 +560,6 @@ show_menu() {
         echo -e "${red}请输入正确的数字 [0-14]${plain}"
         ;;
     esac
-    show_menu
 }
 
 pre_check
