@@ -17,11 +17,11 @@ type geoIP struct {
 
 var (
 	ipv4Servers = []string{
-		"https://ip.seeip.org/geoip",
+		"https://ipapi.co/json",
 		"https://ip.nan.ge/json",
+		"https://api.ip.sb/geoip",
 	}
 	ipv6Servers = []string{
-		"https://ip.seeip.org/geoip",
 		"https://ip.nan.ge/json",
 	}
 	cachedIP, cachedCountry string
@@ -36,10 +36,10 @@ func UpdateIP() {
 		cachedIP = fmt.Sprintf("IPs(IPv4:%s,IPv6:[%s])", ipv4.IP, ipv6.IP)
 		if ipv4.CountryCode != "" {
 			cachedCountry = ipv4.CountryCode
-		} else if ipv6.CountryCode != "" {
+		} else if ipv4.CountryCode == "" || ipv6.CountryCode != "" {
 			cachedCountry = ipv6.CountryCode
-		}
-		time.Sleep(time.Minute * 60)
+		} 
+		time.Sleep(time.Minute * 30)
 	}
 }
 
