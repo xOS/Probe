@@ -17,12 +17,10 @@ type geoIP struct {
 
 var (
 	ipv4Servers = []string{
-		"https://api.ip.sb/geoip",
 		"https://ip.seeip.org/geoip",
 		"https://ip.nan.ge/json",
 	}
 	ipv6Servers = []string{
-		"https://api.ip.sb/geoip",
 		"https://ip.seeip.org/geoip",
 		"https://ip.nan.ge/json",
 	}
