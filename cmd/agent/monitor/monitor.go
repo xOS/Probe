@@ -14,9 +14,9 @@ import (
 	"github.com/shirou/gopsutil/v3/net"
 
 	"github.com/xos/probe/model"
-	"github.com/xos/probe/service/dao"
 )
 
+var Version string = "debug"
 var netInSpeed, netOutSpeed, netInTransfer, netOutTransfer, lastUpdate uint64
 var expectDiskFsTypes = []string{
 	"apfs", "ext4", "ext3", "ext2", "f2fs", "reiserfs", "jfs", "btrfs", "fuseblk", "zfs", "simfs", "ntfs", "fat32", "exfat", "xfs",
@@ -59,7 +59,7 @@ func GetHost() *model.Host {
 		BootTime:        hi.BootTime,
 		IP:              cachedIP,
 		CountryCode:     strings.ToLower(cachedCountry),
-		Version:         dao.Version,
+		Version:         Version,
 	}
 }
 
