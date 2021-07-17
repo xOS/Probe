@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/xos/probe/pkg/utils"
@@ -62,6 +63,14 @@ func fetchGeoIP(servers []string, isV6 bool) geoIP {
 			}
 			if ip.IP == "" || ip.Query != "" {
 				ip.IP = ip.Query
+			}
+			// 没取到 v6 IP
+			if isV6 && !strings.Contains(ip.IP, ":") {
+				continue
+			}
+			// 没取到 v4 IP
+			if !isV6 && !strings.Contains(ip.IP, ".") {
+				continue
 			}
 			return ip
 		}

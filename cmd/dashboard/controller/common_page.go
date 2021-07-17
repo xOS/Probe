@@ -80,10 +80,9 @@ func (p *commonPage) checkViewPassword(c *gin.Context) {
 }
 
 func (p *commonPage) service(c *gin.Context) {
-	msm := dao.ServiceSentinelShared.LoadStats()
 	c.HTML(http.StatusOK, "theme-"+dao.Conf.Site.Theme+"/service", mygin.CommonEnvironment(c, gin.H{
 		"Title":      "服务状态",
-		"Services":   msm,
+		"Services":   dao.ServiceSentinelShared.LoadStats(),
 		"CustomCode": dao.Conf.Site.CustomCode,
 	}))
 }
@@ -99,6 +98,11 @@ func (cp *commonPage) home(c *gin.Context) {
 }
 
 var upgrader = websocket.Upgrader{}
+
+type Data struct {
+	Now     int64           `json:"now,omitempty"`
+	Servers []*model.Server `json:"servers,omitempty"`
+}
 
 func (cp *commonPage) ws(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -116,7 +120,10 @@ func (cp *commonPage) ws(c *gin.Context) {
 	count := 0
 	for {
 		dao.SortedServerLock.RLock()
-		err = conn.WriteJSON(dao.SortedServerList)
+		err = conn.WriteJSON(Data{
+			Now:     time.Now().Unix() * 1000,
+			Servers: dao.SortedServerList,
+		})
 		dao.SortedServerLock.RUnlock()
 		if err != nil {
 			break
