@@ -48,6 +48,7 @@ func GetHost() *model.Host {
 	diskTotal, _ := getDiskTotalAndUsed()
 
 	return &model.Host{
+		OS:        hi.OS,
 		Platform:        hi.Platform,
 		PlatformVersion: hi.PlatformVersion,
 		CPU:             cpus,

@@ -11,6 +11,7 @@ service ProbeService {
 }
 
 message Host {
+    string os = 0;
     string platform = 1;
     string platform_version = 2;
     repeated string cpu = 3;

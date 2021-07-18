@@ -34,6 +34,7 @@ type Host struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	OS        string   `protobuf:"bytes,0,opt,name=os,proto3" json:"os,omitempty"`
 	Platform        string   `protobuf:"bytes,1,opt,name=platform,proto3" json:"platform,omitempty"`
 	PlatformVersion string   `protobuf:"bytes,2,opt,name=platform_version,json=platformVersion,proto3" json:"platform_version,omitempty"`
 	Cpu             []string `protobuf:"bytes,3,rep,name=cpu,proto3" json:"cpu,omitempty"`
@@ -78,6 +79,13 @@ func (x *Host) ProtoReflect() protoreflect.Message {
 // Deprecated: Use Host.ProtoReflect.Descriptor instead.
 func (*Host) Descriptor() ([]byte, []int) {
 	return file_proto_probe_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Host) GetOS() string {
+	if x != nil {
+		return x.OS
+	}
+	return ""
 }
 
 func (x *Host) GetPlatform() string {
