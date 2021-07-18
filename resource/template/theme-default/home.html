@@ -144,7 +144,7 @@
   {{template "common/footer" .}}
   <script>
     const initData = {{.Servers}};
-    var Platform = {server.Host.Platform};
+    var Platform = {{server.Host.Platform}};
     var statusCards = new Vue({
         el: '#app',
         delimiters: ['@#', '#@'],
