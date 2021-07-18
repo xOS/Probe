@@ -22,7 +22,13 @@
                       class="apple icon"
                     ></i
                     ><i
-                      v-if='server.Host.Platform == "linux"'
+                      v-if='server.Host.Platform == "ubuntu"'
+                      class="linux icon"
+                    ><i
+                      v-if='server.Host.Platform == "debian"'
+                      class="linux icon"
+                    ><i
+                      v-if='server.Host.Platform == "centos"'
                       class="linux icon"
                     ></i
                     ><i
