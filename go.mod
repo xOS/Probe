@@ -10,7 +10,7 @@ require (
 	github.com/gin-contrib/pprof v1.3.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-ping/ping v0.0.0-20210407214646-e4e642a95741
-	github.com/golang/protobuf v1.4.2
+	github.com/golang/protobuf v1.5.2
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/gorilla/websocket v1.4.2
 	github.com/onsi/ginkgo v1.7.0 // indirect
@@ -27,7 +27,7 @@ require (
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43
 	golang.org/x/sys v0.0.0-20210423185535-09eb48e85fd7 // indirect
 	google.golang.org/grpc v1.33.1
-	google.golang.org/protobuf v1.25.0
+	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.2.8
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.21.8
