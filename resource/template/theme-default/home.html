@@ -239,17 +239,6 @@
   
     const wsProtocol = window.location.protocol == "https:" ? "wss" : "ws"
     const ws = new WebSocket(wsProtocol + '://' + window.location.host + '/ws');
-  /**
-    ws.onopen = function (evt) {
-        $.suiAlert({
-            title: '实时通道建立',
-            description: '可以实时获取最新监控数据啦',
-            type: 'success',
-            time: '2',
-            position: 'top-center',
-        });
-    }
-  **/
     ws.onmessage = function (evt) {
         const oldServers = statusCards.servers
         const data = JSON.parse(evt.data)
@@ -268,22 +257,12 @@
         }
         statusCards.groups = groupingData(statusCards.servers, "Tag")
     }
-  /**
-    ws.onclose = function () {
-        $.suiAlert({
-            title: '实时通道断开',
-            description: '无法实时获取最新监控数据咯',
-            type: 'warning',
-            time: '2',
-            position: 'top-center',
-        });
-    }
-    **/
     $('.ui.accordion')
         .accordion({"exclusive": false})
     ;
   methods: {
-    matchState(state = '', reg) {
+    matchState(state = '', reg) 
+    {
         return !!String(state).match(reg)
       }
   }
