@@ -24,7 +24,7 @@
                       v-if='server.Host.Platform == "ubuntu" || server.Host.Platform == "debian" || server.Host.Platform == "centos"'
                       class="linux icon"></i>
                     <i
-                      v-if='matchState(server.Host.Platform,/[Windows]/)'
+                      v-if='Platform.indexOf("windows") !== -1'
                       class="windows icon"></i>
                     <i
                       v-if='server.Host.Platform == "freebsd"'
@@ -144,6 +144,7 @@
   {{template "common/footer" .}}
   <script>
     const initData = {{.Servers}};
+    var Platform = server.Host.Platform;
     var statusCards = new Vue({
         el: '#app',
         delimiters: ['@#', '#@'],
@@ -260,12 +261,6 @@
     $('.ui.accordion')
         .accordion({"exclusive": false})
     ;
-  methods: {
-    matchState(state = '', reg) 
-    {
-        return !!String(state).match(reg)
-      }
-  }
   </script>
   <script>
       var statusList = document.getElementsByTagName('small')
