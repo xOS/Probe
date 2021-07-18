@@ -20,8 +20,8 @@
                     <i
                       v-if='server.Host.Platform == "darwin"'
                       class="apple icon"></i>
-                    <i
-                      v-if="[ubuntu,debian,centos].includes(server.Host.Platform)"
+                      <i
+                      v-if='server.Host.Platform == "ubuntu" || server.Host.Platform == "debian" || server.Host.Platform == "centos"'
                       class="linux icon"></i>
                     <i
                       v-if="windows && server.Host.Platform.indexOf('w') != -1"
