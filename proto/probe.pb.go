@@ -34,7 +34,7 @@ type Host struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	OS        string   `protobuf:"bytes,0,opt,name=os,proto3" json:"os,omitempty"`
+	OS        string   `protobuf:"bytes,13,opt,name=os,proto3" json:"os,omitempty"`
 	Platform        string   `protobuf:"bytes,1,opt,name=platform,proto3" json:"platform,omitempty"`
 	PlatformVersion string   `protobuf:"bytes,2,opt,name=platform_version,json=platformVersion,proto3" json:"platform_version,omitempty"`
 	Cpu             []string `protobuf:"bytes,3,rep,name=cpu,proto3" json:"cpu,omitempty"`
