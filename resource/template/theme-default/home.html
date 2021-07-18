@@ -24,10 +24,10 @@
                       v-if='server.Host.Platform == "ubuntu" || server.Host.Platform == "debian" || server.Host.Platform == "centos"'
                       class="linux icon"></i>
                     <i
-                      v-if='server.Host.OS == "windows"'
+                      v-if='server.Host.Os == "windows"'
                       class="windows icon"></i>
                     <i
-                      v-if='server.Host.OS == "freebsd"'
+                      v-if='server.Host.Os == "freebsd"'
                       class="freebsd icon"></i>
                     @#server.Name + (server.live?'':' [已离线]')#@
                     <i class="yellow info circle icon"></i>
