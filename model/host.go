@@ -51,7 +51,7 @@ func PB2State(s *pb.State) HostState {
 }
 
 type Host struct {
-	Os        string
+	OS        string
 	Platform        string
 	PlatformVersion string
 	CPU             []string
@@ -68,7 +68,7 @@ type Host struct {
 
 func (h *Host) PB() *pb.Host {
 	return &pb.Host{
-		Os:        h.OS,
+		OS:        h.OS,
 		Platform:        h.Platform,
 		PlatformVersion: h.PlatformVersion,
 		Cpu:             h.CPU,
@@ -86,7 +86,7 @@ func (h *Host) PB() *pb.Host {
 
 func PB2Host(h *pb.Host) Host {
 	return Host{
-		Os:        h.GetOs(),
+		OS:        h.GetOs(),
 		Platform:        h.GetPlatform(),
 		PlatformVersion: h.GetPlatformVersion(),
 		CPU:             h.GetCpu(),
