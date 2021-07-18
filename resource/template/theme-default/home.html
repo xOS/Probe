@@ -24,7 +24,7 @@
                       v-if='server.Host.Platform == "ubuntu" || server.Host.Platform == "debian" || server.Host.Platform == "centos"'
                       class="linux icon"></i>
                     <i
-                      v-if="windows && server.Host.Platform.indexOf('w') != -1"
+                      v-if='server.Host.Platform == "windows"'
                       class="windows icon"></i>
                     <i
                       v-if='server.Host.Platform == "freebsd"'
