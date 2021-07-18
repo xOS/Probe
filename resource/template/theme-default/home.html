@@ -16,30 +16,26 @@
                   style="margin-top: 10px; padding-bottom: 5px"
                 >
                   <div class="header">
-                    <i :class="server.Host.CountryCode + ' flag'"></i
-                    ><i
+                    <i :class="server.Host.CountryCode + ' flag'"></i>
+                    <i
                       v-if='server.Host.Platform == "darwin"'
-                      class="apple icon"
-                    ></i
-                    ><i
+                      class="apple icon"></i>
+                    <i
                       v-if='server.Host.Platform == "ubuntu"'
-                      class="linux icon"
-                    ><i
+                      class="linux icon"></i>
+                    <i
                       v-if='server.Host.Platform == "debian"'
-                      class="linux icon"
-                    ><i
+                      class="linux icon"></i>
+                    <i
                       v-if='server.Host.Platform == "centos"'
-                      class="linux icon"
-                    ></i
-                    ><i
-                      v-if='server.Host.Platform == "windows"'
-                      class="windows icon"
-                    ></i
-                    ><i
+                      class="linux icon"></i>
+                    <i
+                      v-if='server.Host.Platform = "windows"'
+                      class="windows icon"></i>
+                    <i
                       v-if='server.Host.Platform == "freebsd"'
-                      class="freebsd icon"
-                    ></i
-                    >@#server.Name + (server.live?'':' [已离线]')#@
+                      class="freebsd icon"></i>
+                    @#server.Name + (server.live?'':' [已离线]')#@
                     <i class="yellow info circle icon"></i>
                     <div class="ui content popup" style="margin-bottom: 0">
                       系统：@#server.Host.Platform#@-@#server.Host.PlatformVersion#@
