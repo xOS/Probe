@@ -86,7 +86,7 @@ func (h *Host) PB() *pb.Host {
 
 func PB2Host(h *pb.Host) Host {
 	return Host{
-		OS:        h.GetOS(),
+		OS:        h.GetOs(),
 		Platform:        h.GetPlatform(),
 		PlatformVersion: h.GetPlatformVersion(),
 		CPU:             h.GetCpu(),
