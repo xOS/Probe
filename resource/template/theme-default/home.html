@@ -21,16 +21,10 @@
                       v-if='server.Host.Platform == "darwin"'
                       class="apple icon"></i>
                     <i
-                      v-if='server.Host.Platform == "ubuntu"'
+                      v-if='[ubuntu,debian,centos].includes(server.Host.Platform)'
                       class="linux icon"></i>
                     <i
-                      v-if='server.Host.Platform == "debian"'
-                      class="linux icon"></i>
-                    <i
-                      v-if='server.Host.Platform == "centos"'
-                      class="linux icon"></i>
-                    <i
-                      v-if='server.Host.Platform = "windows"'
+                      v-if='[windows].includes(server.Host.Platform)'
                       class="windows icon"></i>
                     <i
                       v-if='server.Host.Platform == "freebsd"'
