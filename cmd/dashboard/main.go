@@ -61,9 +61,15 @@ func initSystem() {
 	loadCrons()   //加载计划任务
 
 	// 清理 服务请求记录 和 流量记录 的旧数据
-	dao.Cron.AddFunc("0 20 3 * * *", cleanMonitorHistory)
+	_, err := dao.Cron.AddFunc("30 3 * * *", cleanMonitorHistory)
+	if err != nil {
+		panic(err)
+	}
 	// 流量记录打点
-	dao.Cron.AddFunc("0 0 * * * *", recordTransferHourlyUsage)
+	_, err = dao.Cron.AddFunc("0 * * * *", recordTransferHourlyUsage)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func recordTransferHourlyUsage() {
@@ -87,7 +93,10 @@ func recordTransferHourlyUsage() {
 }
 
 func cleanMonitorHistory() {
-	dao.DB.Unscoped().Delete(&model.MonitorHistory{}, "created_at < ?", time.Now().AddDate(0, 0, -30))
+	// 清理无效数据
+	dao.DB.Unscoped().Delete(&model.MonitorHistory{}, "created_at < ? OR monitor_id NOT IN (SELECT `id` FROM monitors)", time.Now().AddDate(0, 0, -30))
+	dao.DB.Unscoped().Delete(&model.Transfer{}, "server_id NOT IN (SELECT `id` FROM servers)")
+	// 计算可清理流量记录的时长
 	var allServerKeep time.Time
 	specialServerKeep := make(map[uint64]time.Time)
 	var specialServerIDs []uint64

@@ -19,16 +19,22 @@
                     <i :class="server.Host.CountryCode + ' flag'"></i>
                     <i
                       v-if='server.Host.Platform == "darwin"'
-                      class="apple icon"></i>
+                      class="fl-apple"></i>
                       <i
-                      v-if='server.Host.Platform == "ubuntu" || server.Host.Platform == "debian" || server.Host.Platform == "centos"'
-                      class="linux icon"></i>
+                      v-if='server.Host.Platform == "ubuntu"'
+                      class="fl-ubuntu"></i>
+                      <i
+                      v-if='server.Host.Platform == "debian"'
+                      class="fl-debian"></i>
+                      <i
+                      v-if='server.Host.Platform == "centos"'
+                      class="fl-centos"></i>
                     <i
                       v-if='server.Host.OS == "windows"'
                       class="windows icon"></i>
                     <i
                       v-if='server.Host.OS == "freebsd"'
-                      class="freebsd icon"></i>
+                      class="fl-freebsd"></i>
                     @#server.Name + (server.live?'':' [已离线]')#@
                     <i class="yellow info circle icon"></i>
                     <div class="ui content popup" style="margin-bottom: 0">
