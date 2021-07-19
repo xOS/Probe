@@ -16,7 +16,7 @@
                   style="margin-top: 10px; padding-bottom: 5px"
                 >
                   <div class="header">
-                    <i :class="server.Host.CountryCode + ' flag'"></i>
+                    <i :class="'flag-icon flag-icon-'+server.Host.CountryCode"></i>
                     <i
                       v-if='server.Host.Platform == "darwin"'
                       class="fl-apple"></i>

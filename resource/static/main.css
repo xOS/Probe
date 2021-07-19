@@ -249,6 +249,26 @@ body {
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
+/**系统图标颜色**/
+i.fl-centos {
+  color: #9c27b0!important;
+}
+i.fl-ubuntu {
+  color: #ff5722!important;
+}
+i.fl-debian {
+  color: #e91e63!important;
+}
+i.fl-freebsd {
+  color: #f44336!important;
+}
+i.windows.icon {
+  color: #03a9f4!important;
+}
+i.fl-apple {
+  color: #9e9e9e!important;
+}
+
 i.yellow.icon {
   color: #ff9800!important;
 }
