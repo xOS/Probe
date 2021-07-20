@@ -54,7 +54,7 @@
                       ></i
                       >@#formatByteSize(server.State.NetOutTransfer)#@<br />
                       启动：@# formatTimestamp(server.Host.BootTime) #@<br />
-                      活动：@# formatTimestamp(server.LastActive) #@<br />
+                      活动：@# timeStamp(server.LastActive) #@<br />
                       版本：@#server.Host.Version#@<br />
                     </div>
                     <div class="ui divider" style="margin-bottom: 5px"></div>
@@ -234,7 +234,10 @@
                 return h + ":" + ("0" + m).slice(-2) + ":" + ("0" + s).slice(-2);
             },
             formatTimestamp(t) {
-                return new Date(t * 1000).format('yyyy年MM月dd日 h:m:s')
+                return new Date(t * 1000).format('yyyy年MM月dd日 hh:mm:ss')
+            },
+            timeStamp(t) {
+                return new Date(t).format('yyyy年MM月dd日 hh:mm:ss')
             },
             formatByteSize(bs) {
                 const x = readableBytes(bs)
