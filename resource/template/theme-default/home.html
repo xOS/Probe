@@ -234,10 +234,10 @@
                 return h + ":" + ("0" + m).slice(-2) + ":" + ("0" + s).slice(-2);
             },
             formatTimestamp(t) {
-                return new Date(t * 1000).format('yyyy年MM月dd日 hh:mm:ss')
+                return new Date(t * 1000).format('yyyy年MM月dd日 HH:mm:ss')
             },
             timeStamp(t) {
-                return new Date(t).format('yyyy年MM月dd日 hh:mm:ss')
+                return new Date(t).format('yyyy年MM月dd日 HH:mm:ss')
             },
             formatByteSize(bs) {
                 const x = readableBytes(bs)
