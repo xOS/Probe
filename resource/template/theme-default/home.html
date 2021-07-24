@@ -19,22 +19,43 @@
                     <i :class="'flag-icon flag-icon-'+server.Host.CountryCode"></i>
                     <i
                       v-if='server.Host.Platform == "darwin"'
-                      class="fl-apple"></i>
+                      class="os-apple"></i>
                       <i
                       v-if='server.Host.Platform == "ubuntu"'
-                      class="fl-ubuntu"></i>
+                      class="os-ubuntu"></i>
                       <i
                       v-if='server.Host.Platform == "debian"'
-                      class="fl-debian"></i>
+                      class="os-debian"></i>
                       <i
                       v-if='server.Host.Platform == "centos"'
-                      class="fl-centos"></i>
+                      class="os-centos"></i>
+                      <i
+                      v-if='server.Host.Platform == "alpine"'
+                      class="os-alpine"></i>
+                      <i
+                      v-if='server.Host.Platform == "archlinux"'
+                      class="os-archlinux"></i>
+                      <i
+                      v-if='server.Host.Platform == "coreos"'
+                      class="os-coreos"></i>
+                      <i
+                      v-if='server.Host.Platform == "deepin"'
+                      class="os-deepin"></i> 
+                      <i
+                      v-if='server.Host.Platform == "fedora"'
+                      class="os-fedora"></i>
+                      <i
+                      v-if='server.Host.Platform == "redhat"'
+                      class="os-redhat"></i>
+                      <i
+                      v-if='server.Host.Platform == "tux"'
+                      class="os-tux"></i>
                     <i
                       v-if='server.Host.OS == "windows"'
                       class="windows icon"></i>
                     <i
                       v-if='server.Host.OS == "freebsd"'
-                      class="fl-freebsd"></i>
+                      class="os-freebsd"></i>
                     @#server.Name + (server.live?'':' [已离线]')#@
                     <i class="yellow info circle icon"></i>
                     <div class="ui content popup" style="margin-bottom: 0">
