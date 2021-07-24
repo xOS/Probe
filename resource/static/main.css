@@ -250,23 +250,47 @@ body {
 }
 
 /**系统图标颜色**/
-i.fl-centos {
+i.os-centos {
   color: #9c27b0!important;
 }
-i.fl-ubuntu {
+i.os-ubuntu {
   color: #ff5722!important;
 }
-i.fl-debian {
+i.os-debian {
   color: #e91e63!important;
 }
-i.fl-freebsd {
+i.os-freebsd {
   color: #f44336!important;
 }
 i.windows.icon {
   color: #03a9f4!important;
 }
-i.fl-apple {
+i.os-apple {
   color: #9e9e9e!important;
+}
+i.os-fedora {
+  color: #2196f3!important;
+}
+i.os-redhat {
+  color: #f44336!important;
+}
+i.os-deepin {
+  color: #03a9f4!important;
+}
+i.os-coreos {
+  color: #2185d0!important;
+}
+i.os-archlinux {
+  color: #2185d0!important;
+}
+i.os-alpine {
+  color: #176eaf!important;
+}
+i.os-win10 {
+  color: #03a9f4!important;
+}
+i.os-tux {
+  color: #1b1c1d!important;
 }
 
 i.yellow.icon {
