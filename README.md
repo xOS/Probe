@@ -1,7 +1,7 @@
 # 楠格探针
-> 个人自用修改版
+> 个人修改自用
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.2.3&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.1.18-brightgreen?style=for-the-badge&logo=linux)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.2.3&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.2.0-brightgreen?style=for-the-badge&logo=linux)
 [![Author](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-naiba-brightgreen?style=for-the-badge&logo=github)](https://github.com/naiba)
 
 一款探针。支持系统状态、HTTP(SSL 证书变更、即将到期、到期)、TCP、Ping 监控报警，命令批量执行和计划任务。
@@ -91,12 +91,34 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 
 #### 报警规则说明
 
-- Type
-  - cpu、memory、swap、disk：Min/Max 数值为占用百分比
-  - net_in_speed(入站网速)、net_out_speed(出站网速)、net_all_speed(双向网速)、transfer_in(入站流量)、transfer_out(出站流量)、transfer_all(双向流量)：Min/Max 数值为字节（1kb=1024，1mb = 1024\*1024）
-  - offline：不支持 Min/Max 参数
-- Duration：持续秒数，监控比较简陋，取持续时间内的 70% 采样结果
-- Ignore: `{"1": true, "2":false}` 忽略此规则的服务器 ID 列表
+##### 基本规则
+
+- type
+  - cpu、memory、swap、disk
+  - net_in_speed(入站网速)、net_out_speed(出站网速)、net_all_speed(双向网速)、transfer_in(入站流量)、transfer_out(出站流量)、transfer_all(双向流量)
+  - offline
+- duration：持续秒数，秒数内采样记录 30% 以上触发阈值才会报警（防数据插针）
+- min/max
+  - 流量、网速类数值 为字节（1KB=1024B，1MB = 1024\*1024B）
+  - 内存、硬盘、CPU 为占用百分比
+  - 离线监控无需设置
+- cover `[{"type":"offline","duration":10, "cover":0, "ignore":{"5": true}}]`
+  - `0` 监控所有，通过 `ignore` 忽略特定服务器
+  - `1` 忽略所有，通过 `ignore` 监控特定服务器
+- ignore: `{"1": true, "2":false}` 特定服务器，搭配 `cover` 使用
+
+##### 特殊：任意周期流量报警
+
+可以用作月流量报警
+
+- type
+  - transfer_in_cycle 周期内的入站流量
+  - transfer_out_cycle 周期内的出站流量
+  - transfer_all_cycle 周期内双向流量和
+- cycle_start 周期开始日期（可以是你机器计费周期的开始日期）
+- cycle_interval 小时（可以设为 1 月，30\*24）
+- min/max、cover、ignore 参考基本规则配置
+- 示例: 3 号机器的每月 15 号计费的出站月流量 1T 报警 `[{"type":"transfer_out_cycle","max":1000000000000,"cycle_start":"2021-07-15T08:00:00Z","cycle_interval":720,"cover":1,"ignore":{"3":true}}]`
 </details>
 
 <details>
@@ -119,7 +141,17 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
   </style>
   ```
 
-- 默认主题修改 LOGO、移除版权示例（来自 [@iLay1678](https://github.com/iLay1678)，欢迎 PR）
+- DayNight 主题更改进度条颜色示例（来自 [@hyt-allen-xu](https://github.com/hyt-allen-xu)）
+
+  ```
+  <style>
+  .ui.fine.progress> .progress-bar {
+    background-color: #00a7d0 !important;
+  }
+  </style>
+  ```
+
+- 默认主题修改 LOGO、移除版权示例（来自 [@iLay1678](https://github.com/iLay1678)）
 
   ```
   <style>
@@ -145,15 +177,27 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
   </script>
   ```
 
+- DayNight 移除版权示例（来自 [@hyt-allen-xu](https://github.com/hyt-allen-xu)）
+
+  ```
+  <script>
+  window.onload = function(){
+  var footer=document.querySelector("div.footer-container")
+  footer.innerHTML="©2021 你的名字 & Powered by 你的名字"
+  footer.style.visibility="visible"
+  }
+  </script>
+  ```
+
 - hotaru 主题更改背景图片示例
 
-      ```
-      <style>
-      .hotaru-cover {
-          background: url(https://s3.ax1x.com/2020/12/08/DzHv6A.jpg) center;
-      }
-      </style>
-      ```
+  ```
+  <style>
+  .hotaru-cover {
+     background: url(https://s3.ax1x.com/2020/12/08/DzHv6A.jpg) center;
+  }
+  </style>
+  ```
 
 </details>
 
@@ -169,7 +213,7 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 <details>
     <summary>如何使 OpenWrt/LEDE 自启动？来自 @艾斯德斯</summary>
 
-首先在 release 下载对应的二进制解压tar.gz包后放置到 `/root`，然后 `chmod +x /root/probe-agent` 赋予执行权限，然后创建 `/etc/init.d/probe-service`：
+首先在 release 下载对应的二进制解压 tar.gz 包后放置到 `/root`，然后 `chmod +x /root/probe-agent` 赋予执行权限，然后创建 `/etc/init.d/probe-service`：
 
 ```
 #!/bin/sh /etc/rc.common
@@ -200,13 +244,6 @@ restart() {
 </details>
 
 <details>
-    <summary>首页服务器随机闪烁掉线？</summary>
-
-执行 `ntpdate 0.pool.ntp.org` 同步一下面板部署所在的服务器的时间，ref: [How do I use pool.ntp.org?](https://www.ntppool.org/en/use.html)
-
-</details>
-
-<details>
     <summary>提示实时通道断开？</summary>
 
 ### 启用 HTTPS
@@ -222,6 +259,7 @@ restart() {
   ```nginx
   server{
 
+      #原有的一些配置
       #server_name blablabla...
 
       location /ws {
@@ -245,4 +283,3 @@ restart() {
   ```
 
 </details>
-

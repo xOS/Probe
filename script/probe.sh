@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.1.18"
+VERSION="v2.2.0"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -45,7 +45,7 @@ pre_check() {
     ## China_IP
     if [[ $(curl -m 10 -s https://api.ip.sb/geoip | grep 'China') != "" ]]; then
         echo "根据ip.sb提供的信息，当前IP可能在中国"
-        read -r -p "是否选用中国镜像完成安装? [Y/n] " input
+        read -e -r -p "是否选用中国镜像完成安装? [Y/n] " input
         case $input in
         [yY][eE][sS] | [yY])
             echo "使用中国镜像"
@@ -79,12 +79,12 @@ pre_check() {
 
 confirm() {
     if [[ $# > 1 ]]; then
-        echo && read -p "$1 [默认$2]: " temp
+        echo && read -e -p "$1 [默认$2]: " temp
         if [[ x"${temp}" == x"" ]]; then
             temp=$2
         fi
     else
-        read -p "$1 [y/n]: " temp
+        read -e -p "$1 [y/n]: " temp
     fi
     if [[ x"${temp}" == x"y" || x"${temp}" == x"Y" ]]; then
         return 0
@@ -259,9 +259,9 @@ modify_agent_config() {
     fi
 
     echo "请先在管理面板上添加Agent，记录下密钥" &&
-        read -p "请输入一个解析到面板所在IP的域名（不可套CDN）: " grpc_host &&
-        read -p "请输入面板RPC端口: (5555)" grpc_port &&
-        read -p "请输入Agent 密钥: " client_secret
+        read -ep "请输入一个解析到面板所在IP的域名（不可套CDN）: " grpc_host &&
+        read -ep "请输入面板RPC端口: (5555)" grpc_port &&
+        read -ep "请输入Agent 密钥: " client_secret
     if [[ -z "${grpc_host}" || -z "${client_secret}" ]]; then
         echo -e "${red}所有选项都不能为空${plain}"
         before_show_menu
@@ -307,13 +307,13 @@ modify_dashboard_config() {
 
     echo "关于 GitHub Oauth2 应用：在 https://github.com/settings/developers 创建，无需审核，Callback 填 http(s)://域名或IP/oauth2/callback" &&
         echo "关于 Gitee Oauth2 应用：在 https://gitee.com/oauth/applications 创建，无需审核，Callback 填 http(s)://域名或IP/oauth2/callback" &&
-        read -p "请输入 OAuth2 提供商(gitee/github，默认 github): " oauth2_type &&
-        read -p "请输入 Oauth2 应用的 Client ID: " github_oauth_client_id &&
-        read -p "请输入 Oauth2 应用的 Client Secret: " github_oauth_client_secret &&
-        read -p "请输入 GitHub/Gitee 登录名作为管理员，多个以逗号隔开: " admin_logins &&
-        read -p "请输入站点标题: " site_title &&
-        read -p "请输入站点访问端口: (8008)" site_port &&
-        read -p "请输入用于 Agent 接入的 RPC 端口: (5555)" grpc_port
+        read -ep "请输入 OAuth2 提供商(gitee/github，默认 github): " oauth2_type &&
+        read -ep "请输入 Oauth2 应用的 Client ID: " github_oauth_client_id &&
+        read -ep "请输入 Oauth2 应用的 Client Secret: " github_oauth_client_secret &&
+        read -ep "请输入 GitHub/Gitee 登录名作为管理员，多个以逗号隔开: " admin_logins &&
+        read -ep "请输入站点标题: " site_title &&
+        read -ep "请输入站点访问端口: (8008)" site_port &&
+        read -ep "请输入用于 Agent 接入的 RPC 端口: (5555)" grpc_port
 
     if [[ -z "${admin_logins}" || -z "${github_oauth_client_id}" || -z "${github_oauth_client_secret}" || -z "${site_title}" ]]; then
         echo -e "${red}所有选项都不能为空${plain}"
@@ -476,7 +476,7 @@ show_usage() {
     echo "./probe.sh uninstall_dashboard        - 卸载管理面板"
     echo "--------------------------------------------------------"
     echo "./probe.sh install_agent              - 安装探针Agent"
-    echo "./probe.sh update_agent              - 更新探针Agent"
+    echo "./probe.sh update_agent              	- 更新探针Agent"
     echo "./probe.sh modify_agent_config        - 修改Agent配置"
     echo "./probe.sh show_agent_log             - 查看Agent日志"
     echo "./probe.sh uninstall_agent            - 卸载Agen"
@@ -508,7 +508,7 @@ show_menu() {
     —————————————————
     ${green}0.${plain}  退出脚本
     "
-    echo && read -p "请输入选择 [0-14]: " num
+    echo && read -ep "请输入选择 [0-14]: " num
 
     case "${num}" in
     0)
