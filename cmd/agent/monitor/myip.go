@@ -20,7 +20,7 @@ type geoIP struct {
 var (
 	geoIPApiList = []string{
 		"https://ip.nan.ge/json",
-		"http://ip-api.com/json/",
+		//"http://ip-api.com/json/",
 	}
 	cachedIP, cachedCountry string
 	httpClientV4            = utils.NewSingleStackHTTPClient(time.Second*20, time.Second*5, time.Second*10, false)
