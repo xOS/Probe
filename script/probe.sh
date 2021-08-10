@@ -246,12 +246,8 @@ update_agent() {
         mv probe-agent $AGENT_PATH &&
         systemctl restart probe-agent
         rm -rf probe-agent_linux_${os_arch}.tar.gz README.md
-
-    if [[ $# == 3 ]]; then
-        modify_agent_config $1 $2 $3
-    else
+        
         modify_agent_config 0
-    fi
 
     if [[ $# == 0 ]]; then
         echo -e "更新完毕！"
