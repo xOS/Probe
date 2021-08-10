@@ -24,11 +24,24 @@
                 <label>备注</label>
                 <textarea name="Note"></textarea>
             </div>
+
+            <div class="command field">
+                <label>Linux 安装指令</label>
+                <div class="ui message">
+                    {{if .Conf.GRPCHost}}
+                    curl -L https://git.io/probe.sh -o probe.sh && chmod +x probe.sh && chmod
+                    +x probe.sh && sudo ./probe.sh install_agent <code class="command">{{.Conf.GRPCHost}}</code> <code
+                        class="command">{{.Conf.GRPCPort}}</code> <code class="command hostSecret"></code>
+                    {{else}}
+                    请先在设置页面配置 未接入CDN的面板服务器域名/IP
+                    {{end}}
+                </div>
+            </div>
         </form>
     </div>
     <div class=" actions">
         <div class="ui negative button">取消</div>
-        <button class="ui positive right labeled icon button">确认<i class="checkmark icon"></i>
+        <button class="ui positive probe-primary-btn right labeled icon button">确认<i class="checkmark icon"></i>
         </button>
     </div>
 </div>

@@ -10,7 +10,7 @@
         <a class='item{{if eq .MatchedPath "/cron"}} active{{end}}' href="/cron"><i class="clock icon"></i>任务</a>
         <a class='item{{if eq .MatchedPath "/notification"}} active{{end}}' href="/notification"><i class="bell icon"></i>报警</a>
         <a class='item{{if eq .MatchedPath "/setting"}} active{{end}}' href="/setting">
-            <i class="setting icon"></i>设置
+            <i class="settings icon"></i>设置
         </a>
         {{else}}
         <a class="item" href="http://status.nange.cn/" target="_blank"><i class=" rss icon"></i>状态</a>
@@ -39,7 +39,7 @@
                     </div>
                 </div>
                 {{else}}
-                <a href="/login" class="ui large teal button"><i class="sign-in icon"></i>登录</a>
+                <a href="/login" class="ui large positive probe-primary-btn button"><i class="sign-in icon"></i>登录</a>
                 {{end}}
             </div>
         </div>

@@ -5,7 +5,7 @@
     <div class="ui container">
         <div class="ui grid">
             <div class="right floated right aligned twelve wide column">
-                <button class="ui right labeled positive icon button" onclick="addOrEditServer()"><i
+                <button class="ui right labeled probe-primary-btn icon button" onclick="addOrEditServer()"><i
                         class="add icon"></i> 添加服务器
                 </button>
             </div>
@@ -19,6 +19,7 @@
                     <th>IP</th>
                     <th>版本号</th>
                     <th>密钥</th>
+                    <th>一键安装</th>
                     <th>备注</th>
                     <th>管理</th>
                 </tr>
@@ -32,6 +33,19 @@
                     <td>{{$server.Host.IP}}</td>
                     <td>{{$server.Host.Version}}</td>
                     <td>{{$server.Secret}}</td>
+                    <td>
+                        <button class="ui icon green mini button"
+                            data-clipboard-text="{{if $.Conf.GRPCHost}}curl -L https://git.io/probe.sh -o probe.sh && chmod +x probe.sh && sudo ./probe.sh install_agent {{$.Conf.GRPCHost}} {{$.Conf.GRPCPort}} {{$server.Secret}}{{else}}请先在设置页面配置 未接入CDN的面板服务器域名/IP{{end}}"
+                            data-tooltip="点击复制安装命令">
+                            <i class="linux icon"></i>
+                        </button>
+                        <button class="ui icon mini button" data-tooltip="尚未支持，请下载release手动安装">
+                            <i class="windows icon"></i>
+                        </button>
+                        <button class="ui icon mini button" data-tooltip="尚未支持，请下载release手动安装">
+                            <i class="apple icon"></i>
+                        </button>
+                    </td>
                     <td style="word-break: break-word;">{{$server.Note}}</td>
                     <td>
                         <div class="ui mini icon buttons">
@@ -50,6 +64,10 @@
         </table>
     </div>
 </div>
-{{template "component/server"}}
+{{template "component/server" .}}
 {{template "common/footer" .}}
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
+<script>
+    var clipboard = new ClipboardJS('.ui.icon.green.mini.button');
+</script>
 {{end}}

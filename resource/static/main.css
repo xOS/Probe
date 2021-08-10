@@ -469,3 +469,16 @@ i.s {
   user-select: none;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
+
+.probe-primary-btn {
+  background-color: #f88400 !important;
+  color: white !important;
+}
+
+.probe-primary-font {
+  color: #f88400 !important;
+}
+
+.probe-secondary-font {
+  color: rgba(243, 160, 7, 0.952) !important;
+}

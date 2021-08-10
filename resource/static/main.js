@@ -7,7 +7,7 @@ function readableBytes(bytes) {
   return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + sizes[i];
 }
 
-const confirmBtn = $(".mini.confirm.modal .positive.button");
+const confirmBtn = $(".mini.confirm.modal .probe-primary-btn.button");
 
 function showConfirm(title, content, callFn, extData) {
   const modal = $(".mini.confirm.modal");
@@ -34,7 +34,7 @@ function showFormModal(modelSelector, formID, URL, getData) {
       closable: true,
       onApprove: function () {
         let success = false;
-        const btn = $(modelSelector + " .positive.button");
+        const btn = $(modelSelector + " .probe-primary-btn.button");
         const form = $(modelSelector + " form");
         if (btn.hasClass("loading")) {
           return success;
@@ -106,7 +106,7 @@ function addOrEditAlertRule(rule) {
   const modal = $(".rule.modal");
   modal.children(".header").text((rule ? "修改" : "添加") + "报警规则");
   modal
-    .find(".positive.button")
+    .find(".probe-primary-btn.button")
     .html(
       rule ? '修改<i class="edit icon"></i>' : '添加<i class="add icon"></i>'
     );
@@ -125,7 +125,7 @@ function addOrEditNotification(notification) {
   const modal = $(".notification.modal");
   modal.children(".header").text((notification ? "修改" : "添加") + "通知方式");
   modal
-    .find(".positive.button")
+    .find(".probe-primary-btn.button")
     .html(
       notification
         ? '修改<i class="edit icon"></i>'
@@ -155,11 +155,11 @@ function addOrEditNotification(notification) {
   );
 }
 
-function addOrEditServer(server) {
+function addOrEditServer(server, conf) {
   const modal = $(".server.modal");
   modal.children(".header").text((server ? "修改" : "添加") + "服务器");
   modal
-    .find(".positive.button")
+    .find(".probe-primary-btn.button")
     .html(
       server ? '修改<i class="edit icon"></i>' : '添加<i class="add icon"></i>'
     );
@@ -172,9 +172,12 @@ function addOrEditServer(server) {
   modal.find("textarea[name=Note]").val(server ? server.Note : null);
   if (server) {
     modal.find(".secret.field").attr("style", "");
+    modal.find(".command.field").attr("style", "");
+    modal.find(".command.hostSecret").text(server.Secret);
     modal.find("input[name=secret]").val(server.Secret);
   } else {
     modal.find(".secret.field").attr("style", "display:none");
+    modal.find(".command.field").attr("style", "display:none");
     modal.find("input[name=secret]").val("");
   }
   showFormModal(".server.modal", "#serverForm", "/api/server");
@@ -184,7 +187,7 @@ function addOrEditMonitor(monitor) {
   const modal = $(".monitor.modal");
   modal.children(".header").text((monitor ? "修改" : "添加") + "监控");
   modal
-    .find(".positive.button")
+    .find(".probe-primary-btn.button")
     .html(
       monitor ? '修改<i class="edit icon"></i>' : '添加<i class="add icon"></i>'
     );
@@ -223,7 +226,7 @@ function addOrEditCron(cron) {
   const modal = $(".cron.modal");
   modal.children(".header").text((cron ? "修改" : "添加") + "计划任务");
   modal
-    .find(".positive.button")
+    .find(".probe-primary-btn.button")
     .html(
       cron ? '修改<i class="edit icon"></i>' : '添加<i class="add icon"></i>'
     );

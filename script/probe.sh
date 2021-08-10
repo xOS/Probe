@@ -2,7 +2,7 @@
 
 #========================================================
 #   System Required: CentOS 7+ / Debian 8+ / Ubuntu 16+ /
-#     Arch 未测试
+#   Arch 未测试
 #   Description: 楠格探针安装脚本
 #   Github: https://github.com/xOS/Probe
 #========================================================
@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.2.0"
+VERSION="v2.2.1"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -204,7 +204,11 @@ install_agent() {
         mv probe-agent $AGENT_PATH &&
         rm -rf probe-agent_linux_${os_arch}.tar.gz README.md
 
-    modify_agent_config 0
+    if [[ $# == 3 ]]; then
+        modify_agent_config $1 $2 $3
+    else
+        modify_agent_config 0
+    fi
 
     if [[ $# == 0 ]]; then
         before_show_menu
@@ -243,8 +247,14 @@ update_agent() {
         systemctl restart probe-agent
         rm -rf probe-agent_linux_${os_arch}.tar.gz README.md
 
+    if [[ $# == 3 ]]; then
+        modify_agent_config $1 $2 $3
+    else
+        modify_agent_config 0
+    fi
+
     if [[ $# == 0 ]]; then
-        echo -e "更新完成！"
+        echo -e "更新完毕！"
         before_show_menu
     fi
 }
@@ -257,19 +267,24 @@ modify_agent_config() {
         echo -e "${red}文件下载失败，请检查本机能否连接 ${GITHUB_RAW_URL}${plain}"
         return 0
     fi
+    if [[ $# != 3 ]]; then
+        echo "请先在管理面板上添加Agent，记录下密钥" &&
+            read -ep "请输入一个解析到面板所在IP的域名（不可套CDN）: " grpc_host &&
+            read -ep "请输入面板RPC端口: (5555)" grpc_port &&
+            read -ep "请输入Agent 密钥: " client_secret
+        if [[ -z "${grpc_host}" || -z "${client_secret}" ]]; then
+            echo -e "${red}所有选项都不能为空${plain}"
+            before_show_menu
+            return 1
+        fi
 
-    echo "请先在管理面板上添加Agent，记录下密钥" &&
-        read -ep "请输入一个解析到面板所在IP的域名（不可套CDN）: " grpc_host &&
-        read -ep "请输入面板RPC端口: (5555)" grpc_port &&
-        read -ep "请输入Agent 密钥: " client_secret
-    if [[ -z "${grpc_host}" || -z "${client_secret}" ]]; then
-        echo -e "${red}所有选项都不能为空${plain}"
-        before_show_menu
-        return 1
-    fi
-
-    if [[ -z "${grpc_port}" ]]; then
-        grpc_port=5555
+        if [[ -z "${grpc_port}" ]]; then
+            grpc_port=5555
+        fi
+    else
+        grpc_host=$1
+        grpc_port=$2
+        client_secret=$3
     fi
 
     sed -i "s/grpc_host/${grpc_host}/" ${AGENT_SERVICE}
@@ -283,6 +298,7 @@ modify_agent_config() {
     systemctl restart probe-agent
 
     if [[ $# == 0 ]]; then
+        echo -e "Agent 已重启完毕！"
         before_show_menu
     fi
 }
@@ -588,7 +604,11 @@ if [[ $# > 0 ]]; then
         uninstall_dashboard 0
         ;;
     "install_agent")
-        install_agent 0
+        if [[ $# == 4 ]]; then
+            install_agent $2 $3 $4
+        else
+            install_agent 0
+        fi
         ;;
     "modify_agent_config")
         modify_agent_config 0

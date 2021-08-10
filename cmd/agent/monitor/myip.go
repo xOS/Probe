@@ -20,7 +20,8 @@ type geoIP struct {
 var (
 	geoIPApiList = []string{
 		"https://ip.nan.ge/json",
-		//"http://ip-api.com/json/",
+		"https://api.ip.sb/geoip",
+		"http://ip-api.com/json/",
 	}
 	cachedIP, cachedCountry string
 	httpClientV4            = utils.NewSingleStackHTTPClient(time.Second*20, time.Second*5, time.Second*10, false)
@@ -37,7 +38,7 @@ func UpdateIP() {
 		} else if ipv4.CountryCode == "" || ipv6.CountryCode != "" {
 			cachedCountry = ipv6.CountryCode
 		}
-		time.Sleep(time.Minute * 30)
+		time.Sleep(time.Minute * 10)
 	}
 }
 
