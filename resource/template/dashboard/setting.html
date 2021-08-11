@@ -37,12 +37,17 @@
                 <input type="text" name="ViewPassword" placeholder="" value="{{.Conf.Site.ViewPassword}}">
             </div>
             <div class="field">
-                <label>后端 Agent 域名/IP</label>
-                <input type="text" name="GRPCHost" placeholder="" value="{{.Conf.GRPCHost}}">
+                <label>后端 Agent 配置</label>
             </div>
-            <div class="field">
-                <label>后端 Agent 端口</label>
-                <input type="text" name="GRPCPort" placeholder="" value="{{.Conf.GRPCPort}}">
+            <div class="ui segment">
+                <div class="field">
+                    <label>Agent 域名/IP</label>
+                    <input type="text" name="GRPCHost" placeholder="" value="{{.Conf.GRPCHost}}">
+                </div>
+                <div class="field">
+                    <label>Agent 端口</label>
+                    <input type="text" name="GRPCPort" placeholder="" value="{{.Conf.GRPCPort}}">
+                </div>
             </div>
             <div class="field">
                 <label>IP 变更提醒</label>
