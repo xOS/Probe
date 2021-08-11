@@ -456,7 +456,7 @@ i.s {
 }
 
 .ui.button {
-      background: rgb(0 0 0 / 40%) none;
+      background: rgb(250 250 250 / 28%) none;
 }
 
 [data-tooltip]:after {
@@ -480,5 +480,5 @@ i.s {
 }
 
 .probe-secondary-font {
-  color: rgba(243, 160, 7, 0.952) !important;
+  color: rgba(252, 166, 7, 0.952) !important;
 }

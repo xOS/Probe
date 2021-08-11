@@ -65,7 +65,7 @@ func main() {
 
 	flag.String("i", "", "unused 旧Agent配置兼容")
 	flag.BoolVar(&debug, "d", true, "开启调试信息")
-	flag.StringVar(&server, "s", "localhost:5555", "管理面板RPC端口")
+	flag.StringVar(&server, "s", "localhost:2222", "管理面板RPC端口")
 	flag.StringVar(&clientSecret, "p", "", "Agent连接Secret")
 	flag.Parse()
 

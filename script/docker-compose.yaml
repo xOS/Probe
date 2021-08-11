@@ -8,4 +8,4 @@ services:
       - ./data:/dashboard/data
     ports:
       - site_port:80
-      - grpc_port:5555
+      - grpc_port:2222

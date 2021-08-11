@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.2.1"
+VERSION="v2.2.2"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -266,7 +266,7 @@ modify_agent_config() {
     if [[ $# != 3 ]]; then
         echo "请先在管理面板上添加Agent，记录下密钥" &&
             read -ep "请输入一个解析到面板所在IP的域名（不可套CDN）: " grpc_host &&
-            read -ep "请输入面板RPC端口: (5555)" grpc_port &&
+            read -ep "请输入面板RPC端口: (2222)" grpc_port &&
             read -ep "请输入Agent 密钥: " client_secret
         if [[ -z "${grpc_host}" || -z "${client_secret}" ]]; then
             echo -e "${red}所有选项都不能为空${plain}"
@@ -275,7 +275,7 @@ modify_agent_config() {
         fi
 
         if [[ -z "${grpc_port}" ]]; then
-            grpc_port=5555
+            grpc_port=2222
         fi
     else
         grpc_host=$1
@@ -325,7 +325,7 @@ modify_dashboard_config() {
         read -ep "请输入 GitHub/Gitee 登录名作为管理员，多个以逗号隔开: " admin_logins &&
         read -ep "请输入站点标题: " site_title &&
         read -ep "请输入站点访问端口: (8008)" site_port &&
-        read -ep "请输入用于 Agent 接入的 RPC 端口: (5555)" grpc_port
+        read -ep "请输入用于 Agent 接入的 RPC 端口: (2222)" grpc_port
 
     if [[ -z "${admin_logins}" || -z "${github_oauth_client_id}" || -z "${github_oauth_client_secret}" || -z "${site_title}" ]]; then
         echo -e "${red}所有选项都不能为空${plain}"
@@ -337,7 +337,7 @@ modify_dashboard_config() {
         site_port=8008
     fi
     if [[ -z "${grpc_port}" ]]; then
-        grpc_port=5555
+        grpc_port=2222
     fi
     if [[ -z "${oauth2_type}" ]]; then
         oauth2_type=github
