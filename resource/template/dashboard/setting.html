@@ -26,10 +26,6 @@
                 <select name="Theme">
                     <option value="default" {{if eq .Conf.Site.Theme "default" }} selected="selected" {{end}}>默认主题
                     </option>
-                    <option value="daynight" {{if eq .Conf.Site.Theme "daynight" }} selected="selected" {{end}}>
-                        JackieSung DayNight</option>
-                    <option value="hotaru" {{if eq .Conf.Site.Theme "hotaru" }} selected="selected" {{end}}>CokeMine
-                        Hotaru</option>
                 </select>
             </div>
             <div class="field">
@@ -41,8 +37,12 @@
                 <input type="text" name="ViewPassword" placeholder="" value="{{.Conf.Site.ViewPassword}}">
             </div>
             <div class="field">
-                <label>未接入CDN的面板服务器域名/IP</label>
+                <label>后端 Agent 域名/IP</label>
                 <input type="text" name="GRPCHost" placeholder="" value="{{.Conf.GRPCHost}}">
+            </div>
+            <div class="field">
+                <label>后端 Agent 端口</label>
+                <input type="text" name="GRPCPort" placeholder="" value="{{.Conf.GRPCPort}}">
             </div>
             <div class="field">
                 <label>IP 变更提醒</label>
