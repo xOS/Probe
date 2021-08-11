@@ -1,4 +1,4 @@
-debug: false
+debug: true
 httpport: 80
 oauth2:
   type: "oauth2_type" #Oauth2 登录接入类型，gitee/github

@@ -67,7 +67,7 @@ jobs:
           curl -s https://purge.jsdelivr.net/gh/$LOWER_USERNAME/probe@master/script/probe-agent.service
           curl -s https://purge.jsdelivr.net/gh/$LOWER_USERNAME/probe@master/script/docker-compose.yaml
           curl -s https://purge.jsdelivr.net/gh/$LOWER_USERNAME/probe@master/script/config.yaml
-          curl -s https://purge.jsdelivr.net/gh/xOS/Probe@master/resource/static/bg/04.JPG
+          curl -s https://purge.jsdelivr.net/gh/xOS/Probe@master/resource/static/bg/background.jpeg
           curl -s https://purge.jsdelivr.net/gh/xOS/Probe@master/resource/static/favicon.ico
           curl -s https://purge.jsdelivr.net/gh/xOS/Probe@master/resource/static/logo.png
           curl -s https://purge.jsdelivr.net/gh/xOS/Probe@master/resource/static/main.css
