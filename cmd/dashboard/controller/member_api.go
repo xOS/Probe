@@ -453,6 +453,7 @@ type settingForm struct {
 	IgnoredIPNotification      string
 	Oauth2Type                 string
 	GRPCHost                   string
+	GRPCPort                   uint
 	Cover                      uint8
 }
 
@@ -468,6 +469,7 @@ func (ma *memberAPI) updateSetting(c *gin.Context) {
 	dao.Conf.EnableIPChangeNotification = sf.EnableIPChangeNotification == "on"
 	dao.Conf.Cover = sf.Cover
 	dao.Conf.GRPCHost = sf.GRPCHost
+	dao.Conf.GRPCPort = sf.GRPCPort
 	dao.Conf.IgnoredIPNotification = sf.IgnoredIPNotification
 	dao.Conf.Site.Brand = sf.Title
 	dao.Conf.Site.Theme = sf.Theme
