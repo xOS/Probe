@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.2.2"
+VERSION="v2.2.3"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -498,9 +498,11 @@ show_usage() {
 }
 
 show_menu() {
+    clear
     echo -e "
-    ${green}楠格探针管理脚本${plain} ${red}${VERSION}${plain}
-    --- https://github.com/xOS/Probe ---
+    =========================
+    ${green}楠格探针管理脚本${plain} ${red}[${VERSION}]${plain}
+    =========================
     ${green}1.${plain}  安装面板端
     ${green}2.${plain}  修改面板配置
     ${green}3.${plain}  启动面板
@@ -508,17 +510,18 @@ show_menu() {
     ${green}5.${plain}  重启并更新面板
     ${green}6.${plain}  查看面板日志
     ${green}7.${plain}  卸载管理面板
-    —————————————————
+    —————————————————————————
     ${green}8.${plain}  安装探针Agent
     ${green}9.${plain}  更新探针Agent
     ${green}10.${plain} 修改Agent配置
     ${green}11.${plain} 查看Agent日志
     ${green}12.${plain} 卸载Agent
     ${green}13.${plain} 重启Agent
-    —————————————————
+    —————————————————————————
     ${green}14.${plain} 更新脚本
-    —————————————————
+    —————————————————————————
     ${green}0.${plain}  退出脚本
+    =========================
     "
     echo && read -ep "请输入选择 [0-14]: " num
 

@@ -141,10 +141,14 @@ i.icon {
   background-image: url(https://cdn.jsdelivr.net/gh/xOS/Probe@master/resource/static/bg/background.jpeg);
   }
 
-  /**后台文本信息可选可复制**/
-  .ui.basic.table{
-    user-select: text;
-  }
+/**后台文本信息可选可复制**/
+.ui.basic.table{
+  user-select: text;
+}
+
+.ui.dimmer{
+  background-color: rgb(34 36 38 / 15%);
+}
 
 .column {
 margin-top: 2px;
