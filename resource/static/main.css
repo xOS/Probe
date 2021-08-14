@@ -62,20 +62,20 @@ a {
 
 /**后台文本域**/
 .ui.form select {
-  background: rgbrgb(249 250 251 / 47%) !important;
+  background: rgb(249 250 251 / 47%) !important;
 }
 .ui.form textarea {
   background: rgb(249 250 251 / 47%) !important;
 }
 .ui.checkbox input:checked~.box:before, .ui.checkbox input:checked~label:before {
-  background:rgbrgb(249 250 251 / 47%);
+  background:rgb(249 250 251 / 47%);
   border-color: rgba(34,36,38,.35);
 }
 .ui.checkbox input:checked~.box:after, .ui.checkbox input:checked~label:after {
-  background:rgbrgb(249 250 251 / 47%);
+  background:rgb(249 250 251 / 47%);
 }
 .ui.form textarea:focus {
-  background: rgbrgb(249 250 251 / 47%) !important;
+  background: rgb(249 250 251 / 47%) !important;
 }
 
 .ui.segment {
