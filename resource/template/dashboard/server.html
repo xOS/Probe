@@ -19,8 +19,8 @@
                     <th>IP</th>
                     <th>版本号</th>
                     <th>密钥</th>
-                    <th>一键安装</th>
-                    <th>备注</th>
+                    <th>安装指令</th>
+                    <th>说明</th>
                     <th>管理</th>
                 </tr>
             </thead>
@@ -35,7 +35,7 @@
                     <td>{{$server.Secret}}</td>
                     <td>
                         <button class="ui icon green mini button"
-                            data-clipboard-text="{{if $.Conf.GRPCHost}}curl -L https://git.io/probe.sh -o probe.sh && chmod +x probe.sh && sudo ./probe.sh install_agent {{$.Conf.GRPCHost}} {{$.Conf.GRPCPort}} {{$server.Secret}}{{else}}请先在设置页面配置 未接入CDN的面板服务器域名/IP{{end}}"
+                            data-clipboard-text="{{if $.Conf.GRPCHost}}curl -L https://git.io/probe.sh -o probe.sh && chmod +x probe.sh && sudo ./probe.sh install_agent {{$.Conf.GRPCHost}} {{$.Conf.GRPCPort}} {{$server.Secret}}{{else}}请先在设置页面配置 后端 Agent 域名/IP 和端口{{end}}"
                             data-tooltip="点击复制安装命令">
                             <i class="linux icon"></i>
                         </button>
@@ -53,7 +53,7 @@
                                 <i class="edit icon"></i>
                             </button>
                             <button class="ui button"
-                                onclick="showConfirm('删除节点','确认删除此监控节点？',deleteRequest,'/api/server/'+{{$server.ID}})">
+                                onclick="showConfirm('删除节点','确认删除此节点？',deleteRequest,'/api/server/'+{{$server.ID}})">
                                 <i class="trash alternate outline icon"></i>
                             </button>
                         </div>

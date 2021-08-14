@@ -315,6 +315,21 @@ i.bell.icon {
 i.setting.icon {
 color: #2196f3!important;
 }
+i.icon.area.chart {
+  color: #21ba45!important;
+}
+i.logout.icon {
+  color: #f44336!important;
+}
+i.edit.icon {
+  color: #21ba45!important;
+}
+i.trash.alternate.outline.icon {
+  color: #f30606!important;
+}
+i.terminal.icon {
+  color: #f3670b!important;
+}
 
 i.arrow.alternate.circle.down.outline.icon {
 color: green;

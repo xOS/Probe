@@ -21,7 +21,7 @@
                 <input type="text" name="secret">
             </div>
             <div class="field">
-                <label>备注</label>
+                <label>说明</label>
                 <textarea name="Note"></textarea>
             </div>
 
@@ -33,7 +33,7 @@
                     +x probe.sh && sudo ./probe.sh install_agent <code class="command">{{.Conf.GRPCHost}}</code> <code
                         class="command">{{.Conf.GRPCPort}}</code> <code class="command hostSecret"></code>
                     {{else}}
-                    请先在设置页面配置 未接入CDN的面板服务器域名/IP
+                    请先在设置页面配置 后端 Agent 域名/IP 和端口
                     {{end}}
                 </div>
             </div>
