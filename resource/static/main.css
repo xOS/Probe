@@ -12,7 +12,10 @@
 
 body {
   background: rgb(255 255 255 / 50%);
+  border: 0px !important;
 }
+
+*{border: 0px !important;}
 
 a {
   color: #4caf50;
