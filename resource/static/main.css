@@ -62,20 +62,20 @@ a {
 
 /**后台文本域**/
 .ui.form select {
-  background: rgb(255 255 255 / 50%) !important;
+  background: rgbrgb(249 250 251 / 47%) !important;
 }
 .ui.form textarea {
-  background: rgb(255 255 255 / 50%) !important;
+  background: rgb(249 250 251 / 47%) !important;
 }
 .ui.checkbox input:checked~.box:before, .ui.checkbox input:checked~label:before {
-  background:rgb(255 255 255 / 50%);
+  background:rgbrgb(249 250 251 / 47%);
   border-color: rgba(34,36,38,.35);
 }
 .ui.checkbox input:checked~.box:after, .ui.checkbox input:checked~label:after {
-  background:rgb(255 255 255 / 50%);
+  background:rgbrgb(249 250 251 / 47%);
 }
 .ui.form textarea:focus {
-  background: rgb(255 255 255 / 50%) !important;
+  background: rgbrgb(249 250 251 / 47%) !important;
 }
 
 .ui.segment {
@@ -148,11 +148,10 @@ i.icon {
 .ui.basic.table{
   user-select: text;
 }
-
 .ui.dimmer{
   background-color: rgb(34 36 38 / 15%);
 }
-/**后台服務器編輯區**/
+/**后台服务器编辑区**/
 .ui.modal>.content {
   background: #e1dae8b0!important;
 }
@@ -161,6 +160,9 @@ i.icon {
 }
 .ui.modal>.header {
   background: #f9fafb78 !important;
+}
+.ui.modal {
+  background: #ffffffa6 !important;
 }
 
 .column {
