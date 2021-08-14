@@ -62,10 +62,10 @@ a {
 
 /**后台文本域**/
 .ui.form select {
-  background: rgb(255 255 255 / 50%);
+  background: rgb(255 255 255 / 50%) !important;
 }
 .ui.form textarea {
-  background: rgb(255 255 255 / 50%);
+  background: rgb(255 255 255 / 50%) !important;
 }
 .ui.checkbox input:checked~.box:before, .ui.checkbox input:checked~label:before {
   background:rgb(255 255 255 / 50%);
@@ -73,6 +73,9 @@ a {
 }
 .ui.checkbox input:checked~.box:after, .ui.checkbox input:checked~label:after {
   background:rgb(255 255 255 / 50%);
+}
+.ui.form textarea:focus {
+  background: rgb(255 255 255 / 50%) !important;
 }
 
 .ui.segment {
@@ -148,6 +151,16 @@ i.icon {
 
 .ui.dimmer{
   background-color: rgb(34 36 38 / 15%);
+}
+/**后台服務器編輯區**/
+.ui.modal>.content {
+  background: #e1dae8b0!important;
+}
+.ui.modal>.actions {
+  background: #f9fafb78 !important;
+}
+.ui.modal>.header {
+  background: #f9fafb78 !important;
 }
 
 .column {
