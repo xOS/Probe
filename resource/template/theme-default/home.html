@@ -58,7 +58,7 @@
                       class="os-freebsd"></i>
                     @#server.Name + (server.live?'':' [已离线]')#@
                     <i class="probe-primary-font info circle icon" style="height: 28px"></i>
-                    <div class="ui content popup" style="margin-bottom: 0">
+                    <div class="ui content popup" style="">
                       系统：@#server.Host.Platform#@-@#server.Host.PlatformVersion#@
                       [<span v-if="server.Host.Virtualization"
                         >@#server.Host.Virtualization#@:</span
@@ -315,8 +315,7 @@
         statusCards.groups = groupingData(statusCards.servers, "Tag")
     }
     $('.ui.accordion')
-        .accordion({"exclusive": false})
-    ;
+        .accordion({"exclusive": false});
   </script>
   <script>
       var statusList = document.getElementsByTagName('small')

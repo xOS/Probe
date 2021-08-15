@@ -127,6 +127,29 @@ a {
   margin: 0;
   padding: 1em !important;
 }
+/**信息透明弹框边小箭头位置**/
+.ui.right.center.popup {
+  margin: -3px 0 0 0.914286em !important;
+  -webkit-transform-origin: left 50%;
+  transform-origin: left 50%;
+}
+.ui.bottom.left.popup {
+  margin-left: 1px !important;
+  margin-top: 3px !important;
+}
+.ui.top.left.popup {
+  margin-left: 0;
+  margin-bottom: 10px !important;
+}
+.ui.top.right.popup {
+  margin-right: 0;
+  margin-bottom: 8px !important;
+}
+.ui.left.center.popup {
+  margin: -3px .91428571em 0 0 !important;
+  -webkit-transform-origin: right 50%;
+  transform-origin: right 50%;
+}
 
 i.icon {
   width: 1em !important;
@@ -421,7 +444,8 @@ color: #ff5722;
 }
 
 .status.cards .ui.content.popup {
-  min-width: 255px;
+  min-width: 292px;
+  min-width: 21rem;
 }
 
 .status.cards .outline.icon {
