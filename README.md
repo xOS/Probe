@@ -1,7 +1,7 @@
 # 楠格探针
 > 个人修改自用
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.2.5&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.2.2-brightgreen?style=for-the-badge&logo=linux)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.2.6&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.2.4-brightgreen?style=for-the-badge&logo=linux)
 [![Author](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-naiba-brightgreen?style=for-the-badge&logo=github)](https://github.com/naiba)
 
 一款探针。支持系统状态、HTTP(SSL 证书变更、即将到期、到期)、TCP、Ping 监控报警，命令批量执行和计划任务。
@@ -41,7 +41,7 @@ _\* 使用 WatchTower 可以自动更新面板，Windows 终端可以使用 nssm
 </details>
 
 <details>
-    <summary>报警通知：CPU、内存、硬盘、带宽、流量实时监控。</summary>
+    <summary>报警通知：负载、CPU、内存、硬盘、带宽、流量、月流量、进程数、连接数实时监控。</summary>
 
 #### 灵活通知方式
 
@@ -94,9 +94,12 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 ##### 基本规则
 
 - type
-  - cpu、memory、swap、disk
-  - net_in_speed(入站网速)、net_out_speed(出站网速)、net_all_speed(双向网速)、transfer_in(入站流量)、transfer_out(出站流量)、transfer_all(双向流量)
-  - offline
+  - `cpu`、`memory`、`swap`、`disk`
+  - `net_in_speed` 入站网速、`net_out_speed` 出站网速、`net_all_speed` 双向网速、`transfer_in` 入站流量、`transfer_out` 出站流量、`transfer_all` 双向流量
+  - `offline` 离线监控
+  - `load1`、`load5`、`load15` 负载
+  - `process_count` 进程数 *目前取线程数占用资源太多，暂时不支持*
+  - `tcp_conn_count`、`udp_conn_count` 连接数
 - duration：持续秒数，秒数内采样记录 30% 以上触发阈值才会报警（防数据插针）
 - min/max
   - 流量、网速类数值 为字节（1KB=1024B，1MB = 1024\*1024B）
@@ -208,6 +211,14 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 
 数据储存在 `/opt/probe` 文件夹中，迁移数据时打包这个文件夹，到新环境解压。然后执行一键脚本安装即可
 
+</details>
+
+<details>
+    <summary>Agent 不断重启/无法启动 ？</summary>
+
+1. 直接执行 `/opt/probe/agent/probe-agent -s 面板IP或非CDN域名:面板RPC端口 -p Agent密钥 -d` 查看日志是否是 DNS 问题。
+2. `nc -v 域名/IP 面板RPC端口` 或者 `telnet 域名/IP 面板RPC端口` 检验是否是网络问题，检查本机与面板服务器出入站防火墙，如果单机无法判断可借助 https://port.ping.pe/ 提供的端口检查工具进行检测。
+3. 如果上面步骤检测正常，Agent 正常上线，尝试关闭 SELinux，[如何关闭 SELinux？](https://www.google.com/search?q=%E5%85%B3%E9%97%ADSELINUX)
 </details>
 
 <details>
