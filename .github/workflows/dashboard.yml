@@ -9,6 +9,8 @@ on:
       - "cmd/agent/**"
       - "script/**"
       - "*.md"
+      - "resource/static/*.css"
+      - "resource/static/*.js"
       - ".*"
       - ".github/workflows/agent.yml"
 
