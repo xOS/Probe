@@ -59,9 +59,9 @@
                     @#server.Name + (server.live?'':' [已离线]')#@
                     <i class="probe-primary-font info circle icon" style="height: 28px"></i>
                     <div class="ui content popup" style="">
-                      系统：@#firstUpperCase(server.Host.Platform)#@-@#server.Host.PlatformVersion#@
+                      系统：@#Speacial(server.Host.Platform)#@-@#server.Host.PlatformVersion#@
                       [<span v-if="server.Host.Virtualization"
-                        >@#server.Host.Virtualization#@:</span
+                        >@#Speacial(server.Host.Virtualization)#@:</span
                       >@#server.Host.Arch#@]<br />
                       CPU：@#server.Host.CPU#@<br />
                       硬盘：@#formatByteSize(server.State.DiskUsed)#@/@#formatByteSize(server.Host.DiskTotal)#@<br />
@@ -175,6 +175,45 @@
   <script>
     function firstUpperCase(str) {
       return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
+    }
+    function Speacial(i) {
+      if (i ==="ubuntu"){
+        return Ubuntu;
+      }
+      if (i ==="debian"){
+        return Debian;
+      }
+      if (i ==="centos"){
+        return CentOS;
+      }
+      if (i ==="darwin"){
+        return MacOS;
+      }
+      if (i ==="redhat"){
+        return RedHat;
+      }
+      if (i ==="archlinux"){
+        return Archlinux;
+      }
+      if (i ==="coreos"){
+        return Coreos;
+      }
+      if (i ==="deepin"){
+        return Deepin;
+      }
+      if (i ==="fedora"){
+        return Fedora;
+      }
+      if (i ==="kvm"){
+        return KVM;
+      }
+      if (i ==="openvz"){
+        return OVZ;
+      }
+      if (i ==="lxc"){
+        return LXC;
+      }
+      return "";
     }
     Date.prototype.format = function(format) {
     var date = {
