@@ -177,6 +177,10 @@
       return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
     }
     function Speacial(i) {
+      str = "windows";
+      if (i.indexOf(str) !== -1 ? true:false){
+        return i;
+      }
       if (i ==="ubuntu"){
         return "Ubuntu";
       }
