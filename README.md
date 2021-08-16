@@ -197,7 +197,7 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
   ```
   <style>
   .hotaru-cover {
-     background: url(https://s3.ax1x.com/2020/12/08/DzHv6A.jpg) center;
+     background: url(https://xx.com/xxx.jpg) center;
   }
   </style>
   ```
@@ -210,6 +210,13 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
     <summary>如何进行数据迁移、备份恢复？</summary>
 
 数据储存在 `/opt/probe` 文件夹中，迁移数据时打包这个文件夹，到新环境解压。然后执行一键脚本安装即可
+
+</details>
+
+<details>
+    <summary>如何禁用连接数/进程数等占用资源的监控？</summary>
+
+编辑 `/etc/systemd/system/probe-agent.service`，在 `ExecStart=` 这一行的末尾加上 `-kconn` 就是不监控连接数，加上 `-kprocess` 就是不监控进程数
 
 </details>
 
