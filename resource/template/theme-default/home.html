@@ -59,7 +59,7 @@
                     @#server.Name + (server.live?'':' [已离线]')#@
                     <i class="probe-primary-font info circle icon" style="height: 28px"></i>
                     <div class="ui content popup" style="">
-                      系统：@#titleCase(server.Host.Platform)#@-@#server.Host.PlatformVersion#@
+                      系统：@#firstUpperCase(server.Host.Platform)#@-@#server.Host.PlatformVersion#@
                       [<span v-if="server.Host.Virtualization"
                         >@#server.Host.Virtualization#@:</span
                       >@#server.Host.Arch#@]<br />
@@ -173,9 +173,8 @@
   </div>
   {{template "common/footer" .}}
   <script>
-    function titleCase(str) {
-      newStr = str.slice(0,1).toUpperCase() +str.slice(1).toLowerCase();
-      return newStr;
+    function firstUpperCase(str) {
+      return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
     }
     Date.prototype.format = function(format) {
     var date = {
