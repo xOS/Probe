@@ -177,9 +177,6 @@
       return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
     }
     function Speacial(i) {
-      if ({.server.Host.OS} == "windows"){
-        return i;
-      }
       if (i ==="ubuntu"){
         return "Ubuntu";
       }
@@ -216,7 +213,7 @@
       if (i ==="lxc"){
         return "LXC";
       }
-      return "";
+      return i;
     }
     Date.prototype.format = function(format) {
     var date = {
