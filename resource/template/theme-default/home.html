@@ -177,8 +177,7 @@
       return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
     }
     function Speacial(i) {
-      str = "windows";
-      if (i.indexOf(str) !== -1 ? true:false){
+      if (server.Host.OS == "windows"){
         return i;
       }
       if (i ==="ubuntu"){
