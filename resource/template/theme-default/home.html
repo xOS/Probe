@@ -59,7 +59,7 @@
                     @#server.Name + (server.live?'':' [已离线]')#@
                     <i class="probe-primary-font info circle icon" style="height: 28px"></i>
                     <div class="ui content popup" style="">
-                      系统：@#Speacial(server.Host.Platform)#@-@#server.Host.PlatformVersion#@
+                      系统：@#Speacial(server.Host.Platform)#@ @#server.Host.PlatformVersion#@
                       [<span v-if="server.Host.Virtualization"
                         >@#Speacial(server.Host.Virtualization)#@:</span
                       >@#server.Host.Arch#@]<br />
@@ -177,7 +177,7 @@
       return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
     }
     function Speacial(i) {
-      if (server.Host.OS == "windows"){
+      if ({.server.Host.OS} == "windows"){
         return i;
       }
       if (i ==="ubuntu"){
