@@ -60,7 +60,7 @@
                     <i class="probe-primary-font info circle icon" style="height: 28px"></i>
                     <div class="ui content popup" style="">
                       系统：@#SpecialOS(server.Host.Platform)#@ @#server.Host.PlatformVersion#@
-                      [<span v-if="SpecialVir(server.Host.Virtualization)">@#SpecialVir(server.Host.Virtualization)#@:</span>@#server.Host.Arch#@]<br />
+                      [<span v-if="server.Host.Virtualization">@#SpecialVir(server.Host.Virtualization)#@:</span>@#server.Host.Arch#@]<br />
                       CPU：@#server.Host.CPU#@<br />
                       硬盘：@#formatByteSize(server.State.DiskUsed)#@/@#formatByteSize(server.Host.DiskTotal)#@<br />
                       内存：@#formatByteSize(server.State.MemUsed)#@/@#formatByteSize(server.Host.MemTotal)#@<br />
