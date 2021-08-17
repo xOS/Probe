@@ -60,7 +60,7 @@
                     <i class="probe-primary-font info circle icon" style="height: 28px"></i>
                     <div class="ui content popup" style="">
                       系统：@#SpecialOS(server.Host.Platform)#@ @#server.Host.PlatformVersion#@ <span v-if="!server.Host.Virtualization">KVM</span> @#SpecialVir(server.Host.Virtualization)#@ [@#server.Host.Arch#@]<br />
-                      CPU：@#server.Host.CPU#@<br />
+                      CPU：@#clearString(server.Host.CPU)#@<br />
                       硬盘：@#formatByteSize(server.State.DiskUsed)#@/@#formatByteSize(server.Host.DiskTotal)#@<br />
                       内存：@#formatByteSize(server.State.MemUsed)#@/@#formatByteSize(server.Host.MemTotal)#@<br />
                       交换：@#formatByteSize(server.State.SwapUsed)#@/@#formatByteSize(server.Host.SwapTotal)#@<br />
@@ -272,6 +272,14 @@
       }
       return i;
     }
+    function clearString(s){ 
+      var pattern = new RegExp("[]");
+      var rs = "";
+      for (var i = 0; i < s.length; i++) { 
+        rs = rs+s.substr(i, 1).replace(pattern, ''); 
+      } 
+      return rs;  
+    } 
     Date.prototype.format = function(format) {
     var date = {
         "M+": this.getMonth() + 1,
