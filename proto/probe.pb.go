@@ -136,7 +136,7 @@ func (x *Host) GetVirtualization() string {
 	if x != nil {
 		return x.Virtualization
 	}
-	return "KVM"
+	return ""
 }
 
 func (x *Host) GetBootTime() uint64 {

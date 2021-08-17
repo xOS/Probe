@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.2.4"
+VERSION="v2.2.5"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -246,8 +246,6 @@ update_agent() {
         mv probe-agent $AGENT_PATH &&
         systemctl restart probe-agent
         rm -rf probe-agent_linux_${os_arch}.tar.gz README.md
-        
-        modify_agent_config 0
 
     if [[ $# == 0 ]]; then
         echo -e "更新完毕！"

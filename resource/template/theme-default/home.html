@@ -59,9 +59,9 @@
                     @#server.Name + (server.live?'':' [已离线]')#@
                     <i class="probe-primary-font info circle icon" style="height: 28px"></i>
                     <div class="ui content popup" style="">
-                      系统：@#Speacial(server.Host.Platform)#@ @#server.Host.PlatformVersion#@
+                      系统：@#SpecialOS(server.Host.Platform)#@ @#server.Host.PlatformVersion#@
                       [<span v-if="server.Host.Virtualization"
-                        >@#Speacial(server.Host.Virtualization)#@:</span
+                        >@#SpecialVir(server.Host.Virtualization)#@:</span
                       >@#server.Host.Arch#@]<br />
                       CPU：@#server.Host.CPU#@<br />
                       硬盘：@#formatByteSize(server.State.DiskUsed)#@/@#formatByteSize(server.Host.DiskTotal)#@<br />
@@ -173,10 +173,7 @@
   </div>
   {{template "common/footer" .}}
   <script>
-    function firstUpperCase(str) {
-      return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
-    }
-    function Speacial(i) {
+    function SpecialOS(i) {
       if (i ==="ubuntu"){
         return "Ubuntu";
       }
@@ -204,16 +201,43 @@
       if (i ==="fedora"){
         return "Fedora";
       }
+      if (i ==="alpine"){
+        return "Alpine";
+      }
+      if (i ==="tux"){
+        return "Tux";
+      }
+      return i;
+    }
+    function SpecialVir(i) {
       if (i ==="kvm"){
         return "KVM";
       }
       if (i ==="openvz"){
-        return "OVZ";
+        return "OpenVZ";
       }
       if (i ==="lxc"){
         return "LXC";
       }
-      return i;
+      if (i =="xen"){
+        return "Xen";
+      }
+      if (i =="docker"){
+        return "Docker";
+      }
+      if (i =="hyperv"){
+        return "Hyper-V";
+      }
+      if (i =="VMware"){
+        return "VMware";
+      }
+      if (i =="Parallels"){
+        return "Parallels";
+      }
+      if (i =="Microsoft"){
+        return "Hyper-V";
+      }
+      return "KVM";
     }
     Date.prototype.format = function(format) {
     var date = {
