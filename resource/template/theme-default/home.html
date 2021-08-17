@@ -60,7 +60,7 @@
                     <i class="probe-primary-font info circle icon" style="height: 28px"></i>
                     <div class="ui content popup" style="">
                       系统：@#SpecialOS(server.Host.Platform)#@ @#server.Host.PlatformVersion#@
-                      [<span v-if="server.Host.Virtualization !=''">@#SpecialVir(server.Host.Virtualization)#@:</span>@#server.Host.Arch#@]<br />
+                      @#SpecialVir(server.Host.Virtualization)#@ [@#server.Host.Arch#@]<br />
                       CPU：@#server.Host.CPU#@<br />
                       硬盘：@#formatByteSize(server.State.DiskUsed)#@/@#formatByteSize(server.Host.DiskTotal)#@<br />
                       内存：@#formatByteSize(server.State.MemUsed)#@/@#formatByteSize(server.Host.MemTotal)#@<br />
@@ -205,6 +205,33 @@
       if (i ==="tux"){
         return "Tux";
       }
+      if (i ==="linuxmint"){
+        return "LinuxMint";
+      }
+      if (i ==="oracle"){
+        return "Oracle";
+      }
+      if (i ==="slackware"){
+        return "SlackWare";
+      }
+      if (i ==="raspbian"){
+        return "Raspbian";
+      }
+      if (i ==="gentoo"){
+        return "Gentoo";
+      }
+      if (i ==="arch"){
+        return "Arch";
+      }
+      if (i ==="amazon"){
+        return "Amazon";
+      }
+      if (i ==="xenserver"){
+        return "XenServer";
+      }
+      if (i =="scientific"){
+        return "ScientificSL";
+      }
       return i;
     }
     function SpecialVir(i) {
@@ -217,8 +244,17 @@
       if (i ==="lxc"){
         return "LXC";
       }
-      if (i =="xen"){
+      if (i ==="xen"){
         return "Xen";
+      }
+      if (i =="vbox"){
+        return "VBox";
+      }
+      if (i =="rkt"){
+        return "RKT";
+      }
+      if (i =="Microsoft"){
+        return "Hyper-V";
       }
       if (i =="docker"){
         return "Docker";
