@@ -15,7 +15,7 @@ Type=simple
 #User=root
 #Group=root
 WorkingDirectory=/opt/probe/dashboard/
-ExecStart=/opt/probe/dashboard/probe-dashboard-linux-amd64
+ExecStart=/opt/probe/dashboard/probe-dashboard
 Restart=always
 #Environment=DEBUG=true
 
