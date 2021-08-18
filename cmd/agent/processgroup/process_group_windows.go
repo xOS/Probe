@@ -1,6 +1,6 @@
 // +build windows
 
-package utils
+package processgroup
 
 import (
 	"fmt"
