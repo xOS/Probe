@@ -272,12 +272,13 @@
       }
       return i;
     }
-    function clearString(s){ 
-      if (s != null && s != "") {
-        return s.replace(/(\r|\n|\"|\]|\[)/ig, "").replace(/(\\)/ig, "");
+    function clearString(i) { 
+      if (i != null && s != "") {
+        str = i.toString();
+        return str.replace(/(\r|\n|\"|\]|\[)/ig, "").replace(/(\\)/ig, "");
         }
-      return "";
-      } 
+      return i;
+    } 
     Date.prototype.format = function(format) {
     var date = {
         "M+": this.getMonth() + 1,
