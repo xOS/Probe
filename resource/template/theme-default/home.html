@@ -273,7 +273,7 @@
       return i;
     }
     function clearString(i) { 
-      if (i != null && s != "") {
+      if (i != null && i != "") {
         str = i.toString();
         return str.replace(/(\r|\n|\"|\]|\[)/ig, "").replace(/(\\)/ig, "");
         }
