@@ -13,7 +13,7 @@
 	<meta name="theme-color" content="#0F7D00">
 	<meta property="og:image" content="/static/logo.png">
 	<meta name="msapplication-TileColor" content="#0F7D00">
-    <title>tty#{{.SessionID}} - {{.Title}}</title>
+    <title>TTY#{{.SessionID}} - {{.Title}}</title>
     <link rel="shortcut icon" type="image/png" href="/static/favicon.ico" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@4.13.0/css/xterm.css">
 </head>
@@ -29,7 +29,7 @@
     }
 </style>
 
-<body>
+<body onresize="onResize()">
     <div id="terminal-container"></div>
     <script src="https://cdn.jsdelivr.net/npm/xterm@4.13.0/lib/xterm.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xterm-addon-attach@0.6.0/lib/xterm-addon-attach.min.js"></script>
@@ -46,7 +46,26 @@
         term.loadAddon(attachAddon);
         term.loadAddon(fitAddon);
         term.open(document.getElementById('terminal-container'));
-        fitAddon.fit()
+
+        socket.onopen = () => {
+            onResize()
+        }
+
+        function onResize() {
+            fitAddon.fit()
+            const w = fitAddon.proposeDimensions();
+            const prefix = new Int8Array([1]);
+            const resizeMessage = new TextEncoder().encode(JSON.stringify({
+                Rows: w.rows,
+                Cols: w.cols,
+            }));
+
+            var msg = new Int8Array(prefix.length + resizeMessage.length);
+            msg.set(prefix);
+            msg.set(resizeMessage, prefix.length);
+
+            socket.send(msg)
+        }
     </script>
 </body>
 
