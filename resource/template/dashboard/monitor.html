@@ -1,5 +1,4 @@
-{{define "dashboard/monitor"}} {{template "common/header" .}} {{template
-  "common/menu" .}}
+{{define "dashboard/monitor"}} {{template "common/header" .}} {{template "common/menu" .}}
   <div class="nb-container">
     <div class="ui container">
       <div class="ui grid">
@@ -31,8 +30,7 @@
             <td>{{if eq $monitor.Cover 0}}覆盖所有{{else}}忽略所有{{end}}</td>
             <td>{{$monitor.SkipServersRaw}}</td>
             <td>
-              {{if eq $monitor.Type 1}}HTTP(S)/SSL证书 {{else if eq $monitor.Type
-              2}} ICMP Ping {{else}} TCP 端口 {{end}}
+              {{if eq $monitor.Type 1}}HTTP(S)/SSL证书 {{else if eq $monitor.Type 2}} ICMP Ping {{else}} TCP 端口 {{end}}
             </td>
             <td>{{$monitor.Notify}}</td>
             <td>
