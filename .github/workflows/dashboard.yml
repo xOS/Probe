@@ -9,8 +9,6 @@ on:
       - "cmd/agent/**"
       - "script/**"
       - "*.md"
-      - "resource/static/*.css"
-      - "resource/static/*.js"
       - ".*"
       - ".github/workflows/agent.yml"
 
@@ -20,11 +18,25 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - name: Log into registry
-        run: |
-          echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-          echo "${{ secrets.ALI_PAT }}" | docker login registry.cn-shanghai.aliyuncs.com -u ${{ secrets.ALI_USER }} --password-stdin
-          echo "${{ secrets.DOC_PAT }}" | docker login -u ${{ secrets.DOC_USER }} --password-stdin
+      - name: Log in to the GHCR
+        uses: docker/login-action@master
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@master
+        with:
+          username: ${{ secrets.DOC_USER }}
+          password: ${{ secrets.DOC_PAT }}    
+
+      - name: Log in to the AliyunCS
+        uses: docker/login-action@master
+        with:
+          registry: registry.cn-shanghai.aliyuncs.com
+          username: ${{ secrets.ALI_USER }}
+          password: ${{ secrets.ALI_PAT }}
       
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -60,6 +72,7 @@ jobs:
           tags: |
             ${{ steps.image-name.outputs.ALI_IMAGE_NAME }}
             ${{ steps.image-name.outputs.DOC_IMAGE_NAME }}
+            ${{ steps.image-name.outputs.GHRC_IMAGE_NAME }}
       
       - name: Purge jsdelivr cache
         run: |
@@ -72,10 +85,3 @@ jobs:
           curl -s https://purge.jsdelivr.net/gh/$LOWER_USERNAME/probe@master/script/probe-agent.service
           curl -s https://purge.jsdelivr.net/gh/$LOWER_USERNAME/probe@master/script/docker-compose.yaml
           curl -s https://purge.jsdelivr.net/gh/$LOWER_USERNAME/probe@master/script/config.yaml
-          curl -s https://purge.jsdelivr.net/gh/xOS/Probe@master/resource/static/bg/background.jpeg
-          curl -s https://purge.jsdelivr.net/gh/xOS/Probe@master/resource/static/favicon.ico
-          curl -s https://purge.jsdelivr.net/gh/xOS/Probe@master/resource/static/logo.png
-          curl -s https://purge.jsdelivr.net/gh/xOS/Probe@master/resource/static/main.css
-          curl -s https://purge.jsdelivr.net/gh/xOS/Probe@master/resource/static/main.js
-          curl -s https://purge.jsdelivr.net/gh/xOS/Probe@master/resource/static/semantic-ui-alerts.min.css
-          curl -s https://purge.jsdelivr.net/gh/xOS/Probe@master/resource/static/semantic-ui-alerts.min.js
