@@ -1,4 +1,5 @@
 debug: true
+httpport: 8080
 grpcport: grpc_port
 oauth2:
   type: "oauth2_type" #Oauth2 登录接入类型，gitee/github
