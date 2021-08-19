@@ -151,6 +151,15 @@ a {
   transform-origin: right 50%;
 }
 
+[data-tooltip]:not([data-position]):before {
+  background: rgb(250 250 250 / 100%) none;
+}
+
+.ui.green.button, .ui.green.buttons .button {
+  background-color: #21ba45;
+  color: #1b1c1d;
+}
+
 i.icon {
   width: 1em !important;
 }
@@ -235,6 +244,12 @@ font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   background-color: rgba(255, 255, 255, 55%);
   position: fixed;
   bottom: 0;
+}
+
+.ui.right.center.popup:before,
+.ui.left.center.popup:before {
+  border: 0px solid #fafafaeb !important;
+  background: #fafafaeb !important;
 }
 
 .ui.top.popup:before {
@@ -521,9 +536,9 @@ i.s {
 }
 
 [data-tooltip]:after {
-  border: 0px;
-  border-radius: 0px;
-  background: rgb(255 255 255 / 78%);
+  border: 0px !important;
+  border-radius: 0px !important;
+  background: rgb(255 255 255 / 90%) !important;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
