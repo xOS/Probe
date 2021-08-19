@@ -13,7 +13,7 @@
 	<meta name="theme-color" content="#0F7D00">
 	<meta property="og:image" content="/static/logo.png">
 	<meta name="msapplication-TileColor" content="#0F7D00">
-    <title>TTY#{{.SessionID}} - {{.Title}}</title>
+    <title>TTY#{{.ServerName}} - {{.Title}}</title>
     <link rel="shortcut icon" type="image/png" href="/static/favicon.ico" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@4.13.0/css/xterm.css">
 </head>
@@ -26,6 +26,10 @@
         margin: unset;
         width: 100vw;
         height: 100vh;
+    }
+
+    body {
+        background-color: black;
     }
 </style>
 
@@ -49,6 +53,15 @@
 
         socket.onopen = () => {
             onResize()
+        }
+
+        socket.onclose = () => {
+            alert('Terminal 连接超时或会话已结束')
+            window.close()
+        }
+
+        socket.onerror = () => {
+            alert('Terminal 连接失败，请检查 /terminal/* 的 WebSocket 反代情况')
         }
 
         function onResize() {

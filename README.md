@@ -1,7 +1,7 @@
 # 楠格探针
 > 个人修改自用
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.3.2&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.2.6-brightgreen?style=for-the-badge&logo=linux)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.3.3&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.2.7-brightgreen?style=for-the-badge&logo=linux)
 [![Author](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-naiba-brightgreen?style=for-the-badge&logo=github)](https://github.com/naiba)
 
 一款探针。支持系统状态、HTTP(SSL 证书变更、即将到期、到期)、TCP、Ping 监控报警，命令批量执行和计划任务。
@@ -144,16 +144,6 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
   </style>
   ```
 
-- DayNight 主题更改进度条颜色示例（来自 [@hyt-allen-xu](https://github.com/hyt-allen-xu)）
-
-  ```
-  <style>
-  .ui.fine.progress> .progress-bar {
-    background-color: #00a7d0 !important;
-  }
-  </style>
-  ```
-
 - 默认主题修改 LOGO、移除版权示例（来自 [@iLay1678](https://github.com/iLay1678)）
 
   ```
@@ -178,28 +168,6 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
   avatar.style.visibility="visible"
   }
   </script>
-  ```
-
-- DayNight 移除版权示例（来自 [@hyt-allen-xu](https://github.com/hyt-allen-xu)）
-
-  ```
-  <script>
-  window.onload = function(){
-  var footer=document.querySelector("div.footer-container")
-  footer.innerHTML="©2021 你的名字 & Powered by 你的名字"
-  footer.style.visibility="visible"
-  }
-  </script>
-  ```
-
-- hotaru 主题更改背景图片示例
-
-  ```
-  <style>
-  .hotaru-cover {
-     background: url(https://xx.com/xxx.jpg) center;
-  }
-  </style>
   ```
 
 </details>
@@ -270,7 +238,7 @@ restart() {
 
 ### 实时通道断开(WebSocket 反代)
 
-使用反向代理时需要针对 `/ws` 路径的 WebSocket 进行特别配置以支持实时更新服务器状态。
+使用反向代理时需要针对 `/ws` 和`/terminal`路径的 WebSocket 进行特别配置以支持实时更新服务器状态和后台 SSH 的连接。
 
 - Nginx(宝塔)：在你的 nginx 配置文件中加入以下代码
 
@@ -287,8 +255,15 @@ restart() {
           proxy_set_header Connection "Upgrade";
           proxy_set_header Host $host;
       }
+    location /terminal {
+          proxy_pass http://ip:站点访问端口;
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "Upgrade";
+          proxy_set_header Host $host;
+      }
 
-      #其他的 location blablabla...
+      #其他的 location ...
   }
   ```
 
@@ -296,6 +271,9 @@ restart() {
 
   ```Caddyfile
   proxy /ws http://ip:8008 {
+      websocket
+  }
+proxy /terminal http://ip:8008 {
       websocket
   }
   ```

@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.2.6"
+VERSION="v2.2.7"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -348,7 +348,7 @@ modify_dashboard_config() {
     sed -i "s/github_oauth_client_secret/${github_oauth_client_secret}/" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/site_title/${site_title}/" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/site_port/${site_port}/" ${DASHBOARD_PATH}/docker-compose.yaml
-    sed -i "s/grpc_port/${grpc_port}/" ${DASHBOARD_PATH}/docker-compose.yaml
+    sed -i "s/grpc_port/${grpc_port}/g" ${DASHBOARD_PATH}/docker-compose.yaml
     sed -i "s/image_url/${Docker_IMG}/" ${DASHBOARD_PATH}/docker-compose.yaml
 
     echo -e "面板配置 ${green}修改成功，请稍等重启生效${plain}"
