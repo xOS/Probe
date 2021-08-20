@@ -6,7 +6,7 @@
 一款探针。支持系统状态、HTTP(SSL 证书变更、即将到期、到期)、TCP、Ping 监控报警，命令批量执行和计划任务。
 
 ## 演示图
-![首页截图1](https://github.com/xos/probe/raw/master/resource/%E6%88%AA%E5%B1%8F2021-08-20%17.54.57.png)
+![首页截图1](https://github.com/xOS/Probe/raw/master/resource/%E6%88%AA%E5%B1%8F2021-08-20%2017.54.57.png)
 
 ## 安装脚本
 
