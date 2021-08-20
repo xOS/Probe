@@ -5,9 +5,8 @@
 
 一款探针。支持系统状态、HTTP(SSL 证书变更、即将到期、到期)、TCP、Ping 监控报警，命令批量执行和计划任务。
 
-| 默认主题                                                | DayNight [@JackieSung](https://github.com/JackieSung4ev) | hotaru                        |
-| ------------------------------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------- |
-| ![首页截图1](https://github.com/xos/probe/raw/master/resource/%E6%88%AA%E5%B1%8F2021-03-17%2005.31.59.png) | <img src="https://s3.ax1x.com/2021/01/20/sfJv2q.jpg"/>   | <img src="https://s3.ax1x.com/2020/12/09/rPF4xJ.png" width="1600px" /> |
+## 演示图
+![首页截图1](https://github.com/xos/probe/raw/master/resource/%E6%88%AA%E5%B1%8F2021-08-20%17.54.57.png)
 
 ## 安装脚本
 
