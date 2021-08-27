@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -21,6 +20,7 @@ import (
 	"github.com/go-ping/ping"
 	"github.com/gorilla/websocket"
 	"github.com/p14yground/go-github-selfupdate/selfupdate"
+	flag "github.com/spf13/pflag"
 	"google.golang.org/grpc"
 
 	"github.com/xos/probe/cmd/agent/monitor"
@@ -35,6 +35,7 @@ import (
 func init() {
 	cert.TimeoutSeconds = 30
 	http.DefaultClient.Timeout = time.Second * 5
+	flag.CommandLine.ParseErrorsWhitelist.UnknownFlags = true
 }
 
 var (
@@ -67,14 +68,13 @@ func main() {
 	// 来自于 GoReleaser 的版本号
 	monitor.Version = version
 
-	flag.String("i", "", "unused 旧Agent配置兼容")
-	flag.BoolVar(&debug, "d", true, "开启调试信息")
-	flag.StringVar(&server, "s", "localhost:2222", "管理面板RPC端口")
-	flag.StringVar(&clientSecret, "p", "", "Agent连接Secret")
-	flag.BoolVar(&stateConf.SkipConnectionCount, "kconn", false, "不监控连接数")
+	flag.BoolVarP(&debug, "debug", "d", true, "开启调试信息")
+	flag.StringVarP(&server, "*server", "s", "localhost:2222", "管理面板RPC端口")
+	flag.StringVarP(&clientSecret, "password", "p", "", "Agent连接Secret")
+	flag.BoolVar(&stateConf.SkipConnectionCount, "skip-conn", false, "不监控连接数")
 	flag.Parse()
 
-	if server == "" || clientSecret == "" {
+	if clientSecret == "" {
 		flag.Usage()
 		return
 	}
@@ -120,7 +120,7 @@ func run() {
 		timeOutCtx, cancel := context.WithTimeout(context.Background(), networkTimeOut)
 		conn, err = grpc.DialContext(timeOutCtx, server, grpc.WithInsecure(), grpc.WithPerRPCCredentials(&auth))
 		if err != nil {
-			println("grpc.Dial err: ", err)
+			println("与面板建立连接失败：", err)
 			cancel()
 			retry()
 			continue
@@ -131,7 +131,7 @@ func run() {
 		timeOutCtx, cancel = context.WithTimeout(context.Background(), networkTimeOut)
 		_, err = client.ReportSystemInfo(timeOutCtx, monitor.GetHost().PB())
 		if err != nil {
-			println("client.ReportSystemInfo err: ", err)
+			println("上报系统信息失败：", err)
 			cancel()
 			retry()
 			continue
@@ -141,12 +141,12 @@ func run() {
 		// 执行 Task
 		tasks, err := client.RequestTask(context.Background(), monitor.GetHost().PB())
 		if err != nil {
-			println("client.RequestTask err: ", err)
+			println("请求任务失败：", err)
 			retry()
 			continue
 		}
 		err = receiveTasks(tasks)
-		println("receiveTasks exit to main: ", err)
+		println("receiveTasks exit to main：", err)
 		retry()
 	}
 }
@@ -187,7 +187,7 @@ func doTask(task *pb.Task) {
 	case model.TaskTypeCommand:
 		handleCommandTask(task, &result)
 	default:
-		println("Unknown action: ", task)
+		println("不支持的任务：", task)
 	}
 	client.ReportTask(context.Background(), &result)
 }
@@ -225,13 +225,10 @@ func doSelfUpdate() {
 	println("Check update", v)
 	latest, err := selfupdate.UpdateSelf(v, "xOS/Probe")
 	if err != nil {
-		println("Binary update failed:", err)
+		println("自动更新失败：", err)
 		return
 	}
-	if latest.Version.Equals(v) {
-		println("Current binary is up to date", version)
-	} else {
-		println("Upgrade successfully", latest.Version)
+	if !latest.Version.Equals(v) {
 		os.Exit(1)
 	}
 }

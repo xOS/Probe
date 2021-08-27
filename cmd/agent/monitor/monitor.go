@@ -22,7 +22,8 @@ import (
 var Version string = "debug"
 var netInSpeed, netOutSpeed, netInTransfer, netOutTransfer, lastUpdate uint64
 var expectDiskFsTypes = []string{
-	"apfs", "ext4", "ext3", "ext2", "f2fs", "reiserfs", "jfs", "btrfs", "fuseblk", "zfs", "simfs", "ntfs", "fat32", "exfat", "xfs",
+	"apfs", "ext4", "ext3", "ext2", "f2fs", "reiserfs", "jfs", "btrfs",
+	"fuseblk", "zfs", "simfs", "ntfs", "fat32", "exfat", "xfs", "fuse.rclone",
 }
 var excludeNetInterfaces = []string{
 	"lo", "tun", "docker", "veth", "br-", "vmbr", "vnet", "kube",
@@ -58,7 +59,7 @@ func GetHost() *model.Host {
 	}
 
 	return &model.Host{
-		OS:        hi.OS,
+		OS:		 hi.OS,
 		Platform:        hi.Platform,
 		PlatformVersion: hi.PlatformVersion,
 		CPU:             cpus,
