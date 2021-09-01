@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.2.7"
+VERSION="v2.2.8"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -323,6 +323,7 @@ modify_dashboard_config() {
         read -ep "请输入 GitHub/Gitee 登录名作为管理员，多个以逗号隔开: " admin_logins &&
         read -ep "请输入站点标题: " site_title &&
         read -ep "请输入站点访问端口: (8008)" site_port &&
+        read -ep "请输入用于 Agent 接入的 RPC 域名: (默认为空)" grpc_host &&
         read -ep "请输入用于 Agent 接入的 RPC 端口: (2222)" grpc_port
 
     if [[ -z "${admin_logins}" || -z "${github_oauth_client_id}" || -z "${github_oauth_client_secret}" || -z "${site_title}" ]]; then
@@ -334,6 +335,9 @@ modify_dashboard_config() {
     if [[ -z "${site_port}" ]]; then
         site_port=8008
     fi
+    if [[ -z "${grpc_host}" ]]; then
+        grpc_host=''
+    fi
     if [[ -z "${grpc_port}" ]]; then
         grpc_port=2222
     fi
@@ -343,6 +347,7 @@ modify_dashboard_config() {
 
     sed -i "s/oauth2_type/${oauth2_type}/" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/admin_logins/${admin_logins}/" ${DASHBOARD_PATH}/data/config.yaml
+    sed -i "s/grpc_host/$grpc_host}/" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/grpc_port/$grpc_port}/" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/github_oauth_client_id/${github_oauth_client_id}/" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/github_oauth_client_secret/${github_oauth_client_secret}/" ${DASHBOARD_PATH}/data/config.yaml
