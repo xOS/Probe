@@ -17,7 +17,11 @@ import (
 	"github.com/xos/probe/service/dao"
 )
 
+var serviceSentinelDispatchBus chan model.Monitor
+
 func init() {
+	serviceSentinelDispatchBus = make(chan model.Monitor)
+
 	shanghai, err := time.LoadLocation("Asia/Shanghai")
 	if err != nil {
 		panic(err)
@@ -55,7 +59,7 @@ func initSystem() {
 	dao.DB.AutoMigrate(model.Server{}, model.User{},
 		model.Notification{}, model.AlertRule{}, model.Monitor{},
 		model.MonitorHistory{}, model.Cron{}, model.Transfer{})
-	dao.NewServiceSentinel()
+	dao.NewServiceSentinel(serviceSentinelDispatchBus)
 
 	loadServers() //加载服务器列表
 	loadCrons()   //加载计划任务
@@ -173,7 +177,7 @@ func loadCrons() {
 func main() {
 	cleanMonitorHistory()
 	go rpc.ServeRPC(dao.Conf.GRPCPort)
-	go rpc.DispatchTask(time.Second * 30)
+	go rpc.DispatchTask(serviceSentinelDispatchBus)
 	go dao.AlertSentinelStart()
 	srv := controller.ServeWeb(dao.Conf.HTTPPort)
 	graceful.Graceful(func() error {
