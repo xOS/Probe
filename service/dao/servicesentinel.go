@@ -345,7 +345,7 @@ func (ss *ServiceSentinel) worker() {
 			isNeedSendNotification := (ss.lastStatus[mh.MonitorID] != "" || stateStr == "故障") && ss.monitors[mh.MonitorID].Notify
 			ss.lastStatus[mh.MonitorID] = stateStr
 			if isNeedSendNotification {
-				go SendNotification(fmt.Sprintf("服务监控：%s 服务状态：%s", ss.monitors[mh.MonitorID].Name, stateStr), true)
+				go SendNotification(fmt.Sprintf("#探针通知" + "\n" + "服务监控：%s 服务状态：%s", ss.monitors[mh.MonitorID].Name, stateStr), true)
 			}
 			ss.monitorsLock.RUnlock()
 		}
@@ -369,7 +369,7 @@ func (ss *ServiceSentinel) worker() {
 				// 证书过期提醒
 				if expiresNew.Before(time.Now().AddDate(0, 0, 7)) {
 					errMsg = fmt.Sprintf(
-						"SSL证书将在七天内过期，过期时间：%s。",
+						"#探针通知" + "\n" + "SSL证书将在七天内过期，过期时间：%s。",
 						expiresNew.Format("2006-01-02 15:04:05"))
 				}
 				// 证书变更提醒
@@ -381,7 +381,7 @@ func (ss *ServiceSentinel) worker() {
 				if oldCert[0] != newCert[0] && !expiresNew.Equal(expiresOld) {
 					ss.sslCertCache[mh.MonitorID] = mh.Data
 					errMsg = fmt.Sprintf(
-						"SSL证书变更，旧：%s, %s 过期；新：%s, %s 过期。",
+						"#探针通知" + "\n" + "SSL证书变更，旧：%s, %s 过期；新：%s, %s 过期。",
 						oldCert[0], expiresOld.Format("2006-01-02 15:04:05"), newCert[0], expiresNew.Format("2006-01-02 15:04:05"))
 				}
 			}
@@ -389,7 +389,7 @@ func (ss *ServiceSentinel) worker() {
 		if errMsg != "" {
 			ss.monitorsLock.RLock()
 			if ss.monitors[mh.MonitorID].Notify {
-				go SendNotification(fmt.Sprintf("服务监控：%s %s", ss.monitors[mh.MonitorID].Name, errMsg), true)
+				go SendNotification(fmt.Sprintf("#探针通知" + "\n" + "服务监控：%s %s", ss.monitors[mh.MonitorID].Name, errMsg), true)
 			}
 			ss.monitorsLock.RUnlock()
 		}
