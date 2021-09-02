@@ -118,7 +118,7 @@ func checkStatus() {
 				go SendNotification(message, true)
 			} else {
 				if alertsPrevState[alert.ID][server.ID] == _RuleCheckFail {
-					message := fmt.Sprintf("#探针通知" + "\n" + "报警规则：%s，服务器：%s(%s)，已恢复正常", alert.Name, server.Name, utils.IPDesensitize(server.Host.IP))
+					message := fmt.Sprintf("#探针通知" + "\n" + "报警规则：%s，服务器：%s(%s)，已恢复正常。", alert.Name, server.Name, utils.IPDesensitize(server.Host.IP))
 					go SendNotification(message, true)
 				}
 				alertsPrevState[alert.ID][server.ID] = _RuleCheckPass
