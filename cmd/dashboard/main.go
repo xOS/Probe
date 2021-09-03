@@ -17,11 +17,7 @@ import (
 	"github.com/xos/probe/service/dao"
 )
 
-var serviceSentinelDispatchBus chan model.Monitor
-
 func init() {
-	serviceSentinelDispatchBus = make(chan model.Monitor)
-
 	shanghai, err := time.LoadLocation("Asia/Shanghai")
 	if err != nil {
 		panic(err)
@@ -177,8 +173,10 @@ func loadCrons() {
 func main() {
 	cleanMonitorHistory()
 	go rpc.ServeRPC(dao.Conf.GRPCPort)
+	serviceSentinelDispatchBus := make(chan model.Monitor)
 	go rpc.DispatchTask(serviceSentinelDispatchBus)
 	go dao.AlertSentinelStart()
+	dao.NewServiceSentinel(serviceSentinelDispatchBus)
 	srv := controller.ServeWeb(dao.Conf.HTTPPort)
 	graceful.Graceful(func() error {
 		return srv.ListenAndServe()
