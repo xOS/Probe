@@ -64,7 +64,7 @@ func ManualTrigger(c *model.Cron) {
 				Type: model.TaskTypeCommand,
 			})
 		} else {
-			SendNotification(fmt.Sprintf("计划任务：%s，服务器：%s 离线，无法执行。", c.Name, ServerList[c.Servers[j]].Name), false)
+			SendNotification(fmt.Sprintf("#探针通知" + "\n" + "计划任务：%s，服务器：%s 离线，无法执行。", c.Name, ServerList[c.Servers[j]].Name), false)
 		}
 	}
 }
@@ -91,7 +91,7 @@ func CronTrigger(cr model.Cron) func() {
 					Type: model.TaskTypeCommand,
 				})
 			} else {
-				SendNotification(fmt.Sprintf("计划任务：%s，服务器：%s 离线，无法执行。", cr.Name, s.Name), false)
+				SendNotification(fmt.Sprintf("#探针通知" + "\n" + "计划任务：%s，服务器：%s 离线，无法执行。", cr.Name, s.Name), false)
 			}
 		}
 	}
