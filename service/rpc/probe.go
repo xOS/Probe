@@ -101,7 +101,7 @@ func (s *ProbeHandler) ReportSystemInfo(c context.Context, r *pb.Host) (*pb.Rece
 		host.IP != "" &&
 		dao.ServerList[clientID].Host.IP != host.IP {
 		dao.SendNotification(fmt.Sprintf(
-			"#探针通知" + "\n" + "IP 变更：" + "\n" + "服务器：%s " + "\n" + "旧 IP：%s，新 IP：%s",
+			"#探针通知" + "\n" + "IP 变更：" + "\n" + "服务器：%s " + "\n" + "旧 IP：%s" + "\n" + "新 IP：%s",
 			dao.ServerList[clientID].Name, utils.IPDesensitize(dao.ServerList[clientID].Host.IP), utils.IPDesensitize(host.IP)), true)
 	}
 
