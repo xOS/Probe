@@ -368,7 +368,7 @@ func (ss *ServiceSentinel) worker() {
 				expiresNew, _ := time.Parse("2006-01-02 15:04:05 -0700 MST", newCert[1])
 				// 证书过期提醒
 				if expiresNew.Before(time.Now().AddDate(0, 0, 7)) {
-					errMsg = fmt.Sprintf("SSL证书将在七天内过期，过期时间：%s。",
+					errMsg = fmt.Sprintf("\n" + "SSL证书将在七天内过期，过期时间：%s。",
 						expiresNew.Format("2006-01-02 15:04:05"))
 				}
 				// 证书变更提醒
@@ -379,7 +379,7 @@ func (ss *ServiceSentinel) worker() {
 				}
 				if oldCert[0] != newCert[0] && !expiresNew.Equal(expiresOld) {
 					ss.sslCertCache[mh.MonitorID] = mh.Data
-					errMsg = fmt.Sprintf("SSL证书变更：" + "\n" + "旧证书：%s, %s 过期；" + "\n" + "新证书：%s, %s 过期。",
+					errMsg = fmt.Sprintf("\n" + "SSL证书变更：" + "\n" + "旧证书：%s, %s 过期；" + "\n" + "新证书：%s, %s 过期。",
 						oldCert[0], expiresOld.Format("2006-01-02 15:04:05"), newCert[0], expiresNew.Format("2006-01-02 15:04:05"))
 				}
 			}
