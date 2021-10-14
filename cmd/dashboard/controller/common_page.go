@@ -271,8 +271,8 @@ func (cp *commonPage) terminal(c *gin.Context) {
 	}
 	defer conn.Close()
 
-	log.Println("terminal connected", isAgent, c.Request.URL)
-	defer log.Println("terminal disconnected", isAgent, c.Request.URL)
+	log.Println("NG>> terminal connected", isAgent, c.Request.URL)
+	defer log.Println("NG>> terminal disconnected", isAgent, c.Request.URL)
 
 	if isAgent {
 		terminal.agentConn = conn
@@ -329,7 +329,6 @@ func (cp *commonPage) terminal(c *gin.Context) {
 
 	var dataBuffer [][]byte
 	var distConn *websocket.Conn
-
 	checkDistConn := func() {
 		if distConn == nil {
 			if isAgent {

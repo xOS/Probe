@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -25,7 +27,7 @@ func init() {
 
 	// 初始化 dao 包
 	dao.Conf = &model.Config{}
-	dao.Cron = cron.New(cron.WithLocation(shanghai))
+	dao.Cron = cron.New(cron.WithSeconds(), cron.WithLocation(shanghai))
 	dao.Crons = make(map[uint64]*model.Cron)
 	dao.ServerList = make(map[uint64]*model.Server)
 	dao.SecretToID = make(map[string]uint64)
@@ -56,16 +58,18 @@ func initSystem() {
 		model.Notification{}, model.AlertRule{}, model.Monitor{},
 		model.MonitorHistory{}, model.Cron{}, model.Transfer{})
 
+	dao.LoadNotifications()
 	loadServers() //加载服务器列表
 	loadCrons()   //加载计划任务
 
 	// 清理 服务请求记录 和 流量记录 的旧数据
-	_, err := dao.Cron.AddFunc("30 3 * * *", cleanMonitorHistory)
+	_, err := dao.Cron.AddFunc("0 30 3 * * *", cleanMonitorHistory)
 	if err != nil {
 		panic(err)
 	}
+
 	// 流量记录打点
-	_, err = dao.Cron.AddFunc("0 * * * *", recordTransferHourlyUsage)
+	_, err = dao.Cron.AddFunc("0 0 * * * *", recordTransferHourlyUsage)
 	if err != nil {
 		panic(err)
 	}
@@ -152,6 +156,7 @@ func loadCrons() {
 	var crons []model.Cron
 	dao.DB.Find(&crons)
 	var err error
+	errMsg := new(bytes.Buffer)
 	for i := 0; i < len(crons); i++ {
 		cr := crons[i]
 
@@ -160,11 +165,19 @@ func loadCrons() {
 			crIgnoreMap[cr.Servers[j]] = true
 		}
 
-		cr.CronID, err = dao.Cron.AddFunc(cr.Scheduler, dao.CronTrigger(cr))
-		if err != nil {
-			panic(err)
+		cr.CronJobID, err = dao.Cron.AddFunc(cr.Scheduler, dao.CronTrigger(cr))
+		if err == nil {
+			dao.Crons[cr.ID] = &cr
+		} else {
+			if errMsg.Len() == 0 {
+				errMsg.WriteString("调度失败的计划任务：[")
+			}
+			errMsg.WriteString(fmt.Sprintf("%d,", cr.ID))
 		}
-		dao.Crons[cr.ID] = &cr
+	}
+	if errMsg.Len() > 0 {
+		msg := errMsg.String()
+		dao.SendNotification(msg[:len(msg)-1]+"] 这些任务将无法正常执行,请进入后点重新修改保存。", false)
 	}
 	dao.Cron.Start()
 }
@@ -197,7 +210,7 @@ func main() {
 			}
 		}
 		if err := dao.DB.Create(txs).Error; err != nil {
-			log.Println("流量统计入库", err)
+			log.Println("NG>> 流量统计入库", err)
 		}
 		srv.Shutdown(c)
 		return nil

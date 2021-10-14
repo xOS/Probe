@@ -8,12 +8,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/robfig/cron/v3"
 	"github.com/xos/probe/model"
 	pb "github.com/xos/probe/proto"
 )
 
-const _CurrentStatusSize = 30 // 统计 15 分钟内的数据为当前状态
+const (
+	_CurrentStatusSize = 30 // 统计 15 分钟内的数据为当前状态
+	_StatusOk          = "良好"
+)
 
 var ServiceSentinelShared *ServiceSentinel
 
@@ -42,11 +44,9 @@ func NewServiceSentinel(serviceSentinelDispatchBus chan<- model.Monitor) {
 		sslCertCache:                        make(map[uint64]string),
 		// 30天数据缓存
 		monthlyStatus: make(map[uint64]*model.ServiceItemResponse),
-		dispatchCron:  cron.New(cron.WithSeconds()),
 		dispatchBus:   serviceSentinelDispatchBus,
 	}
 	ServiceSentinelShared.loadMonitorHistory()
-	ServiceSentinelShared.dispatchCron.Start()
 
 	year, month, day := time.Now().Date()
 	today := time.Date(year, month, day, 0, 0, 0, 0, time.Local)
@@ -75,7 +75,7 @@ func NewServiceSentinel(serviceSentinelDispatchBus chan<- model.Monitor) {
 	go ServiceSentinelShared.worker()
 
 	// 每日将游标往后推一天
-	_, err := Cron.AddFunc("0 0 * * *", ServiceSentinelShared.refreshMonthlyServiceStatus)
+	_, err := Cron.AddFunc("0 0 0 * * *", ServiceSentinelShared.refreshMonthlyServiceStatus)
 	if err != nil {
 		panic(err)
 	}
@@ -102,8 +102,7 @@ type ServiceSentinel struct {
 	monthlyStatusLock sync.Mutex
 	monthlyStatus     map[uint64]*model.ServiceItemResponse
 	// 服务监控调度计划任务
-	dispatchCron *cron.Cron
-	dispatchBus  chan<- model.Monitor
+	dispatchBus chan<- model.Monitor
 }
 
 func (ss *ServiceSentinel) refreshMonthlyServiceStatus() {
@@ -147,7 +146,7 @@ func (ss *ServiceSentinel) loadMonitorHistory() {
 	ss.monitors = make(map[uint64]*model.Monitor)
 	for i := 0; i < len(monitors); i++ {
 		task := *monitors[i]
-		monitors[i].CronJobID, err = ss.dispatchCron.AddFunc(task.CronSpec(), func() {
+		monitors[i].CronJobID, err = Cron.AddFunc(task.CronSpec(), func() {
 			ss.dispatchBus <- task
 		})
 		if err != nil {
@@ -193,7 +192,7 @@ func (ss *ServiceSentinel) OnMonitorUpdate(m model.Monitor) error {
 	defer ss.monitorsLock.Unlock()
 	var err error
 	// 写入新任务
-	m.CronJobID, err = ss.dispatchCron.AddFunc(m.CronSpec(), func() {
+	m.CronJobID, err = Cron.AddFunc(m.CronSpec(), func() {
 		ss.dispatchBus <- m
 	})
 	if err != nil {
@@ -201,7 +200,7 @@ func (ss *ServiceSentinel) OnMonitorUpdate(m model.Monitor) error {
 	}
 	if ss.monitors[m.ID] != nil {
 		// 停掉旧任务
-		ss.dispatchCron.Remove(ss.monitors[m.ID].CronJobID)
+		Cron.Remove(ss.monitors[m.ID].CronJobID)
 	} else {
 		// 新任务初始化数据
 		ss.monthlyStatusLock.Lock()
@@ -235,7 +234,7 @@ func (ss *ServiceSentinel) OnMonitorDelete(id uint64) {
 	ss.monitorsLock.Lock()
 	defer ss.monitorsLock.Unlock()
 	// 停掉定时任务
-	ss.dispatchCron.Remove(ss.monitors[id].CronJobID)
+	Cron.Remove(ss.monitors[id].CronJobID)
 	delete(ss.monitors, id)
 	ss.monthlyStatusLock.Lock()
 	defer ss.monthlyStatusLock.Unlock()
@@ -272,7 +271,7 @@ func getStateStr(percent uint64) string {
 		return "无数据"
 	}
 	if percent > 95 {
-		return "良好"
+		return _StatusOk
 	}
 	if percent > 80 {
 		return "低可用"
@@ -282,7 +281,8 @@ func getStateStr(percent uint64) string {
 
 func (ss *ServiceSentinel) worker() {
 	for r := range ss.serviceReportChannel {
-		if ss.monitors[r.Data.GetId()].ID == 0 {
+		if ss.monitors[r.Data.GetId()] == nil || ss.monitors[r.Data.GetId()].ID == 0 {
+			log.Printf("NG>> 错误的服务监控上报 %+v", r)
 			continue
 		}
 		mh := model.PB2MonitorHistory(r.Data)
@@ -306,18 +306,13 @@ func (ss *ServiceSentinel) worker() {
 			ss.serviceStatusToday[mh.MonitorID].Up++
 		} else {
 			ss.serviceStatusToday[mh.MonitorID].Down++
+			ServerLock.RLock()
+			log.Println("NG>> 服务故障上报：", ss.monitors[mh.MonitorID].Target, "上报者：", ServerList[r.Reporter].Name, "错误信息：", mh.Data)
+			ServerLock.RUnlock()
 		}
 		// 写入当前数据
 		ss.serviceCurrentStatusData[mh.MonitorID][ss.serviceCurrentStatusIndex[mh.MonitorID]] = mh
 		ss.serviceCurrentStatusIndex[mh.MonitorID]++
-		// 数据持久化
-		if ss.serviceCurrentStatusIndex[mh.MonitorID] == _CurrentStatusSize {
-			ss.serviceCurrentStatusIndex[mh.MonitorID] = 0
-			dataToSave := ss.serviceCurrentStatusData[mh.MonitorID]
-			if err := DB.Create(&dataToSave).Error; err != nil {
-				log.Println("服务监控数据持久化失败：", err)
-			}
-		}
 		// 更新当前状态
 		ss.serviceResponseDataStoreCurrentUp[mh.MonitorID] = 0
 		ss.serviceResponseDataStoreCurrentDown[mh.MonitorID] = 0
@@ -335,17 +330,24 @@ func (ss *ServiceSentinel) worker() {
 			upPercent = ss.serviceResponseDataStoreCurrentUp[mh.MonitorID] * 100 / (ss.serviceResponseDataStoreCurrentDown[mh.MonitorID] + ss.serviceResponseDataStoreCurrentUp[mh.MonitorID])
 		}
 		stateStr := getStateStr(upPercent)
-		if !mh.Successful {
-			ServerLock.RLock()
-			log.Println("服务故障上报：", ss.monitors[mh.MonitorID].Target, stateStr, "上报者：", ServerList[r.Reporter].Name, "请求输出：", mh.Data)
-			ServerLock.RUnlock()
+		// 数据持久化
+		if ss.serviceCurrentStatusIndex[mh.MonitorID] == _CurrentStatusSize {
+			ss.serviceCurrentStatusIndex[mh.MonitorID] = 0
+			if err := DB.Create(&model.MonitorHistory{
+				MonitorID:  mh.MonitorID,
+				Delay:      ss.serviceStatusToday[mh.MonitorID].Delay,
+				Successful: stateStr == _StatusOk,
+				Data:       mh.Data,
+			}).Error; err != nil {
+				log.Println("NG>> 服务监控数据持久化失败：", err)
+			}
 		}
 		if stateStr == "故障" || stateStr != ss.lastStatus[mh.MonitorID] {
 			ss.monitorsLock.RLock()
 			isNeedSendNotification := (ss.lastStatus[mh.MonitorID] != "" || stateStr == "故障") && ss.monitors[mh.MonitorID].Notify
 			ss.lastStatus[mh.MonitorID] = stateStr
 			if isNeedSendNotification {
-				go SendNotification(fmt.Sprintf("#探针通知" + "\n" + "服务监控：%s 服务状态：%s", ss.monitors[mh.MonitorID].Name, stateStr), true)
+				go SendNotification(fmt.Sprintf("[服务%s] %s", stateStr, ss.monitors[mh.MonitorID].Name), true)
 			}
 			ss.monitorsLock.RUnlock()
 		}
@@ -368,7 +370,7 @@ func (ss *ServiceSentinel) worker() {
 				expiresNew, _ := time.Parse("2006-01-02 15:04:05 -0700 MST", newCert[1])
 				// 证书过期提醒
 				if expiresNew.Before(time.Now().AddDate(0, 0, 7)) {
-					errMsg = fmt.Sprintf("\n" + "SSL证书将在七天内过期，过期时间：%s。",
+					errMsg = fmt.Sprintf("\n" + "[SSL证书过期提醒]" + "\n" + "SSL证书将在七天内过期，过期时间：%s。",
 						expiresNew.Format("2006-01-02 15:04:05"))
 				}
 				// 证书变更提醒
@@ -379,7 +381,7 @@ func (ss *ServiceSentinel) worker() {
 				}
 				if oldCert[0] != newCert[0] && !expiresNew.Equal(expiresOld) {
 					ss.sslCertCache[mh.MonitorID] = mh.Data
-					errMsg = fmt.Sprintf("\n" + "SSL证书变更：" + "\n" + "旧证书：%s, %s 过期；" + "\n" + "新证书：%s, %s 过期。",
+					errMsg = fmt.Sprintf("\n" + "[SSL证书变更]" + "\n" + "旧证书：%s, %s 过期；" + "\n" + "新证书：%s, %s 过期。",
 						oldCert[0], expiresOld.Format("2006-01-02 15:04:05"), newCert[0], expiresNew.Format("2006-01-02 15:04:05"))
 				}
 			}
@@ -387,7 +389,7 @@ func (ss *ServiceSentinel) worker() {
 		if errMsg != "" {
 			ss.monitorsLock.RLock()
 			if ss.monitors[mh.MonitorID].Notify {
-				go SendNotification(fmt.Sprintf("#探针通知" + "\n" + "服务监控：%s %s", ss.monitors[mh.MonitorID].Name, errMsg), true)
+				go SendNotification(fmt.Sprintf("#探针通知" + "\n" + "SSL证书监控：%s %s", ss.monitors[mh.MonitorID].Name, errMsg), true)
 			}
 			ss.monitorsLock.RUnlock()
 		}

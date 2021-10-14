@@ -30,11 +30,6 @@ type NotificationHistory struct {
 func AlertSentinelStart() {
 	alertsStore = make(map[uint64]map[uint64][][]interface{})
 	alertsPrevState = make(map[uint64]map[uint64]uint)
-	notificationsLock.Lock()
-	if err := DB.Find(&notifications).Error; err != nil {
-		panic(err)
-	}
-	notificationsLock.Unlock()
 	alertsLock.Lock()
 	if err := DB.Find(&alerts).Error; err != nil {
 		panic(err)
@@ -54,7 +49,7 @@ func AlertSentinelStart() {
 		checkCount++
 		if lastPrint.Before(startedAt.Add(-1 * time.Hour)) {
 			if Conf.Debug {
-				log.Println("报警规则检测每小时", checkCount, "次", startedAt, time.Now())
+				log.Println("NG>> 报警规则检测每小时", checkCount, "次", startedAt, time.Now())
 			}
 			checkCount = 0
 			lastPrint = startedAt
@@ -114,11 +109,11 @@ func checkStatus() {
 			max, passed := alert.Check(alertsStore[alert.ID][server.ID])
 			if !passed {
 				alertsPrevState[alert.ID][server.ID] = _RuleCheckFail
-				message := fmt.Sprintf("#探针通知" + "\n" + "报警规则：%s" + "\n" + "服务器：%s[%s]" + "\n" + "已离线，快去看看！", alert.Name, server.Name, utils.IPDesensitize(server.Host.IP))
+				message := fmt.Sprintf("#探针通知" + "\n" + "[主机故障]%s[%s]" + "\n" + "规则：%s", server.Name, utils.IPDesensitize(server.Host.IP), alert.Name)
 				go SendNotification(message, true)
 			} else {
 				if alertsPrevState[alert.ID][server.ID] == _RuleCheckFail {
-					message := fmt.Sprintf("#探针通知" + "\n" + "报警规则：%s" + "\n" + "服务器：%s[%s]" + "\n" + "已恢复正常。", alert.Name, server.Name, utils.IPDesensitize(server.Host.IP))
+					message := fmt.Sprintf("#探针通知" + "\n" + "[主机恢复]%s[%s]" + "\n" + "规则：%s", server.Name, utils.IPDesensitize(server.Host.IP), alert.Name)
 					go SendNotification(message, true)
 				}
 				alertsPrevState[alert.ID][server.ID] = _RuleCheckPass

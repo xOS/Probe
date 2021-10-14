@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -29,20 +28,25 @@ import (
 	"github.com/xos/probe/service/rpc"
 )
 
-func init() {
-	http.DefaultClient.Timeout = time.Second * 5
-	flag.CommandLine.ParseErrorsWhitelist.UnknownFlags = true
+type AgentConfig struct {
+	SkipConnectionCount   bool
+	SkipProcsCount        bool
+	DisableAutoUpdate     bool
+	DisableCommandExecute bool
+	Debug                 bool
+	Server                string
+	ClientSecret          string
+	ReportDelay           int
 }
 
 var (
-	server, clientSecret, version string
-	debug                         bool
-	stateConf                     monitor.GetStateConfig
+	version string
+	client  pb.ProbeServiceClient
+	inited  bool
 )
 
 var (
-	client     pb.ProbeServiceClient
-	inited     bool
+	agentConf  AgentConfig
 	updateCh   = make(chan struct{}) // Agent 自动更新间隔
 	httpClient = &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -57,18 +61,32 @@ const (
 	networkTimeOut = time.Second * 5  // 普通网络超时
 )
 
+func init() {
+	http.DefaultClient.Timeout = time.Second * 5
+	flag.CommandLine.ParseErrorsWhitelist.UnknownFlags = true
+}
+
 func main() {
 	// 来自于 GoReleaser 的版本号
 	monitor.Version = version
 
-	flag.BoolVarP(&debug, "debug", "d", true, "开启调试信息")
-	flag.StringVarP(&server, "*server", "s", "localhost:2222", "管理面板RPC端口")
-	flag.StringVarP(&clientSecret, "password", "p", "", "Agent连接Secret")
-	flag.BoolVar(&stateConf.SkipConnectionCount, "skip-conn", false, "不监控连接数")
+	flag.BoolVarP(&agentConf.Debug, "debug", "d", true, "开启调试信息")
+	flag.StringVarP(&agentConf.Server, "server", "s", "localhost:2222", "管理面板RPC端口")
+	flag.StringVarP(&agentConf.ClientSecret, "password", "p", "", "Agent连接Secret")
+	flag.IntVar(&agentConf.ReportDelay, "report-delay", 3, "系统状态上报间隔")
+	flag.BoolVar(&agentConf.SkipConnectionCount, "skip-conn", false, "不监控连接数")
+	flag.BoolVar(&agentConf.SkipProcsCount, "skip-procs", false, "不监控进程数")
+	flag.BoolVar(&agentConf.DisableCommandExecute, "disable-command-execute", false, "禁止在此机器上执行命令")
+	flag.BoolVar(&agentConf.DisableAutoUpdate, "disable-auto-update", false, "禁用自动升级")
 	flag.Parse()
 
-	if clientSecret == "" {
+	if agentConf.ClientSecret == "" {
 		flag.Usage()
+		return
+	}
+
+	if agentConf.ReportDelay < 1 || agentConf.ReportDelay > 4 {
+		println("report-delay 的区间为 1-4")
 		return
 	}
 
@@ -77,20 +95,27 @@ func main() {
 
 func run() {
 	auth := rpc.AuthHandler{
-		ClientSecret: clientSecret,
+		ClientSecret: agentConf.ClientSecret,
 	}
 
-	go pty.DownloadDependency()
-
+	if !agentConf.DisableCommandExecute {
+		go pty.DownloadDependency()
+	}
 	// 上报服务器信息
 	go reportState()
 	// 更新IP信息
 	go monitor.UpdateIP()
 
-	if _, err := semver.Parse(version); err == nil {
+	if _, err := semver.Parse(version); err == nil && !agentConf.DisableAutoUpdate {
 		go func() {
 			for range updateCh {
-				go doSelfUpdate()
+				go func() {
+					defer func() {
+						time.Sleep(time.Minute * 20)
+						updateCh <- struct{}{}
+					}()
+					doSelfUpdate()
+				}()
 			}
 		}()
 		updateCh <- struct{}{}
@@ -111,7 +136,7 @@ func run() {
 
 	for {
 		timeOutCtx, cancel := context.WithTimeout(context.Background(), networkTimeOut)
-		conn, err = grpc.DialContext(timeOutCtx, server, grpc.WithInsecure(), grpc.WithPerRPCCredentials(&auth))
+		conn, err = grpc.DialContext(timeOutCtx, agentConf.Server, grpc.WithInsecure(), grpc.WithPerRPCCredentials(&auth))
 		if err != nil {
 			println("与面板建立连接失败：", err)
 			cancel()
@@ -155,8 +180,8 @@ func receiveTasks(tasks pb.ProbeService_RequestTaskClient) error {
 		}
 		go func() {
 			defer func() {
-				if recover() != nil {
-					println("task panic", task)
+				if err := recover(); err != nil {
+					println("task panic", task, err)
 				}
 			}()
 			doTask(task)
@@ -179,6 +204,8 @@ func doTask(task *pb.Task) {
 		handleTcpPingTask(task, &result)
 	case model.TaskTypeCommand:
 		handleCommandTask(task, &result)
+	case model.TaskTypeUpgrade:
+		handleUpgradeTask(task, &result)
 	default:
 		println("不支持的任务：", task)
 	}
@@ -194,7 +221,7 @@ func reportState() {
 		if client != nil && inited {
 			monitor.TrackNetworkSpeed()
 			timeOutCtx, cancel := context.WithTimeout(context.Background(), networkTimeOut)
-			_, err = client.ReportSystemState(timeOutCtx, monitor.GetState(stateConf).PB())
+			_, err = client.ReportSystemState(timeOutCtx, monitor.GetState(agentConf.SkipConnectionCount, agentConf.SkipProcsCount).PB())
 			cancel()
 			if err != nil {
 				println("reportState error", err)
@@ -205,15 +232,11 @@ func reportState() {
 				client.ReportSystemInfo(context.Background(), monitor.GetHost().PB())
 			}
 		}
-		time.Sleep(time.Second)
+		time.Sleep(time.Second * time.Duration(agentConf.ReportDelay))
 	}
 }
 
 func doSelfUpdate() {
-	defer func() {
-		time.Sleep(time.Minute * 20)
-		updateCh <- struct{}{}
-	}()
 	v := semver.MustParse(version)
 	println("检查更新：", v)
 	latest, err := selfupdate.UpdateSelf(v, "xOS/Probe")
@@ -224,6 +247,10 @@ func doSelfUpdate() {
 	if !latest.Version.Equals(v) {
 		os.Exit(1)
 	}
+}
+
+func handleUpgradeTask(task *pb.Task, result *pb.TaskResult) {
+	doSelfUpdate()
 }
 
 func handleTcpPingTask(task *pb.Task, result *pb.TaskResult) {
@@ -267,7 +294,7 @@ func handleHttpGetTask(task *pb.Task, result *pb.TaskResult) {
 	}
 	if err == nil {
 		// 检查 SSL 证书信息
-		if len(resp.TLS.PeerCertificates) > 0 {
+		if resp.TLS != nil && len(resp.TLS.PeerCertificates) > 0 {
 			c := resp.TLS.PeerCertificates[0]
 			result.Data = c.Issuer.CommonName + "|" + c.NotAfter.In(time.Local).String()
 		}
@@ -279,6 +306,10 @@ func handleHttpGetTask(task *pb.Task, result *pb.TaskResult) {
 }
 
 func handleCommandTask(task *pb.Task, result *pb.TaskResult) {
+	if agentConf.DisableCommandExecute {
+		result.Data = "此 Agent 已禁止命令执行"
+		return
+	}
 	startedAt := time.Now()
 	var cmd *exec.Cmd
 	var endCh = make(chan struct{})
@@ -290,9 +321,9 @@ func handleCommandTask(task *pb.Task, result *pb.TaskResult) {
 	}
 	timeout := time.NewTimer(time.Hour * 2)
 	if utils.IsWindows() {
-		cmd = exec.Command("cmd", "/c", task.GetData())
+		cmd = exec.Command("cmd", "/c", task.GetData()) // #nosec
 	} else {
-		cmd = exec.Command("sh", "-c", task.GetData())
+		cmd = exec.Command("sh", "-c", task.GetData()) // #nosec
 	}
 	cmd.Env = os.Environ()
 	pg.AddProcess(cmd)
@@ -314,6 +345,7 @@ func handleCommandTask(task *pb.Task, result *pb.TaskResult) {
 		result.Data = string(output)
 		result.Successful = true
 	}
+	pg.Dispose()
 	result.Delay = float32(time.Since(startedAt).Seconds())
 }
 
@@ -323,6 +355,10 @@ type WindowSize struct {
 }
 
 func handleTerminalTask(task *pb.Task) {
+	if agentConf.DisableCommandExecute {
+		println("此 Agent 已禁止命令执行")
+		return
+	}
 	var terminal model.TerminalTask
 	err := json.Unmarshal([]byte(task.GetData()), &terminal)
 	if err != nil {
@@ -334,7 +370,7 @@ func handleTerminalTask(task *pb.Task) {
 		protocol += "s"
 	}
 	header := http.Header{}
-	header.Add("Secret", clientSecret)
+	header.Add("Secret", agentConf.ClientSecret)
 	conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("%s://%s/terminal/%s", protocol, terminal.Host, terminal.Session), header)
 	if err != nil {
 		println("Terminal 连接失败：", err)
@@ -349,9 +385,9 @@ func handleTerminalTask(task *pb.Task) {
 	}
 
 	defer func() {
-		tty.Close()
+		err := tty.Close()
 		conn.Close()
-		println("terminal exit", terminal.Session)
+		println("terminal exit", terminal.Session, err)
 	}()
 	println("terminal init", terminal.Session)
 
@@ -404,7 +440,8 @@ func handleTerminalTask(task *pb.Task) {
 }
 
 func println(v ...interface{}) {
-	if debug {
-		log.Println(v...)
+	if agentConf.Debug {
+		fmt.Printf("NG@%s>> ", time.Now().Format("2006-01-02 15:04:05"))
+		fmt.Println(v...)
 	}
 }

@@ -1,7 +1,7 @@
 # 楠格探针
-> 个人修改自用
+> 本项目为原项目[哪吒探针](https://github.com/naiba/nezha)的修改自用版
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.3.8&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.2.8-brightgreen?style=for-the-badge&logo=linux)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.4.0&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.2.8-brightgreen?style=for-the-badge&logo=linux)
 
 一款探针。支持系统状态、HTTP(SSL 证书变更、即将到期、到期)、TCP、Ping 监控报警，命令批量执行和计划任务。
 
@@ -28,6 +28,16 @@ CN=true sudo ./probe.sh
 </details>
 
 _\* 使用 WatchTower 可以自动更新面板，Windows 终端可以使用 nssm 配置自启动。_
+
+### 增强配置
+
+通过执行 `./probe-agent --help` 查看支持的参数，如果你使用一键脚本，可以编辑 `/etc/systemd/system/probe-agent.service`，在 `ExecStart=` 这一行的末尾加上
+
+- `--report-delay` 系统信息上报的间隔，默认为 1 秒，可以设置为 3 来进一步降低 agent 端系统资源占用（配置区间 1-4）
+- `--skip-conn` 不监控连接数，机场/连接密集型机器推荐设置，不然比较占 CPU([shirou/gopsutil/issues#220](https://github.com/shirou/gopsutil/issues/220))
+- `--skip-procs` 不监控进程数，也可以降低 agent 占用
+- `--disable-auto-update` 禁止 Agent 自动更新（安全特性）
+- `--disable-command-execute` 禁止在 Agent 机器上执行定时任务、打开在线终端（安全特性）
 
 ## 功能说明
 
@@ -96,7 +106,7 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
   - `net_in_speed` 入站网速、`net_out_speed` 出站网速、`net_all_speed` 双向网速、`transfer_in` 入站流量、`transfer_out` 出站流量、`transfer_all` 双向流量
   - `offline` 离线监控
   - `load1`、`load5`、`load15` 负载
-  - `process_count` 进程数 *目前取线程数占用资源太多，暂时不支持*
+  - `process_count` 进程数 _目前取线程数占用资源太多，暂时不支持_
   - `tcp_conn_count`、`udp_conn_count` 连接数
 - duration：持续秒数，秒数内采样记录 30% 以上触发阈值才会报警（防数据插针）
 - min/max

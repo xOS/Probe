@@ -16,6 +16,7 @@ const (
 	TaskTypeTCPPing
 	TaskTypeCommand
 	TaskTypeTerminal
+	TaskTypeUpgrade
 )
 
 type TerminalTask struct {
@@ -72,4 +73,8 @@ func (m *Monitor) AfterFind(tx *gorm.DB) error {
 		m.SkipServers[skipServers[i]] = true
 	}
 	return nil
+}
+
+func IsServiceSentinelNeeded(t uint64) bool {
+	return t != TaskTypeCommand && t != TaskTypeTerminal && t != TaskTypeUpgrade
 }
