@@ -36,18 +36,18 @@ func UpdateIP() {
 			time.Sleep(time.Minute)
 			continue
 		}
-		if ipv4.IP == "" || ipv6.IP == "" {
+		if ipv4.IP == "" && ipv6.IP == "" {
 			cachedIP = fmt.Sprintf("IPs(IP 为空%s%s)", ipv4.IP, ipv6.IP)
-		} else if ipv4.IP != "" || ipv6.IP == "" {
+		} else if ipv4.IP != "" && ipv6.IP == "" {
 			cachedIP = fmt.Sprintf("IPs(IPv4:%s%s)", ipv4.IP, ipv6.IP)
-		} else if ipv4.IP == "" || ipv6.IP != "" {
+		} else if ipv4.IP == "" && ipv6.IP != "" {
 			cachedIP = fmt.Sprintf("IPs(IPv6:%s[%s])", ipv4.IP, ipv6.IP)
 		} else {
 			cachedIP = fmt.Sprintf("IPs(IPv4:%s,IPv6:[%s])", ipv4.IP, ipv6.IP)
 		} 
 		if ipv4.CountryCode != "" {
 			cachedCountry = ipv4.CountryCode
-		} else if ipv4.CountryCode == "" || ipv6.CountryCode != "" {
+		} else if ipv4.CountryCode == "" && ipv6.CountryCode != "" {
 			cachedCountry = ipv6.CountryCode
 		}
 		time.Sleep(time.Minute * 30)
@@ -74,7 +74,7 @@ func fetchGeoIP(servers []string, isV6 bool) geoIP {
 			if err != nil {
 				continue
 			}
-			if ip.IP == "" || ip.Query != "" {
+			if ip.IP == "" && ip.Query != "" {
 				ip.IP = ip.Query
 			}
 			// 没取到 v6 IP
