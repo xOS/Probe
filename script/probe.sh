@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.2.8"
+VERSION="v2.2.9"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -430,6 +430,8 @@ uninstall_dashboard() {
     cd $DASHBOARD_PATH &&
         docker-compose down
     rm -rf $DASHBOARD_PATH
+    docker rmi -f ghcr.io/xos/probe-dashboard > /dev/null 2>&1
+    docker rmi -f registry.cn-shanghai.aliyuncs.com/dns/probe-dashboard > /dev/null 2>&1
     clean_all
 
     if [[ $# == 0 ]]; then
