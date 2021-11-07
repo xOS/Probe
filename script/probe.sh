@@ -266,8 +266,8 @@ set_secret(){
         [[ -z "${client_secret}" ]] && echo "已取消输入..." && exit 1
 }
 read_config(){
-	[[ ! -e ${AGENT_SERVICE} ]] && echo -e "${red} Snell 配置文件不存在 ! ${plain}" && exit 1
-    host=$(cat ${AGENT_SERVICE}|grep 'probe-agent'|awk -F '-s' '{print $2}'|head -1|sed 's/\:/ /'|awk '{print $1}')
+	[[ ! -e ${AGENT_SERVICE} ]] && echo -e "${red} Agent启动文件不存在 ! ${plain}" && exit 1
+    	host=$(cat ${AGENT_SERVICE}|grep 'probe-agent'|awk -F '-s' '{print $2}'|head -1|sed 's/\:/ /'|awk '{print $1}')
 	port=$(cat ${AGENT_SERVICE}|grep 'probe-agent'|awk -F '-s' '{print $2}'|head -1|sed 's/\:/ /'|awk '{print $2}')
 	secret=$(cat ${AGENT_SERVICE}|grep 'p '|awk -F 'p ' '{print $NF}')
 }
