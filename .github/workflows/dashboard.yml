@@ -43,11 +43,6 @@ jobs:
         
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-        
-      - name: Code Test
-        run: |
-          go env
-          go test -v ./...
       
       - name: Set up image name
         run: |
