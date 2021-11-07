@@ -83,7 +83,7 @@ func main() {
 	flag.BoolVar(&agentConf.DisableCommandExecute, "disable-command-execute", false, "禁止在此机器上执行命令")
 	flag.BoolVar(&agentConf.DisableAutoUpdate, "disable-auto-update", false, "禁用自动升级")
 	flag.BoolVar(&agentConf.DisableForceUpdate, "disable-force-update", false, "禁用强制升级")
-	flag.BoolVar(&agentConf.TLS, "tls", true, "启用SSL/TLS加密")
+	flag.BoolVar(&agentConf.TLS, "tls", false, "启用SSL/TLS加密")
 	flag.Parse()
 
 	if agentConf.ClientSecret == "" {
