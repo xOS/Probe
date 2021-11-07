@@ -42,7 +42,7 @@ func percentage(used, total uint64) float64 {
 }
 
 // Snapshot 未通过规则返回 struct{}{}, 通过返回 nil
-func (u *Rule) Snapshot(server *Server, db *gorm.DB) interface{} {
+func (u *Rule) Snapshot(cycleTransferStats *CycleTransferStats, server *Server, db *gorm.DB) interface{} {
 	// 监控全部但是排除了此服务器
 	if u.Cover == RuleCoverAll && u.Ignore[server.ID] {
 		return nil
@@ -123,7 +123,7 @@ func (u *Rule) Snapshot(server *Server, db *gorm.DB) interface{} {
 
 	// 循环区间流量检测 · 更新下次需要检测时间
 	if u.IsTransferDurationRule() {
-		seconds := 1800 * time.Duration(((u.Max - src) / u.Max))
+		seconds := 1800 * ((u.Max - src) / u.Max)
 		if seconds < 180 {
 			seconds = 180
 		}
@@ -133,12 +133,17 @@ func (u *Rule) Snapshot(server *Server, db *gorm.DB) interface{} {
 		if u.LastCycleStatus == nil {
 			u.LastCycleStatus = make(map[uint64]interface{})
 		}
-		u.NextTransferAt[server.ID] = time.Now().Add(time.Duration(time.Second * seconds))
+		u.NextTransferAt[server.ID] = time.Now().Add(time.Second * time.Duration(seconds))
 		if (u.Max > 0 && src > u.Max) || (u.Min > 0 && src < u.Min) {
 			u.LastCycleStatus[server.ID] = struct{}{}
 		} else {
 			u.LastCycleStatus[server.ID] = nil
 		}
+		if cycleTransferStats.ServerName[server.ID] != server.Name {
+			cycleTransferStats.ServerName[server.ID] = server.Name
+		}
+		cycleTransferStats.Transfer[server.ID] = uint64(src)
+		cycleTransferStats.NextUpdate[server.ID] = u.NextTransferAt[server.ID]
 	}
 
 	if u.Type == "offline" && float64(time.Now().Unix())-src > 6 {

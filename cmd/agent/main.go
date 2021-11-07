@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -18,6 +19,7 @@ import (
 	"github.com/p14yground/go-github-selfupdate/selfupdate"
 	flag "github.com/spf13/pflag"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 
 	"github.com/xos/probe/cmd/agent/monitor"
 	"github.com/xos/probe/cmd/agent/processgroup"
@@ -32,11 +34,13 @@ type AgentConfig struct {
 	SkipConnectionCount   bool
 	SkipProcsCount        bool
 	DisableAutoUpdate     bool
+	DisableForceUpdate    bool
 	DisableCommandExecute bool
 	Debug                 bool
 	Server                string
 	ClientSecret          string
 	ReportDelay           int
+	TLS                   bool
 }
 
 var (
@@ -78,6 +82,8 @@ func main() {
 	flag.BoolVar(&agentConf.SkipProcsCount, "skip-procs", false, "不监控进程数")
 	flag.BoolVar(&agentConf.DisableCommandExecute, "disable-command-execute", false, "禁止在此机器上执行命令")
 	flag.BoolVar(&agentConf.DisableAutoUpdate, "disable-auto-update", false, "禁用自动升级")
+	flag.BoolVar(&agentConf.DisableForceUpdate, "disable-force-update", false, "禁用强制升级")
+	flag.BoolVar(&agentConf.TLS, "tls", true, "启用SSL/TLS加密")
 	flag.Parse()
 
 	if agentConf.ClientSecret == "" {
@@ -114,7 +120,7 @@ func run() {
 						time.Sleep(time.Minute * 20)
 						updateCh <- struct{}{}
 					}()
-					doSelfUpdate()
+					doSelfUpdate(true)
 				}()
 			}
 		}()
@@ -136,7 +142,13 @@ func run() {
 
 	for {
 		timeOutCtx, cancel := context.WithTimeout(context.Background(), networkTimeOut)
-		conn, err = grpc.DialContext(timeOutCtx, agentConf.Server, grpc.WithInsecure(), grpc.WithPerRPCCredentials(&auth))
+		var securityOption grpc.DialOption
+		if agentConf.TLS {
+			securityOption = grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{MinVersion: tls.VersionTLS12}))
+		} else {
+			securityOption = grpc.WithInsecure()
+		}
+		conn, err = grpc.DialContext(timeOutCtx, agentConf.Server, securityOption, grpc.WithPerRPCCredentials(&auth))
 		if err != nil {
 			println("与面板建立连接失败：", err)
 			cancel()
@@ -236,8 +248,11 @@ func reportState() {
 	}
 }
 
-func doSelfUpdate() {
-	v := semver.MustParse(version)
+func doSelfUpdate(useLocalVersion bool) {
+	v := semver.MustParse("0.1.0")
+	if useLocalVersion {
+		v = semver.MustParse(version)
+	}
 	println("检查更新：", v)
 	latest, err := selfupdate.UpdateSelf(v, "xOS/Probe")
 	if err != nil {
@@ -250,7 +265,10 @@ func doSelfUpdate() {
 }
 
 func handleUpgradeTask(task *pb.Task, result *pb.TaskResult) {
-	doSelfUpdate()
+	if agentConf.DisableForceUpdate {
+		return
+	}
+	doSelfUpdate(false)
 }
 
 func handleTcpPingTask(task *pb.Task, result *pb.TaskResult) {

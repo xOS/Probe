@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -14,6 +15,7 @@ import (
 	"github.com/xos/probe/model"
 	"github.com/xos/probe/pkg/mygin"
 	"github.com/xos/probe/pkg/utils"
+	"github.com/xos/probe/proto"
 	"github.com/xos/probe/service/dao"
 )
 
@@ -36,6 +38,7 @@ func (ma *memberAPI) serve() {
 	mr.POST("/monitor", ma.addOrEditMonitor)
 	mr.POST("/cron", ma.addOrEditCron)
 	mr.GET("/cron/:id/manual", ma.manualTrigger)
+	mr.POST("/force-update", ma.forceUpdate)
 	mr.POST("/notification", ma.addOrEditNotification)
 	mr.POST("/alert-rule", ma.addOrEditAlertRule)
 	mr.POST("/setting", ma.updateSetting)
@@ -58,11 +61,24 @@ func (ma *memberAPI) delete(c *gin.Context) {
 	case "server":
 		err = dao.DB.Unscoped().Delete(&model.Server{}, "id = ?", id).Error
 		if err == nil {
+			// 删除服务器
 			dao.ServerLock.Lock()
 			delete(dao.SecretToID, dao.ServerList[id].Secret)
 			delete(dao.ServerList, id)
 			dao.ServerLock.Unlock()
 			dao.ReSortServer()
+			// 删除循环流量状态中的此服务器相关的记录
+			dao.AlertsLock.Lock()
+			for i := 0; i < len(dao.Alerts); i++ {
+				if dao.AlertsCycleTransferStatsStore[dao.Alerts[i].ID] != nil {
+					delete(dao.AlertsCycleTransferStatsStore[dao.Alerts[i].ID].ServerName, id)
+					delete(dao.AlertsCycleTransferStatsStore[dao.Alerts[i].ID].Transfer, id)
+					delete(dao.AlertsCycleTransferStatsStore[dao.Alerts[i].ID].NextUpdate, id)
+				}
+			}
+			dao.AlertsLock.Unlock()
+			// 删除服务器相关循环流量记录
+			dao.DB.Unscoped().Delete(&model.Transfer{}, "server_id = ?", id)
 		}
 	case "notification":
 		err = dao.DB.Unscoped().Delete(&model.Notification{}, "id = ?", id).Error
@@ -322,12 +338,48 @@ func (ma *memberAPI) manualTrigger(c *gin.Context) {
 	})
 }
 
+func (ma *memberAPI) forceUpdate(c *gin.Context) {
+	var forceUpdateServers []uint64
+	if err := c.ShouldBindJSON(&forceUpdateServers); err != nil {
+		c.JSON(http.StatusOK, model.Response{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	var executeResult bytes.Buffer
+
+	for i := 0; i < len(forceUpdateServers); i++ {
+		dao.ServerLock.RLock()
+		server := dao.ServerList[forceUpdateServers[i]]
+		dao.ServerLock.RUnlock()
+		if server != nil && server.TaskStream != nil {
+			if err := server.TaskStream.Send(&proto.Task{
+				Type: model.TaskTypeUpgrade,
+			}); err != nil {
+				executeResult.WriteString(fmt.Sprintf("%d 下发指令失败 %+v<br/>", forceUpdateServers[i], err))
+			} else {
+				executeResult.WriteString(fmt.Sprintf("%d 下发指令成功<br/>", forceUpdateServers[i]))
+			}
+		} else {
+			executeResult.WriteString(fmt.Sprintf("%d 离线<br/>", forceUpdateServers[i]))
+		}
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code:    http.StatusOK,
+		Message: executeResult.String(),
+	})
+}
+
 type notificationForm struct {
 	ID            uint64
 	Name          string
 	URL           string
 	RequestMethod int
 	RequestType   int
+	RequestHeader string
 	RequestBody   string
 	VerifySSL     string
 }
@@ -340,6 +392,7 @@ func (ma *memberAPI) addOrEditNotification(c *gin.Context) {
 		n.Name = nf.Name
 		n.RequestMethod = nf.RequestMethod
 		n.RequestType = nf.RequestType
+		n.RequestHeader = nf.RequestHeader
 		n.RequestBody = nf.RequestBody
 		n.URL = nf.URL
 		verifySSL := nf.VerifySSL == "on"

@@ -36,8 +36,10 @@ _\* 使用 WatchTower 可以自动更新面板，Windows 终端可以使用 nssm
 - `--report-delay` 系统信息上报的间隔，默认为 1 秒，可以设置为 3 来进一步降低 agent 端系统资源占用（配置区间 1-4）
 - `--skip-conn` 不监控连接数，机场/连接密集型机器推荐设置，不然比较占 CPU([shirou/gopsutil/issues#220](https://github.com/shirou/gopsutil/issues/220))
 - `--skip-procs` 不监控进程数，也可以降低 agent 占用
-- `--disable-auto-update` 禁止 Agent 自动更新（安全特性）
+- `--disable-auto-update` 禁止 **自动更新** Agent（安全特性）
+- `--disable-force-update` 禁止 **强制更新** Agent（安全特性）
 - `--disable-command-execute` 禁止在 Agent 机器上执行定时任务、打开在线终端（安全特性）
+- `--tls` 启用SSL/TLS加密（使用 nginx 反向代理 Agent 的 grpc 连接，并且 nginx 开启 SSL/TLS 时，需要启用该项配置）
 
 ## 功能说明
 
@@ -64,22 +66,25 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 1. 添加通知方式
 
    - server 酱示例
+
      - 名称：server 酱
-     - URL：https://sc.ftqq.com/SCUrandomkeys.send?text=#NG#
+     - URL：<https://sc.ftqq.com/SCUrandomkeys.send?text=#NG>#
      - 请求方式: GET
      - 请求类型: 默认
      - Body: 空
+
    - wxpusher 示例，需要关注你的应用
 
      - 名称: wxpusher
-     - URL：http://wxpusher.zjiecode.com/api/send/message
+     - URL：<http://wxpusher.zjiecode.com/api/send/message>
      - 请求方式: POST
      - 请求类型: JSON
      - Body: `{"appToken":"你的appToken","topicIds":[],"content":"#NG#","contentType":"1","uids":["你的uid"]}`
 
    - telegram 示例 [@haitau](https://github.com/haitau) 贡献
+
      - 名称：telegram 机器人消息通知
-     - URL：https://api.telegram.org/botXXXXXX/sendMessage?chat_id=YYYYYY&text=#NG#
+     - URL：<https://api.telegram.org/botXXXXXX/sendMessage?chat_id=YYYYYY&text=#NG>#
      - 请求方式: GET
      - 请求类型: 默认
      - Body: 空
@@ -194,14 +199,7 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 
 
 <details>
-    <summary>如何禁用连接数/进程数等占用资源的监控？</summary>
-
-编辑 `/etc/systemd/system/probe-agent.service`，在 `ExecStart=` 这一行的末尾加上 `-kconn` 就是不监控连接数，加上 `-kprocess` 就是不监控进程数
-
-</details>
-
-<details>
-    <summary>Agent 不断重启/无法启动 ？</summary>
+    <summary>Agent 启动/上线 问题自检流程</summary>
 
 1. 直接执行 `/opt/probe/agent/probe-agent -s 面板IP或非CDN域名:面板RPC端口 -p Agent密钥 -d` 查看日志是否是 DNS 问题。
 2. `nc -v 域名/IP 面板RPC端口` 或者 `telnet 域名/IP 面板RPC端口` 检验是否是网络问题，检查本机与面板服务器出入站防火墙，如果单机无法判断可借助 https://port.ping.pe/ 提供的端口检查工具进行检测。
@@ -260,22 +258,23 @@ restart() {
       #原有的一些配置
       #server_name blablabla...
 
-      location /ws {
+      location ~ ^/(ws|terminal/.+)$  {
           proxy_pass http://ip:站点访问端口;
-          proxy_http_version 1.1;
-          proxy_set_header Upgrade $http_upgrade;
-          proxy_set_header Connection "Upgrade";
-          proxy_set_header Host $host;
-      }
-    location /terminal {
-          proxy_pass http://ip:站点访问端口;
-          proxy_http_version 1.1;
           proxy_set_header Upgrade $http_upgrade;
           proxy_set_header Connection "Upgrade";
           proxy_set_header Host $host;
       }
 
-      #其他的 location ...
+      #其他的 location blablabla...
+  }
+  ```
+
+  如果非宝塔，还要在 `server{}` 中添加上这一段
+
+  ```nginx
+  location / {
+    proxy_pass http://ip:站点访问端口;
+    proxy_set_header Host $host;
   }
   ```
 
@@ -285,9 +284,37 @@ restart() {
   proxy /ws http://ip:8008 {
       websocket
   }
-proxy /terminal http://ip:8008 {
+  proxy /terminal/* http://ip:8008 {
       websocket
   }
   ```
 
+</details>
+
+<details>
+    <summary>Agent 连接 Dashboard 域名开启 Cloudflare CDN</summary>
+根据 Cloudflare gRPC 的要求：gRPC 服务必须侦听 443 端口 且必须支持 TLS 和 HTTP/2。我们可以使用 nginx 反向代理 gRPC 并配置 SSL/TLS 证书。
+
+- nginx 配置，比如 Agent 连接 Dashboard 的域名为 ip-to-dashboard.nai.ba，为 nginx 添加如下配置，然后重新启动 nginx 或者重新加载配置文件。
+```nginx
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name ip-to-dashboard.nai.ba; # 你的 Agent 连接 Dashboard 的域名
+
+    ssl_certificate          /data/letsencrypt/fullchain.pem; # 你的域名证书路径
+    ssl_certificate_key      /data/letsencrypt/key.pem;       # 你的域名私钥路径
+
+    underscores_in_headers on;
+
+    location / {
+        grpc_pass grpc://localhost:5555;
+    }
+}
+```
+- Agent 端配置，编辑 `/etc/systemd/system/probe-agent.service`，在 `ExecStart=` 这一行的末尾加上 `--tls`，然后重启 probe-agent.service。例如：
+```bash
+ExecStart=/opt/probe/agent/probe-agent -s ip-to-dashboard.nai.ba:443 -p xxxxxx --tls
+```
+- 在 Cloudflare 中将对应的域名解析设置橙色云开启CDN，并在网络选项中启用gRPC。
 </details>

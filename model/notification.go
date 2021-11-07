@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -29,6 +30,7 @@ type Notification struct {
 	URL           string
 	RequestMethod int
 	RequestType   int
+	RequestHeader string `gorm:"type:longtext" `
 	RequestBody   string `gorm:"type:longtext" `
 	VerifySSL     *bool
 }
@@ -39,8 +41,18 @@ func (n *Notification) reqURL(message string) string {
 	})
 }
 
+func (n *Notification) reqMethod() (string, error) {
+	switch n.RequestMethod {
+	case NotificationRequestMethodPOST:
+		return http.MethodPost, nil
+	case NotificationRequestMethodGET:
+		return http.MethodGet, nil
+	}
+	return "", errors.New("不支持的请求方式")
+}
+
 func (n *Notification) reqBody(message string) (string, error) {
-	if n.RequestMethod == NotificationRequestMethodGET {
+	if n.RequestMethod == NotificationRequestMethodGET || message == "" {
 		return "", nil
 	}
 	switch n.RequestType {
@@ -63,14 +75,29 @@ func (n *Notification) reqBody(message string) (string, error) {
 	return "", errors.New("不支持的请求类型")
 }
 
-func (n *Notification) reqContentType() string {
+func (n *Notification) setContentType(req *http.Request) {
 	if n.RequestMethod == NotificationRequestMethodGET {
-		return ""
+		return
 	}
 	if n.RequestType == NotificationRequestTypeForm {
-		return "application/x-www-form-urlencoded"
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	} else {
+		req.Header.Set("Content-Type", "application/json")
 	}
-	return "application/json"
+}
+
+func (n *Notification) setRequestHeader(req *http.Request) error {
+	if n.RequestHeader == "" {
+		return nil
+	}
+	var m map[string]string
+	if err := json.Unmarshal([]byte(n.RequestHeader), &m); err != nil {
+		return err
+	}
+	for k, v := range m {
+		req.Header.Set(k, v)
+	}
+	return nil
 }
 
 func (n *Notification) Send(message string) error {
@@ -86,24 +113,39 @@ func (n *Notification) Send(message string) error {
 	}
 
 	client := &http.Client{Transport: transCfg, Timeout: time.Minute * 10}
-
 	reqBody, err := n.reqBody(message)
-
-	var resp *http.Response
-
-	if err == nil {
-		if n.RequestMethod == NotificationRequestMethodGET {
-			resp, err = client.Get(n.reqURL(message))
-		} else {
-			resp, err = client.Post(n.reqURL(message), n.reqContentType(), strings.NewReader(reqBody))
-		}
+	if err != nil {
+		return err
 	}
 
-	if err == nil && (resp.StatusCode < 200 || resp.StatusCode > 299) {
-		err = fmt.Errorf("%d %s", resp.StatusCode, resp.Status)
+	reqMethod, err := n.reqMethod()
+	if err != nil {
+		return err
 	}
 
-	return err
+	req, err := http.NewRequest(reqMethod, n.reqURL(message), strings.NewReader(reqBody))
+	if err != nil {
+		return err
+	}
+
+	n.setContentType(req)
+
+	if err := n.setRequestHeader(req); err != nil {
+		return err
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		defer resp.Body.Close()
+		body, _ := ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("%d@%s %s", resp.StatusCode, resp.Status, string(body))
+	}
+
+	return nil
 }
 
 func replaceParamsInString(str string, message string, mod func(string) string) string {

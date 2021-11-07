@@ -2,8 +2,7 @@ before:
   hooks:
     - go mod tidy -v
 builds:
-  - id: probe-agent
-    env:
+  - env:
       - CGO_ENABLED=0
     goos:
       - linux
@@ -25,15 +24,16 @@ builds:
         goarch: arm64
     main: ./cmd/agent
     binary: probe-agent
+universal_binaries:
+  - name_template: "probe-agent"
+    replace: false
 checksum:
   name_template: "checksums.txt"
 snapshot:
-  name_template: "{{.ProjectName}}"
+  name_template: "probe-agent"
 archives:
   - name_template: "probe-agent_{{ .Os }}_{{ .Arch }}"
+    files:
+      - none*
 changelog:
   sort: asc
-  filters:
-    exclude:
-      - "^docs:"
-      - "^test:"
