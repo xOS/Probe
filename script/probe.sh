@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.2.9"
+VERSION="v2.3.0"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -253,8 +253,82 @@ update_agent() {
     fi
 }
 
+set_host(){
+    read -ep "请输入一个解析到面板所在IP的域名: " grpc_host
+        [[ -z "${grpc_host}" ]] && echo "已取消输入..." && exit 1
+}
+set_port(){
+    read -ep "请输入面板RPC端口: (默认：2222)" grpc_port
+        [[ -z "${grpc_port}" ]] && grpc_port=2222
+}
+set_secret(){
+    read -ep "请输入Agent 密钥: " client_secret
+        [[ -z "${client_secret}" ]] && echo "已取消输入..." && exit 1
+}
+read_config(){
+	[[ ! -e ${AGENT_SERVICE} ]] && echo -e "${red} Snell 配置文件不存在 ! ${plain}" && exit 1
+    host=$(cat ${AGENT_SERVICE}|grep 'probe-agent'|awk -F '-s' '{print $2}'|head -1|sed 's/\:/ /'|awk '{print $1}')
+	port=$(cat ${AGENT_SERVICE}|grep 'probe-agent'|awk -F '-s' '{print $2}'|head -1|sed 's/\:/ /'|awk '{print $2}')
+	secret=$(cat ${AGENT_SERVICE}|grep 'p '|awk -F 'p ' '{print $NF}')
+}
+set_agent(){
+    echo && echo -e "修改Agent配置
+    =========================
+    ${green}1.${plain}  修改 域名
+    ${green}2.${plain}  修改 端口
+    ${green}3.${plain}  修改 密钥
+    =========================
+    ${green}4.${plain}  修改 全部配置" && echo
+	    read -e -p "(默认: 取消):" modify
+        [[ -z "${modify}" ]] && echo "已取消..." && exit 1
+
+	if [[ "${modify}" == "1" ]]; then
+        read_config
+		set_host
+        grpc_host=${grpc_host}
+        sed -i "s/${host}/${grpc_host}/" ${AGENT_SERVICE}
+        echo -e "Agent域名 ${green}修改成功，请稍等重启生效${plain}"
+        systemctl daemon-reload
+        systemctl enable probe-agent
+        systemctl restart probe-agent
+        echo -e "Agent已重启完毕！"
+        before_show_menu
+
+	elif [[ "${modify}" == "2" ]]; then
+        read_config
+		set_port
+        grpc_port=${grpc_port}
+        sed -i "s/${port}/${grpc_port}/" ${AGENT_SERVICE}
+        echo -e "Agent端口${green}修改成功，请稍等重启生效${plain}"
+        systemctl daemon-reload
+        systemctl enable probe-agent
+        systemctl restart probe-agent
+        echo -e "Agent已重启完毕！"
+        before_show_menu
+
+	elif [[ "${modify}" == "3" ]]; then
+        read_config
+		set_secret
+        client_secret=${client_secret}
+        sed -i "s/${secret}/${client_secret}/" ${AGENT_SERVICE}
+        echo -e "Agent密钥${green}修改成功，请稍等重启生效${plain}"
+        systemctl daemon-reload
+        systemctl enable probe-agent
+        systemctl restart probe-agent
+        echo -e "Agent已重启完毕！"
+        before_show_menu
+
+	elif [[ "${modify}" == "4" ]]; then
+		modify_agent_config
+    else
+		echo -e "${Error} 请输入正确的数字(1-4)" && exit 1
+    fi
+    sleep 3s
+    start_menu
+}
+
 modify_agent_config() {
-    echo -e "> 修改Agent配置"
+    echo -e "> 初始化Agent配置"
 
     wget -O $AGENT_SERVICE https://${GITHUB_RAW_URL}/script/probe-agent.service >/dev/null 2>&1
     if [[ $? != 0 ]]; then
@@ -263,8 +337,8 @@ modify_agent_config() {
     fi
     if [[ $# != 3 ]]; then
         echo "请先在管理面板上添加Agent，记录下密钥" &&
-            read -ep "请输入一个解析到面板所在IP的域名（不可套CDN）: " grpc_host &&
-            read -ep "请输入面板RPC端口: (2222)" grpc_port &&
+            read -ep "请输入一个解析到面板所在IP的域名: " grpc_host &&
+            read -ep "请输入面板RPC端口: (默认：2222)" grpc_port &&
             read -ep "请输入Agent 密钥: " client_secret
         if [[ -z "${grpc_host}" || -z "${client_secret}" ]]; then
             echo -e "${red}所有选项都不能为空${plain}"
@@ -324,7 +398,7 @@ modify_dashboard_config() {
         read -ep "请输入站点标题: " site_title &&
         read -ep "请输入站点访问端口: (8008)" site_port &&
         read -ep "请输入用于 Agent 接入的 RPC 域名: (默认为空)" grpc_host &&
-        read -ep "请输入用于 Agent 接入的 RPC 端口: (2222)" grpc_port
+        read -ep "请输入用于 Agent 接入的 RPC 端口: (默认：2222)" grpc_port
 
     if [[ -z "${admin_logins}" || -z "${github_oauth_client_id}" || -z "${github_oauth_client_secret}" || -z "${site_title}" ]]; then
         echo -e "${red}所有选项都不能为空${plain}"
@@ -519,17 +593,17 @@ show_menu() {
     —————————————————————————
     ${green}8.${plain}  安装探针Agent
     ${green}9.${plain}  更新探针Agent
-    ${green}10.${plain} 修改Agent配置
-    ${green}11.${plain} 查看Agent日志
-    ${green}12.${plain} 卸载Agent
-    ${green}13.${plain} 重启Agent
+    ${green}10.${plain} 查看Agent 志
+    ${green}11.${plain} 卸载Agent
+    ${green}12.${plain} 重启Agent
     —————————————————————————
-    ${green}14.${plain} 更新脚本
+    ${green}13.${plain} 修改Agent配置
     —————————————————————————
+    ${green}00.${plain} 更新脚本
     ${green}0.${plain}  退出脚本
     =========================
     "
-    echo && read -ep "请输入选择 [0-14]: " num
+    echo && read -ep "请输入选择 [0-13]: " num
 
     case "${num}" in
     0)
@@ -563,22 +637,22 @@ show_menu() {
         update_agent
         ;;
     10)
-        modify_agent_config
-        ;;
-    11)
         show_agent_log
         ;;
-    12)
+    11)
         uninstall_agent
         ;;
-    13)
+    12)
         restart_agent
         ;;
-    14)
+    13)
+        set_agent
+        ;;
+    00)
         update_script
         ;;
     *)
-        echo -e "${red}请输入正确的数字 [0-14]${plain}"
+        echo -e "${red}请输入正确的数字 [0-22]${plain}"
         ;;
     esac
 }
