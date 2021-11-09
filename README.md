@@ -134,7 +134,7 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 - cycle_start 周期开始日期（可以是你机器计费周期的开始日期）
 - cycle_interval 小时（可以设为 1 月，30\*24）
 - min/max、cover、ignore 参考基本规则配置
-- 示例: 3 号机器的每月 15 号计费的出站月流量 1T 报警 `[{"type":"transfer_out_cycle","max":1000000000000,"cycle_start":"2021-07-15T08:00:00Z","cycle_interval":720,"cover":1,"ignore":{"3":true}}]`
+- 示例: ID 为 3 的机器（ignore 里面定义）的每月 15 号计费的出站月流量 1T 报警 `[{"type":"transfer_out_cycle","max":1000000000000,"cycle_start":"2021-07-15T08:00:00Z","cycle_interval":730,"cover":1,"ignore":{"3":true}}]`
 </details>
 
 <details>
