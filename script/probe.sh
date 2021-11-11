@@ -593,7 +593,7 @@ show_menu() {
     —————————————————————————
     ${green}8.${plain}  安装探针Agent
     ${green}9.${plain}  更新探针Agent
-    ${green}10.${plain} 查看Agent 志
+    ${green}10.${plain} 查看Agent日志
     ${green}11.${plain} 卸载Agent
     ${green}12.${plain} 重启Agent
     —————————————————————————
