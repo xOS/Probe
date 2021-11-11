@@ -31,7 +31,8 @@
                     {{if .Conf.GRPCHost}}
                     curl -L https://git.io/probe.sh -o probe.sh && chmod +x probe.sh && chmod
                     +x probe.sh && sudo ./probe.sh install_agent <code class="command">{{.Conf.GRPCHost}}</code> <code
-                        class="command">{{.Conf.GRPCPort}}</code> <code class="command hostSecret"></code>
+                        class="command">{{if .Conf.ProxyGRPCPort}}{{.Conf.ProxyGRPCPort}}{{else}}{{.Conf.GRPCPort}}{{end}}</code> <code
+                        class="command hostSecret"></code> <code class="command">{{if .Conf.TLS}}--tls{{end}}</code>
                     {{else}}
                     请先在设置页面配置 后端 Agent 域名/IP 和端口
                     {{end}}

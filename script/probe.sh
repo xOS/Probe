@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.3.0"
+VERSION="v2.3.1"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -200,12 +200,11 @@ install_agent() {
         return 0
     fi
     tar xf probe-agent_linux_${os_arch}.tar.gz &&
-        chmod +x probe-agent &&
         mv probe-agent $AGENT_PATH &&
         rm -rf probe-agent_linux_${os_arch}.tar.gz README.md
 
-    if [[ $# == 3 ]]; then
-        modify_agent_config $1 $2 $3
+    if [ $# -ge 3 ]; then
+        modify_agent_config "$@"
     else
         modify_agent_config 0
     fi
@@ -358,6 +357,12 @@ modify_agent_config() {
     sed -i "s/grpc_host/${grpc_host}/" ${AGENT_SERVICE}
     sed -i "s/grpc_port/${grpc_port}/" ${AGENT_SERVICE}
     sed -i "s/client_secret/${client_secret}/" ${AGENT_SERVICE}
+
+    shift 3
+    if [ $# -gt 0 ]; then
+        args=" $*"
+        sed -i "/ExecStart/ s/$/${args}/" ${AGENT_SERVICE}
+    fi
 
     echo -e "Agent配置 ${green}修改成功，请稍等重启生效${plain}"
 
@@ -683,8 +688,9 @@ if [[ $# > 0 ]]; then
         uninstall_dashboard 0
         ;;
     "install_agent")
-        if [[ $# == 4 ]]; then
-            install_agent $2 $3 $4
+        shift
+        if [ $# -ge 3 ]; then
+            install_agent "$@"
         else
             install_agent 0
         fi

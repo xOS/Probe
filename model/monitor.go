@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/robfig/cron/v3"
 	pb "github.com/xos/probe/proto"
+	"github.com/robfig/cron/v3"
+	
 	"gorm.io/gorm"
 )
 
@@ -17,6 +18,7 @@ const (
 	TaskTypeCommand
 	TaskTypeTerminal
 	TaskTypeUpgrade
+	TaskTypeKeepalive
 )
 
 type TerminalTask struct {
