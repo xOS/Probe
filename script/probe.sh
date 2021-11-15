@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.3.2"
+VERSION="v2.3.3"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -575,7 +575,7 @@ show_usage() {
     echo "./probe.sh uninstall_dashboard        - 卸载管理面板"
     echo "--------------------------------------------------------"
     echo "./probe.sh install_agent              - 安装探针Agent"
-    echo "./probe.sh update_agent              	- 更新探针Agent"
+    echo "./probe.sh update_agent               - 更新探针Agent"
     echo "./probe.sh modify_agent_config        - 修改Agent配置"
     echo "./probe.sh show_agent_log             - 查看Agent日志"
     echo "./probe.sh uninstall_agent            - 卸载Agen"
