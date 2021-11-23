@@ -30,10 +30,10 @@ func (s *ProbeHandler) ReportTask(c context.Context, r *pb.TaskResult) (*pb.Rece
 			dao.ServerLock.RLock()
 			defer dao.ServerLock.RUnlock()
 			if cr.PushSuccessful && r.GetSuccessful() {
-				dao.SendNotification(fmt.Sprintf("#探针通知" + "\n" + "[任务成功]%s " + "\n" + "服务器：%s，日志：\n%s", cr.Name, dao.ServerList[clientID].Name, r.GetData()), false)
+				dao.SendNotification(fmt.Sprintf("#探针通知" + "\n" + "[任务成功]" + "\n" + "%s " + "\n" + "服务器：%s，日志：\n%s", cr.Name, dao.ServerList[clientID].Name, r.GetData()), false)
 			}
 			if !r.GetSuccessful() {
-				dao.SendNotification(fmt.Sprintf("#探针通知" + "\n" + "[任务失败]%s " + "\n" + "服务器：%s，日志：\n%s", cr.Name, dao.ServerList[clientID].Name, r.GetData()), false)
+				dao.SendNotification(fmt.Sprintf("#探针通知" + "\n" + "[任务失败]" + "\n" + "%s " + "\n" + "服务器：%s，日志：\n%s", cr.Name, dao.ServerList[clientID].Name, r.GetData()), false)
 			}
 			dao.DB.Model(cr).Updates(model.Cron{
 				LastExecutedAt: time.Now().Add(time.Second * -1 * time.Duration(r.GetDelay())),
@@ -105,7 +105,7 @@ func (s *ProbeHandler) ReportSystemInfo(c context.Context, r *pb.Host) (*pb.Rece
 		host.IP != "" &&
 		dao.ServerList[clientID].Host.IP != host.IP {
 		dao.SendNotification(fmt.Sprintf(
-			"#探针通知" + "\n" + "[IP 变更]%s " + "\n" + "旧 IP：%s" + "\n" + "新 IP：%s",
+			"#探针通知" + "\n" + "[IP 变更]" + "\n" + "%s " + "\n" + "旧 IP：%s" + "\n" + "新 IP：%s",
 			dao.ServerList[clientID].Name, utils.IPDesensitize(dao.ServerList[clientID].Host.IP), utils.IPDesensitize(host.IP)), true)
 	}
 
