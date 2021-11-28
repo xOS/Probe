@@ -13,7 +13,7 @@ import (
 	pb "github.com/xos/probe/proto"
 )
 
-var Version = "v2.4.13"
+var Version = "v2.4.14"
 
 var (
 	Conf  *model.Config
@@ -53,20 +53,8 @@ var CronLock sync.RWMutex
 var Crons map[uint64]*model.Cron
 var Cron *cron.Cron
 
-func ManualTrigger(c *model.Cron) {
-	ServerLock.RLock()
-	defer ServerLock.RUnlock()
-	for j := 0; j < len(c.Servers); j++ {
-		if ServerList[c.Servers[j]].TaskStream != nil {
-			ServerList[c.Servers[j]].TaskStream.Send(&pb.Task{
-				Id:   c.ID,
-				Data: c.Command,
-				Type: model.TaskTypeCommand,
-			})
-		} else {
-			SendNotification(fmt.Sprintf("#探针通知" + "\n" + "[任务失败]：%s" + "\n" + "服务器：%s 离线，无法执行。", c.Name, ServerList[c.Servers[j]].Name), false)
-		}
-	}
+func ManualTrigger(c model.Cron) {
+	CronTrigger(c)()
 }
 
 func CronTrigger(cr model.Cron) func() {
