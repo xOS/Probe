@@ -58,7 +58,7 @@
                     @#server.Name + (server.live?'':' [已离线]')#@
                     <i class="probe-primary-font info circle icon" style="height: 28px"></i>
                     <div class="ui content popup" style="">
-                      系统：@#SpecialOS(server.Host.Platform)#@ <span v-if='server.Host.OS!= "windows"'>@#server.Host.PlatformVersion#@</span> <span v-if='!server.Host.Virtualization'>KVM</span> @#SpecialVir(server.Host.Virtualization)#@ [@#server.Host.Arch#@]<br />
+                      系统：@#SpecialOS(server.Host.Platform)#@ <span v-if='server.Host.OS!= "windows"'>@#server.Host.PlatformVersion#@ <span v-if='!server.Host.Virtualization'>KVM</span></span> @#SpecialVir(server.Host.Virtualization)#@ [@#server.Host.Arch#@]<br />
                       CPU：@#clearString(server.Host.CPU)#@<br />
                       硬盘：@#formatByteSize(server.State.DiskUsed)#@ / @#formatByteSize(server.Host.DiskTotal)#@<br />
                       内存：@#formatByteSize(server.State.MemUsed)#@ / @#formatByteSize(server.Host.MemTotal)#@<br />
@@ -231,7 +231,7 @@
         return "ScientificSL";
       }
       if ((i.toString().toLowerCase().indexOf("windows"))!= -1){
-        var os = i.replace("Microsoft ", "");
+        var os = i.replace("Microsoft ", "").replace("Datacenter", "").replace("Service Pack 1", "");
         return os;
       }
       return i;
