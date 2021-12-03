@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.3.3"
+VERSION="v2.3.4"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -40,6 +40,10 @@ pre_check() {
         os_arch="arm64"
     elif [[ $(uname -m | grep 'arm') != "" ]]; then
         os_arch="arm"
+    elif [[ $(uname -m | grep 's390x') != "" ]]; then
+        os_arch="s390x"
+    elif [[ $(uname -m | grep 'riscv64') != "" ]]; then
+        os_arch="riscv64"
     fi
 
     ## China_IP
