@@ -1,4 +1,4 @@
-package dao
+package singleton
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 	pb "github.com/xos/probe/proto"
 )
 
-var Version = "v2.5.0"
+var Version = "v2.5.1"
 
 var (
 	Conf  *model.Config

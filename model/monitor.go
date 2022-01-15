@@ -6,7 +6,6 @@ import (
 
 	pb "github.com/xos/probe/proto"
 	"github.com/robfig/cron/v3"
-	
 	"gorm.io/gorm"
 )
 
@@ -79,4 +78,16 @@ func (m *Monitor) AfterFind(tx *gorm.DB) error {
 
 func IsServiceSentinelNeeded(t uint64) bool {
 	return t != TaskTypeCommand && t != TaskTypeTerminal && t != TaskTypeUpgrade
+}
+
+func (m *Monitor) InitSkipServers() error {
+	var skipServers []uint64
+	if err := json.Unmarshal([]byte(m.SkipServersRaw), &skipServers); err != nil {
+		return err
+	}
+	m.SkipServers = make(map[uint64]bool)
+	for i := 0; i < len(skipServers); i++ {
+		m.SkipServers[skipServers[i]] = true
+	}
+	return nil
 }

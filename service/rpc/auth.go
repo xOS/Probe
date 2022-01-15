@@ -3,7 +3,7 @@ package rpc
 import (
 	"context"
 
-	"github.com/xos/probe/service/dao"
+	"github.com/xos/probe/service/singleton"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -32,13 +32,13 @@ func (a *AuthHandler) Check(ctx context.Context) (uint64, error) {
 		clientSecret = value[0]
 	}
 
-	dao.ServerLock.RLock()
-	defer dao.ServerLock.RUnlock()
-	clientID, hasID := dao.SecretToID[clientSecret]
+	singleton.ServerLock.RLock()
+	defer singleton.ServerLock.RUnlock()
+	clientID, hasID := singleton.SecretToID[clientSecret]
 	if !hasID {
 		return 0, status.Errorf(codes.Unauthenticated, "客户端认证失败")
 	}
-	_, hasServer := dao.ServerList[clientID]
+	_, hasServer := singleton.ServerList[clientID]
 	if !hasServer {
 		return 0, status.Errorf(codes.Unauthenticated, "客户端认证失败")
 	}

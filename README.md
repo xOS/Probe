@@ -1,7 +1,7 @@
 # 楠格探针
 > 本项目为原项目[哪吒探针](https://github.com/naiba/nezha)的修改自用版
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.5.0&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.3.4-brightgreen?style=for-the-badge&logo=linux)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.5.1&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.3.4-brightgreen?style=for-the-badge&logo=linux)
 
 一款探针。支持系统状态、HTTP(SSL 证书变更、即将到期、到期)、TCP、Ping 监控报警，命令批量执行和计划任务。
 
@@ -131,8 +131,9 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
   - transfer_in_cycle 周期内的入站流量
   - transfer_out_cycle 周期内的出站流量
   - transfer_all_cycle 周期内双向流量和
-- cycle_start 周期开始日期（可以是你机器计费周期的开始日期）
-- cycle_interval 小时（可以设为 1 月，30\*24）
+- cycle_start 统计周期开始日期（可以是你机器计费周期的开始日期），RFC3339 时间格式，例如北京时间为`2022-01-11T08:00:00.00+08:00`
+- cycle_interval 每隔多少个周期单位（例如，周期单位为天，该值为 7，则代表每隔 7 天统计一次）
+- cycle_unit 统计周期单位，默认`hour`,可选(`hour`, `day`, `week`, `month`, `year`)
 - min/max、cover、ignore 参考基本规则配置
 - 示例: ID 为 3 的机器（ignore 里面定义）的每月 15 号计费的出站月流量 1T 报警 `[{"type":"transfer_out_cycle","max":1000000000000,"cycle_start":"2021-07-15T08:00:00Z","cycle_interval":730,"cover":1,"ignore":{"3":true}}]`
 </details>
@@ -181,6 +182,16 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
   avatar.style.visibility="visible"
   }
   </script>
+  ```
+
+- 默认主题更改背景图片示例
+
+  ```
+  <style>
+  #bg {
+    background-image: url(bg/background.jpeg) !important;
+}
+  </style>
   ```
 
 </details>
@@ -236,9 +247,9 @@ stop_service() {
 }
 
 restart() {
-	stop
-	sleep 2
-	start
+ stop
+ sleep 2
+ start
 }
 ```
 
@@ -247,15 +258,9 @@ restart() {
 </details>
 
 <details>
-    <summary>提示实时通道断开？</summary>
+    <summary>实时通道断开/在线终端连接失败</summary>
 
-### 启用 HTTPS
-
-使用宝塔反代或者上 CDN，建议 Agent 配置 跟 访问管理面板 使用不同的域名，这样管理面板使用的域名可以直接套 CDN，Agent 配置的域名是解析管理面板 IP 使用的，也方便后面管理面板迁移（如果你使用 IP，后面 IP 更换了，需要修改每个 agent，就麻烦了）
-
-### 实时通道断开(WebSocket 反代)
-
-使用反向代理时需要针对 `/ws` 和`/terminal`路径的 WebSocket 进行特别配置以支持实时更新服务器状态和后台 SSH 的连接。
+使用反向代理时需要针对 `/ws`,`/terminal` 路径的 WebSocket 进行特别配置以支持实时更新服务器状态和 **WebSSH**。
 
 - Nginx(宝塔)：在你的 nginx 配置文件中加入以下代码
 

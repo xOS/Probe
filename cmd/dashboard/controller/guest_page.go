@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/xos/probe/model"
 	"github.com/xos/probe/pkg/mygin"
-	"github.com/xos/probe/service/dao"
+	"github.com/xos/probe/service/singleton"
 )
 
 type guestPage struct {
@@ -34,7 +34,7 @@ func (gp *guestPage) serve() {
 func (gp *guestPage) login(c *gin.Context) {
 	LoginType := "GitHub"
 	RegistrationLink := "https://github.com/join"
-	if dao.Conf.Oauth2.Type == model.ConfigTypeGitee {
+	if singleton.Conf.Oauth2.Type == model.ConfigTypeGitee {
 		LoginType = "Gitee"
 		RegistrationLink = "https://gitee.com/signup"
 	}

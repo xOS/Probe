@@ -14,13 +14,13 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/xos/probe/pkg/mygin"
-	"github.com/xos/probe/service/dao"
+	"github.com/xos/probe/service/singleton"
 )
 
 func ServeWeb(port uint) *http.Server {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
-	if dao.Conf.Debug {
+	if singleton.Conf.Debug {
 		gin.SetMode(gin.DebugMode)
 		pprof.Register(r)
 	}
@@ -45,7 +45,7 @@ func ServeWeb(port uint) *http.Server {
 			return time.Duration(time.Duration(duration) * time.Second).String()
 		},
 		"sft": func(future time.Time) string {
-			return time.Until(future).String()
+			return time.Until(future).Round(time.Second).String()
 		},
 		"bf": func(b uint64) string {
 			return bytefmt.ByteSize(b)
