@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/xos/probe/model"
-	"github.com/xos/probe/service/singleton""
+	"github.com/xos/probe/service/singleton"
 )
 
 type AuthorizeOption struct {
