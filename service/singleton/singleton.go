@@ -13,7 +13,7 @@ import (
 	pb "github.com/xos/probe/proto"
 )
 
-var Version = "v2.5.1"
+var Version = "v2.5.2"
 
 var (
 	Conf  *model.Config
