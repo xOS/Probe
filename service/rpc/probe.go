@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/xos/probe/model"
-	"github.com/xos/probe/pkg/utils"
 	pb "github.com/xos/probe/proto"
 	"github.com/xos/probe/service/singleton"
 )

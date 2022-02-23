@@ -1,5 +1,5 @@
 /*
-  Icon Font: OSI
+  Icon Font: osi
 */
 
 @font-face {
@@ -82,6 +82,7 @@
 .os-nixos:before,
 .os-openbsd:before,
 .os-opensuse:before,
+.os-parrot:before,
 .os-pop-os:before,
 .os-raspberry-pi:before,
 .os-redhat:before,
@@ -143,6 +144,7 @@
 .os-nixos:before { content: "\f11d"; }
 .os-openbsd:before { content: "\f11e"; }
 .os-opensuse:before { content: "\f11f"; }
+.os-parrot:before { content: "\f12f"; }
 .os-pop-os:before { content: "\f120"; }
 .os-raspberry-pi:before { content: "\f121"; }
 .os-redhat:before { content: "\f122"; }

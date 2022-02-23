@@ -10,10 +10,11 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/xos/probe/model"
+	"github.com/xos/probe/pkg/utils"
 	pb "github.com/xos/probe/proto"
 )
 
-var Version = "v2.5.3"
+var Version = "v2.6.3"
 
 var (
 	Conf  *model.Config
@@ -83,4 +84,11 @@ func CronTrigger(cr model.Cron) func() {
 			}
 		}
 	}
+}
+
+func IPDesensitize(ip string) string {
+	if Conf.EnablePlainIPInNotification {
+		return ip
+	}
+	return utils.IPDesensitize(ip)
 }

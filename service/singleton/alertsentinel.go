@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/xos/probe/model"
-	"github.com/xos/probe/pkg/utils"
 )
 
 const (
