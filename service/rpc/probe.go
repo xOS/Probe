@@ -105,7 +105,7 @@ func (s *ProbeHandler) ReportSystemInfo(c context.Context, r *pb.Host) (*pb.Rece
 		singleton.ServerList[clientID].Host.IP != host.IP {
 		singleton.SendNotification(fmt.Sprintf(
 			"#探针通知" + "\n" + "[IP 变更]" + "\n" + "%s " + "\n" + "旧 IP：%s" + "\n" + "新 IP：%s",
-			singleton.ServerList[clientID].Name, utils.IPDesensitize(singleton.ServerList[clientID].Host.IP), utils.IPDesensitize(host.IP)), true)
+			singleton.ServerList[clientID].Name, IPDesensitize(singleton.ServerList[clientID].Host.IP), utils.IPDesensitize(host.IP)), true)
 	}
 
 	// 判断是否是机器重启，如果是机器重启要录入最后记录的流量里面
