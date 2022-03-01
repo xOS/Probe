@@ -1,7 +1,7 @@
 # 楠格探针
 > 本项目为原项目[哪吒探针](https://github.com/naiba/nezha)的修改自用版
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.6.6&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.3.4-brightgreen?style=for-the-badge&logo=linux)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.7.7&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.3.4-brightgreen?style=for-the-badge&logo=linux)
 
 一款探针。支持系统状态、HTTP(SSL 证书变更、即将到期、到期)、TCP、Ping 监控报警，命令批量执行和计划任务。
 
@@ -139,7 +139,9 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 - cycle_interval 每隔多少个周期单位（例如，周期单位为天，该值为 7，则代表每隔 7 天统计一次）
 - cycle_unit 统计周期单位，默认`hour`,可选(`hour`, `day`, `week`, `month`, `year`)
 - min/max、cover、ignore 参考基本规则配置
-- 示例: ID 为 3 的机器（ignore 里面定义）的每月 15 号计费的出站月流量 1T 报警 `[{"type":"transfer_out_cycle","max":1000000000000,"cycle_start":"2021-07-15T08:00:00Z","cycle_interval":730,"cover":1,"ignore":{"3":true}}]`
+- 示例: ID 为 3 的机器（ignore 里面定义）的每月 15 号计费的出站月流量 1T 报警 `[{"type":"transfer_out_cycle","max":1000000000000,"cycle_start":"2022-01-11T08:00:00.00+08:00","cycle_interval":1,"cycle_unit":"month","cover":1,"ignore":{"3":true}}]`
+  ![7QKaUx.md.png](https://s4.ax1x.com/2022/01/13/7QKaUx.md.png)
+
 </details>
 
 <details>
@@ -154,7 +156,7 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 
 - 默认主题更改进度条颜色示例
 
-  ```
+  ```html
   <style>
   .ui.fine.progress> .bar {
       background-color: pink !important;
@@ -165,6 +167,10 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 - 默认主题修改 LOGO、移除版权示例（来自 [@iLay1678](https://github.com/iLay1678)）
 
   ```
+
+- 默认主题修改 LOGO、修改页脚示例（来自 [@iLay1678](https://github.com/iLay1678)）
+
+  ```html
   <style>
   .right.menu>a{
   visibility: hidden;
@@ -190,7 +196,7 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 
 - 默认主题更改背景图片示例
 
-  ```
+  ```html
   <style>
   #bg {
     background-image: url(bg/background.jpeg) !important;

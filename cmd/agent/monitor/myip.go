@@ -37,7 +37,7 @@ func UpdateIP() {
 			continue
 		}
 		if ipv4.IP == "" && ipv6.IP == "" {
-			cachedIP = fmt.Sprintf("IPs(IP 为空%s%s)", ipv4.IP, ipv6.IP)
+			cachedIP = fmt.Sprintf("IPs(未获取到 IP%s%s)", ipv4.IP, ipv6.IP)
 		} else if ipv4.IP != "" && ipv6.IP == "" {
 			cachedIP = fmt.Sprintf("IPs(IPv4:%s%s)", ipv4.IP, ipv6.IP)
 		} else if ipv4.IP == "" && ipv6.IP != "" {
