@@ -9,11 +9,7 @@ const CacheKeyOauth2State = "p:a:state"
 var Loc *time.Location
 
 func init() {
-	var err error
-	Loc, err = time.LoadLocation("Asia/Shanghai")
-	if err != nil {
-		panic(err)
-	}
+	Loc = time.FixedZone("CST", 8*3600)
 }
 
 type Common struct {
