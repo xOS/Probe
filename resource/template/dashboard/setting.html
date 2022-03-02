@@ -6,14 +6,14 @@
         <form id="settingForm" class="ui large form" onsubmit="return false;">
             <div class="field">
                 <label>站点标题</label>
-                <input type="text" name="Title" placeholder="楠格探针" value="{{.Conf.Site.Brand}}">
+                <input type="text" name="Title" placeholder="探针" value="{{.Conf.Site.Brand}}">
             </div>
             <div class="field">
                 <label>管理员列表</label>
                 <input type="text" name="Admin" placeholder="1010,2020" value="{{.Conf.Oauth2.Admin}}">
             </div>
             <div class="field">
-                <label>前台主题</label>
+                <label>面板主题</label>
                 <select name="Theme">
                     <option value="default" {{if eq .Conf.Site.Theme "default" }} selected="selected" {{end}}>默认主题
                     </option>
@@ -24,19 +24,19 @@
                 <textarea name="CustomCode">{{.Conf.Site.CustomCode}}</textarea>
             </div>
             <div class="field">
-                <label>前台查看密码</label>
+                <label>面板查看密码</label>
                 <input type="text" name="ViewPassword" placeholder="" value="{{.Conf.Site.ViewPassword}}">
             </div>
             <div class="field">
-                <label>后端 Agent 配置</label>
+                <label>后端探针配置</label>
             </div>
             <div class="ui segment">
                 <div class="field">
-                    <label>Agent 域名/IP</label>
+                    <label>探针域名/IP</label>
                     <input type="text" name="GRPCHost" placeholder="" value="{{.Conf.GRPCHost}}">
                 </div>
                 <div class="field">
-                    <label>Agent 端口</label>
+                    <label>探针端口</label>
                     <input type="number" name="GRPCPort" placeholder="" value="{{.Conf.GRPCPort}}">
                 </div>
             </div>

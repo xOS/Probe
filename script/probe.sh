@@ -3,7 +3,7 @@
 #========================================================
 #   System Required: CentOS 7+ / Debian 8+ / Ubuntu 16+ /
 #   Arch 未测试
-#   Description: 楠格探针安装脚本
+#   Description: 探针安装脚本
 #   Github: https://github.com/xOS/Probe
 #========================================================
 
@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.3.4"
+VERSION="v2.3.5"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -75,7 +75,7 @@ pre_check() {
         Get_Docker_Argu=" "
         Docker_IMG="ghcr.io\/xos\/probe-dashboard"
     else
-        GITHUB_RAW_URL="cdn.jsdelivr.net/gh/xos/probe@master"
+        GITHUB_RAW_URL="fastly.jsdelivr.net/gh/xos/probe@master"
         GITHUB_URL="dn-dao-github-mirror.daocloud.io"
         Get_Docker_URL="get.daocloud.io/docker"
         Get_Docker_Argu=" -s docker --mirror Aliyun"
@@ -138,9 +138,9 @@ install_soft() {
 install_dashboard() {
     install_base
 
-    echo -e "> 安装面板"
+    echo -e "> 安装探针面板"
 
-    # 楠格探针文件夹
+    # 探针文件夹
     mkdir -p $DASHBOARD_PATH
     chmod 777 -R $DASHBOARD_PATH
 
@@ -179,13 +179,13 @@ install_dashboard() {
 install_agent() {
     install_base
 
-    echo -e "> 安装探针Agent"
+    echo -e "> 安装探针"
 
-    echo -e "正在获取探针Agent版本号"
+    echo -e "正在获取探针版本号"
 
     local version=$(curl -m 10 -sL "https://api.github.com/repos/xOS/Probe/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
     if [ ! -n "$version" ]; then
-        version=$(curl -m 10 -sL "https://cdn.jsdelivr.net/gh/xOS/Probe/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/xOS\/Probe@/v/g')
+        version=$(curl -m 10 -sL "https://fastly.jsdelivr.net/gh/xOS/Probe/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/xOS\/Probe@/v/g')
     fi
 
     if [ ! -n "$version" ]; then
@@ -195,11 +195,11 @@ install_agent() {
         echo -e "当前最新版本为: ${version}"
     fi
 
-    # 楠格探针文件夹
+    # 探针文件夹
     mkdir -p $AGENT_PATH
     chmod 777 -R $AGENT_PATH
 
-    echo -e "正在下载探针端"
+    echo -e "正在下载探针"
     wget -O probe-agent_linux_${os_arch}.tar.gz https://${GITHUB_URL}/xos/probe/releases/download/${version}/probe-agent_linux_${os_arch}.tar.gz >/dev/null 2>&1
     if [[ $? != 0 ]]; then
         echo -e "${red}Release 下载失败，请检查本机能否连接 ${GITHUB_URL}${plain}"
@@ -221,13 +221,13 @@ install_agent() {
 }
 
 update_agent() {
-    echo -e "> 更新Agent"
+    echo -e "> 更新 探针"
 
-    echo -e "正在获取探针Agent版本号"
+    echo -e "正在获取探针版本号"
 
     local version=$(curl -m 10 -sL "https://api.github.com/repos/xOS/Probe/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
     if [ ! -n "$version" ]; then
-        version=$(curl -m 10 -sL "https://cdn.jsdelivr.net/gh/xOS/Probe/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/xOS\/Probe@/v/g')
+        version=$(curl -m 10 -sL "https://fastly.jsdelivr.net/gh/xOS/Probe/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/xOS\/Probe@/v/g')
     fi
 
     if [ ! -n "$version" ]; then
@@ -237,10 +237,10 @@ update_agent() {
         echo -e "当前最新版本为: ${version}"
     fi
 
-    # 楠格探针文件夹
+    # 探针文件夹
     chmod 777 -R $AGENT_PATH
 
-    echo -e "正在下载最新版探针端"
+    echo -e "正在下载最新版探针"
     wget -O probe-agent_linux_${os_arch}.tar.gz https://${GITHUB_URL}/xos/probe/releases/download/${version}/probe-agent_linux_${os_arch}.tar.gz >/dev/null 2>&1
     if [[ $? != 0 ]]; then
         echo -e "${red}Release 下载失败，请检查本机能否连接 ${GITHUB_URL}${plain}"
@@ -259,25 +259,25 @@ update_agent() {
 }
 
 set_host(){
-    read -ep "请输入一个解析到面板所在IP的域名: " grpc_host
+    read -ep "请输入一个解析到探针面板所在IP的域名: " grpc_host
         [[ -z "${grpc_host}" ]] && echo "已取消输入..." && exit 1
 }
 set_port(){
-    read -ep "请输入面板RPC端口: (默认：2222)" grpc_port
+    read -ep "请输入探针面板RPC端口: (默认：2222)" grpc_port
         [[ -z "${grpc_port}" ]] && grpc_port=2222
 }
 set_secret(){
-    read -ep "请输入Agent 密钥: " client_secret
+    read -ep "请输入探针密钥: " client_secret
         [[ -z "${client_secret}" ]] && echo "已取消输入..." && exit 1
 }
 read_config(){
-	[[ ! -e ${AGENT_SERVICE} ]] && echo -e "${red} Agent启动文件不存在 ! ${plain}" && exit 1
+	[[ ! -e ${AGENT_SERVICE} ]] && echo -e "${red} 探针启动文件不存在 ! ${plain}" && exit 1
     	host=$(cat ${AGENT_SERVICE}|grep 'probe-agent'|awk -F '-s' '{print $2}'|head -1|sed 's/\:/ /'|awk '{print $1}')
 	port=$(cat ${AGENT_SERVICE}|grep 'probe-agent'|awk -F '-s' '{print $2}'|head -1|sed 's/\:/ /'|awk '{print $2}')
 	secret=$(cat ${AGENT_SERVICE}|grep 'p '|awk -F 'p ' '{print $NF}')
 }
 set_agent(){
-    echo && echo -e "修改Agent配置
+    echo && echo -e "修改探针配置
     =========================
     ${green}1.${plain}  修改 域名
     ${green}2.${plain}  修改 端口
@@ -292,11 +292,11 @@ set_agent(){
 		set_host
         grpc_host=${grpc_host}
         sed -i "s/${host}/${grpc_host}/" ${AGENT_SERVICE}
-        echo -e "Agent域名 ${green}修改成功，请稍等重启生效${plain}"
+        echo -e "探针域名 ${green}修改成功，请稍等重启生效${plain}"
         systemctl daemon-reload
         systemctl enable probe-agent
         systemctl restart probe-agent
-        echo -e "Agent已重启完毕！"
+        echo -e "探针 已重启完毕！"
         before_show_menu
 
 	elif [[ "${modify}" == "2" ]]; then
@@ -304,11 +304,11 @@ set_agent(){
 		set_port
         grpc_port=${grpc_port}
         sed -i "s/${port}/${grpc_port}/" ${AGENT_SERVICE}
-        echo -e "Agent端口${green}修改成功，请稍等重启生效${plain}"
+        echo -e "探针端口${green} 修改成功，请稍等重启生效${plain}"
         systemctl daemon-reload
         systemctl enable probe-agent
         systemctl restart probe-agent
-        echo -e "Agent已重启完毕！"
+        echo -e "探针 已重启完毕！"
         before_show_menu
 
 	elif [[ "${modify}" == "3" ]]; then
@@ -316,11 +316,11 @@ set_agent(){
 		set_secret
         client_secret=${client_secret}
         sed -i "s/${secret}/${client_secret}/" ${AGENT_SERVICE}
-        echo -e "Agent密钥${green}修改成功，请稍等重启生效${plain}"
+        echo -e "探针密钥${green} 修改成功，请稍等重启生效${plain}"
         systemctl daemon-reload
         systemctl enable probe-agent
         systemctl restart probe-agent
-        echo -e "Agent已重启完毕！"
+        echo -e "探针 已重启完毕！"
         before_show_menu
 
 	elif [[ "${modify}" == "4" ]]; then
@@ -333,7 +333,7 @@ set_agent(){
 }
 
 modify_agent_config() {
-    echo -e "> 初始化Agent配置"
+    echo -e "> 初始化探针配置"
 
     wget -O $AGENT_SERVICE https://${GITHUB_RAW_URL}/script/probe-agent.service >/dev/null 2>&1
     if [[ $? != 0 ]]; then
@@ -341,10 +341,10 @@ modify_agent_config() {
         return 0
     fi
     if [[ $# != 3 ]]; then
-        echo "请先在管理面板上添加Agent，记录下密钥" &&
-            read -ep "请输入一个解析到面板所在IP的域名: " grpc_host &&
-            read -ep "请输入面板RPC端口: (默认：2222)" grpc_port &&
-            read -ep "请输入Agent 密钥: " client_secret
+        echo "请先在管理面板上添加探针服务，记录下密钥" &&
+            read -ep "请输入一个解析到探针面板所在IP的域名: " grpc_host &&
+            read -ep "请输入探针面板RPC端口: (默认：2222)" grpc_port &&
+            read -ep "请输入探针密钥: " client_secret
         if [[ -z "${grpc_host}" || -z "${client_secret}" ]]; then
             echo -e "${red}所有选项都不能为空${plain}"
             before_show_menu
@@ -370,20 +370,20 @@ modify_agent_config() {
         sed -i "/ExecStart/ s/$/${args}/" ${AGENT_SERVICE}
     fi
 
-    echo -e "Agent配置 ${green}修改成功，请稍等重启生效${plain}"
+    echo -e "探针配置 ${green}修改成功，请稍等重启生效${plain}"
 
     systemctl daemon-reload
     systemctl enable probe-agent
     systemctl restart probe-agent
 
     if [[ $# == 0 ]]; then
-        echo -e "Agent 已重启完毕！"
+        echo -e "探针 已重启完毕！"
         before_show_menu
     fi
 }
 
 modify_dashboard_config() {
-    echo -e "> 修改面板配置"
+    echo -e "> 修改探针面板配置"
 
     echo -e "正在下载 Docker 脚本"
     wget -O ${DASHBOARD_PATH}/docker-compose.yaml https://${GITHUB_RAW_URL}/script/docker-compose.yaml >/dev/null 2>&1
@@ -408,8 +408,8 @@ modify_dashboard_config() {
         read -ep "请输入 GitHub/Gitee 登录名作为管理员，多个以逗号隔开: " admin_logins &&
         read -ep "请输入站点标题: " site_title &&
         read -ep "请输入站点访问端口: (8008)" site_port &&
-        read -ep "请输入用于 Agent 接入的 RPC 域名: (默认为空)" grpc_host &&
-        read -ep "请输入用于 Agent 接入的 RPC 端口: (默认：2222)" grpc_port
+        read -ep "请输入用于探针接入的 RPC 域名: (默认为空)" grpc_host &&
+        read -ep "请输入用于探针接入的 RPC 端口: (默认：2222)" grpc_port
 
     if [[ -z "${admin_logins}" || -z "${github_oauth_client_id}" || -z "${github_oauth_client_secret}" || -z "${site_title}" ]]; then
         echo -e "${red}所有选项都不能为空${plain}"
@@ -441,7 +441,7 @@ modify_dashboard_config() {
     sed -i "s/grpc_port/${grpc_port}/g" ${DASHBOARD_PATH}/docker-compose.yaml
     sed -i "s/image_url/${Docker_IMG}/" ${DASHBOARD_PATH}/docker-compose.yaml
 
-    echo -e "面板配置 ${green}修改成功，请稍等重启生效${plain}"
+    echo -e "探针面板配置 ${green}修改成功，请稍等重启生效${plain}"
 
     restart_and_update
 
@@ -451,14 +451,14 @@ modify_dashboard_config() {
 }
 
 restart_and_update() {
-    echo -e "> 重启并更新面板"
+    echo -e "> 重启并更新探针面板"
 
     cd $DASHBOARD_PATH
     docker-compose pull
     docker-compose down
     docker-compose up -d
     if [[ $? == 0 ]]; then
-        echo -e "${green}楠格探针 重启成功${plain}"
+        echo -e "${green}探针面板 重启成功${plain}"
         echo -e "默认管理面板地址：${yellow}域名:站点访问端口${plain}"
     else
         echo -e "${red}重启失败，可能是因为启动时间超过了两秒，请稍后查看日志信息${plain}"
@@ -470,11 +470,11 @@ restart_and_update() {
 }
 
 start_dashboard() {
-    echo -e "> 启动面板"
+    echo -e "> 启动 探针面板"
 
     cd $DASHBOARD_PATH && docker-compose up -d
     if [[ $? == 0 ]]; then
-        echo -e "${green}楠格探针 启动成功${plain}"
+        echo -e "${green}探针面板 启动成功${plain}"
     else
         echo -e "${red}启动失败，请稍后查看日志信息${plain}"
     fi
@@ -485,11 +485,11 @@ start_dashboard() {
 }
 
 stop_dashboard() {
-    echo -e "> 停止面板"
+    echo -e "> 停止 探针面板"
 
     cd $DASHBOARD_PATH && docker-compose down
     if [[ $? == 0 ]]; then
-        echo -e "${green}楠格探针 停止成功${plain}"
+        echo -e "${green}探针面板 停止成功${plain}"
     else
         echo -e "${red}停止失败，请稍后查看日志信息${plain}"
     fi
@@ -500,7 +500,7 @@ stop_dashboard() {
 }
 
 show_dashboard_log() {
-    echo -e "> 获取面板日志"
+    echo -e "> 获取探针面板日志"
 
     cd $DASHBOARD_PATH && docker-compose logs -f
 
@@ -510,7 +510,7 @@ show_dashboard_log() {
 }
 
 uninstall_dashboard() {
-    echo -e "> 卸载管理面板"
+    echo -e "> 卸载 探针面板"
 
     cd $DASHBOARD_PATH &&
         docker-compose down
@@ -525,7 +525,7 @@ uninstall_dashboard() {
 }
 
 show_agent_log() {
-    echo -e "> 获取Agent日志"
+    echo -e "> 获取探针日志"
 
     systemctl status probe-agent.service
 
@@ -535,7 +535,7 @@ show_agent_log() {
 }
 
 uninstall_agent() {
-    echo -e "> 卸载Agent"
+    echo -e "> 卸载 探针"
 
     systemctl disable probe-agent.service
     systemctl stop probe-agent.service
@@ -551,7 +551,7 @@ uninstall_agent() {
 }
 
 restart_agent() {
-    echo -e "> 重启Agent"
+    echo -e "> 重启 探针"
 
     systemctl restart probe-agent.service
 
@@ -567,23 +567,23 @@ clean_all() {
 }
 
 show_usage() {
-    echo "楠格探针 管理脚本使用方法: "
+    echo "探针 管理脚本使用方法: "
     echo "--------------------------------------------------------"
     echo "./probe.sh                            - 显示管理菜单"
     echo "./probe.sh install_dashboard          - 安装面板端"
     echo "./probe.sh modify_dashboard_config    - 修改面板配置"
-    echo "./probe.sh start_dashboard            - 启动面板"
-    echo "./probe.sh stop_dashboard             - 停止面板"
+    echo "./probe.sh start_dashboard            - 启动探针面板"
+    echo "./probe.sh stop_dashboard             - 停止探针面板"
     echo "./probe.sh restart_and_update         - 重启并更新面板"
     echo "./probe.sh show_dashboard_log         - 查看面板日志"
     echo "./probe.sh uninstall_dashboard        - 卸载管理面板"
     echo "--------------------------------------------------------"
-    echo "./probe.sh install_agent              - 安装探针Agent"
-    echo "./probe.sh update_agent               - 更新探针Agent"
-    echo "./probe.sh modify_agent_config        - 修改Agent配置"
-    echo "./probe.sh show_agent_log             - 查看Agent日志"
-    echo "./probe.sh uninstall_agent            - 卸载Agen"
-    echo "./probe.sh restart_agent              - 重启Agen"
+    echo "./probe.sh install_agent              - 安装探针"
+    echo "./probe.sh update_agent               - 更新探针"
+    echo "./probe.sh modify_agent_config        - 修改探针配置"
+    echo "./probe.sh show_agent_log             - 探针状态"
+    echo "./probe.sh uninstall_agent            - 卸载探针"
+    echo "./probe.sh restart_agent              - 重启探针"
     echo "./probe.sh update_script              - 更新脚本"
     echo "--------------------------------------------------------"
 }
@@ -592,23 +592,23 @@ show_menu() {
     clear
     echo -e "
     =========================
-    ${green}楠格探针管理脚本${plain} ${red}[${VERSION}]${plain}
+    ${green}探针管理脚本${plain} ${red}[${VERSION}]${plain}
     =========================
-    ${green}1.${plain}  安装面板端
-    ${green}2.${plain}  修改面板配置
-    ${green}3.${plain}  启动面板
-    ${green}4.${plain}  停止面板
-    ${green}5.${plain}  重启并更新面板
-    ${green}6.${plain}  查看面板日志
-    ${green}7.${plain}  卸载管理面板
+    ${green}1.${plain}  安装探针面板端
+    ${green}2.${plain}  修改探针面板配置
+    ${green}3.${plain}  启动探针面板
+    ${green}4.${plain}  停止探针面板
+    ${green}5.${plain}  重启并更新探针面板
+    ${green}6.${plain}  查看探针面板日志
+    ${green}7.${plain}  卸载管理探针面板
     —————————————————————————
-    ${green}8.${plain}  安装探针Agent
-    ${green}9.${plain}  更新探针Agent
-    ${green}10.${plain} 查看Agent日志
-    ${green}11.${plain} 卸载Agent
-    ${green}12.${plain} 重启Agent
+    ${green}8.${plain}  安装 探针
+    ${green}9.${plain}  更新 探针
+    ${green}10.${plain} 探针 状态
+    ${green}11.${plain} 卸载 探针
+    ${green}12.${plain} 重启 探针
     —————————————————————————
-    ${green}13.${plain} 修改Agent配置
+    ${green}13.${plain} 修改探针配置
     —————————————————————————
     ${green}00.${plain} 更新脚本
     ${green}0.${plain}  退出脚本
