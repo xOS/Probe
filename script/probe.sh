@@ -595,7 +595,7 @@ show_menu() {
     =========================
     ${green}探针管理脚本${plain} ${red}[${VERSION}]${plain}
     =========================
-    ${green}1.${plain}  安装探针面板端
+    ${green}1.${plain}  安装探针面板
     ${green}2.${plain}  修改探针面板配置
     ${green}3.${plain}  启动探针面板
     ${green}4.${plain}  停止探针面板
