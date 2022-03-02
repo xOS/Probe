@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.3.5"
+VERSION="v2.3.6"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -80,6 +80,7 @@ pre_check() {
         Get_Docker_URL="get.daocloud.io/docker"
         Get_Docker_Argu=" -s docker --mirror Aliyun"
         Docker_IMG="registry.cn-shanghai.aliyuncs.com\/dns\/probe-dashboard"
+        curl -s https://purge.jsdelivr.net/gh/xos/probe@master/script/probe.sh > /dev/null 2>&1
     fi
 }
 
