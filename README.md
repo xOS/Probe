@@ -33,6 +33,58 @@ CN=true sudo ./probe.sh
 
 _\* 使用 WatchTower 可以自动更新面板，Windows 终端可以使用 nssm 配置自启动。_
 
+
+
+## 非Docker环境手动部署控制面板
+
+> 注意：1.需要安装`Golang` 且版本需要1.17或以上。
+>
+> ​	 2.默认安装路径 `/opt/probe/dashboard`。
+>
+> ​	 3.手动部署的面板暂无法通过脚本进行面板部分的控制操作。
+
+1.克隆仓库
+
+```bash
+git clone https://github.com/xOS/Probe.git
+```
+
+2.下载依赖
+
+```bash
+cd Probe/
+go mod tidy -v
+```
+
+3.编译，以`AMD64`架构为例
+
+```bash
+cd cmd/dashboard/
+CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o probe-dashboard -ldflags="-s -w"
+```
+
+4.部署面板为系统服务
+
+```bash
+mkdir -p /opt/probe/dashboard
+mv probe-dashboard /opt/probe/dashboard/
+cp /root/Probe/resource/ /opt/probe/dashboard/ -r
+cd ../..
+mkdir -p /opt/probe/dashboard/data
+cp script/config.yaml /opt/probe/dashboard/data
+cp script/docker-compose.yaml /opt/probe/dashboard
+cp script/probe-dashboard.service /etc/systemd/system
+```
+
+5.修改配置文件`/opt/probe/dashboard/data/config.yaml`，注册服务并启动
+
+```bash
+systemctl enable probe-dashboard
+systemctl start probe-dashboard
+```
+
+
+
 ### 增强配置
 
 通过执行 `./probe-agent --help` 查看支持的参数，如果你使用一键脚本，可以编辑 `/etc/systemd/system/probe-agent.service`，在 `ExecStart=` 这一行的末尾加上
