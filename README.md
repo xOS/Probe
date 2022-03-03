@@ -6,10 +6,12 @@
 一款探针。支持系统状态、HTTP(SSL 证书变更、即将到期、到期)、TCP、Ping 监控报警，命令批量执行和计划任务。
 
 ## 注意：
+
 * 本项目与原项目不兼容！
 * 本项目配置文件与原项目不通用！
 
 ## 演示图
+
 ![首页截图](https://i.cdn.ink/views/a4f36a.png)
 
 ## 安装脚本
@@ -37,11 +39,11 @@ _\* 使用 WatchTower 可以自动更新面板，Windows 终端可以使用 nssm
 
 ## 非Docker环境手动部署控制面板
 
-> 注意：1.需要安装`Golang` 且版本需要1.17或以上。
->
-> ​	 2.默认安装路径 `/opt/probe/dashboard`。
->
-> ​	 3.手动部署的面板暂无法通过脚本进行面板部分的控制操作。
+注意：
+
+* 需要安装`Golang` 且版本需要1.17或以上。
+* 默认安装路径 `/opt/probe/dashboard`。
+* 手动部署的面板暂无法通过脚本进行面板部分的控制操作。
 
 1.克隆仓库
 
@@ -72,7 +74,6 @@ cp /root/Probe/resource/ /opt/probe/dashboard/ -r
 cd ../..
 mkdir -p /opt/probe/dashboard/data
 cp script/config.yaml /opt/probe/dashboard/data
-cp script/docker-compose.yaml /opt/probe/dashboard
 cp script/probe-dashboard.service /etc/systemd/system
 ```
 
