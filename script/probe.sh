@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.3.7"
+VERSION="v2.3.8"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -264,7 +264,7 @@ set_host(){
         [[ -z "${grpc_host}" ]] && echo "已取消输入..." && exit 1
 }
 set_port(){
-    read -ep "请输入探针面板RPC端口: (默认：2222)" grpc_port
+    read -ep "请输入探针面板GRPC端口: (默认：2222)" grpc_port
         [[ -z "${grpc_port}" ]] && grpc_port=2222
 }
 set_secret(){
