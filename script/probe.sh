@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.3.8"
+VERSION="v2.4.0"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -264,7 +264,7 @@ set_host(){
         [[ -z "${grpc_host}" ]] && echo "已取消输入..." && exit 1
 }
 set_port(){
-    read -ep "请输入探针面板GRPC端口: (默认：2222)" grpc_port
+    read -ep "请输入探针面板 GRPC 端口（默认：2222）: " grpc_port
         [[ -z "${grpc_port}" ]] && grpc_port=2222
 }
 set_secret(){
@@ -344,7 +344,7 @@ modify_agent_config() {
     if [[ $# != 3 ]]; then
         echo "请先在管理面板上添加探针服务，记录下密钥" &&
             read -ep "请输入一个解析到探针面板所在IP的域名: " grpc_host &&
-            read -ep "请输入探针面板RPC端口: (默认：2222)" grpc_port &&
+            read -ep "请输入探针面板 GRPC 端口（默认：2222）: " grpc_port &&
             read -ep "请输入探针密钥: " client_secret
         if [[ -z "${grpc_host}" || -z "${client_secret}" ]]; then
             echo -e "${red}所有选项都不能为空${plain}"
@@ -403,14 +403,14 @@ modify_dashboard_config() {
 
     echo "关于 GitHub Oauth2 应用：在 https://github.com/settings/developers 创建，无需审核，Callback 填 http(s)://域名或IP/oauth2/callback" &&
         echo "关于 Gitee Oauth2 应用：在 https://gitee.com/oauth/applications 创建，无需审核，Callback 填 http(s)://域名或IP/oauth2/callback" &&
-        read -ep "请输入 OAuth2 提供商(gitee/github，默认 github): " oauth2_type &&
+        read -ep "请输入 OAuth2 提供商(Gitee/Github，默认 Github): " oauth2_type &&
         read -ep "请输入 Oauth2 应用的 Client ID: " github_oauth_client_id &&
         read -ep "请输入 Oauth2 应用的 Client Secret: " github_oauth_client_secret &&
         read -ep "请输入 GitHub/Gitee 登录名作为管理员，多个以逗号隔开: " admin_logins &&
         read -ep "请输入站点标题: " site_title &&
         read -ep "请输入站点访问端口: (8008)" site_port &&
-        read -ep "请输入用于探针接入的 RPC 域名: (默认为空)" grpc_host &&
-        read -ep "请输入用于探针接入的 RPC 端口: (默认：2222)" grpc_port
+        read -ep "请输入用于探针接入的 GRPC 域名（必填，默认为空）: " grpc_host &&
+        read -ep "请输入用于探针接入的 GRPC 端口（默认：2222）: " grpc_port
 
     if [[ -z "${admin_logins}" || -z "${github_oauth_client_id}" || -z "${github_oauth_client_secret}" || -z "${site_title}" ]]; then
         echo -e "${red}所有选项都不能为空${plain}"
