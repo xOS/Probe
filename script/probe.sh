@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.4.1"
+VERSION="v2.4.2"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -433,7 +433,7 @@ modify_dashboard_config() {
 
     sed -i "s/oauth2_type/${oauth2_type}/" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/admin_logins/${admin_logins}/" ${DASHBOARD_PATH}/data/config.yaml
-    sed -i "s/http_port/${site_port}/g" ${DASHBOARD_PATH}/data/config.yaml
+    sed -i "s/site_port/${site_port}/g" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/grpc_host/${grpc_host}/g" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/grpc_port/${grpc_port}/g" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/github_oauth_client_id/${github_oauth_client_id}/" ${DASHBOARD_PATH}/data/config.yaml
