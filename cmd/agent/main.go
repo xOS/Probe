@@ -349,7 +349,7 @@ func handleHttpGetTask(task *pb.Task, result *pb.TaskResult) {
 
 func handleCommandTask(task *pb.Task, result *pb.TaskResult) {
 	if agentConf.DisableCommandExecute {
-		result.Data = "此 Agent 已禁止命令执行"
+		result.Data = "该节点已禁止命令执行"
 		return
 	}
 	startedAt := time.Now()
