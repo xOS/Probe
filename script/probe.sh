@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.4.0"
+VERSION="v2.4.1"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -408,7 +408,7 @@ modify_dashboard_config() {
         read -ep "请输入 Oauth2 应用的 Client Secret: " github_oauth_client_secret &&
         read -ep "请输入 GitHub/Gitee 登录名作为管理员，多个以逗号隔开: " admin_logins &&
         read -ep "请输入站点标题: " site_title &&
-        read -ep "请输入站点访问端口: (8008)" site_port &&
+        read -ep "请输入站点访问端口（默认：8008）: " site_port &&
         read -ep "请输入用于探针接入的 GRPC 域名（必填，默认为空）: " grpc_host &&
         read -ep "请输入用于探针接入的 GRPC 端口（默认：2222）: " grpc_port
 
@@ -433,12 +433,13 @@ modify_dashboard_config() {
 
     sed -i "s/oauth2_type/${oauth2_type}/" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/admin_logins/${admin_logins}/" ${DASHBOARD_PATH}/data/config.yaml
-    sed -i "s/grpc_host/$grpc_host}/" ${DASHBOARD_PATH}/data/config.yaml
-    sed -i "s/grpc_port/$grpc_port}/" ${DASHBOARD_PATH}/data/config.yaml
+    sed -i "s/http_port/${site_port}/g" ${DASHBOARD_PATH}/data/config.yaml
+    sed -i "s/grpc_host/${grpc_host}/g" ${DASHBOARD_PATH}/data/config.yaml
+    sed -i "s/grpc_port/${grpc_port}/g" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/github_oauth_client_id/${github_oauth_client_id}/" ${DASHBOARD_PATH}/data/config.yaml
     sed -i "s/github_oauth_client_secret/${github_oauth_client_secret}/" ${DASHBOARD_PATH}/data/config.yaml
-    sed -i "s/site_title/${site_title}/" ${DASHBOARD_PATH}/data/config.yaml
-    sed -i "s/site_port/${site_port}/" ${DASHBOARD_PATH}/docker-compose.yaml
+    sed -i "s/site_title/${site_title}/g" ${DASHBOARD_PATH}/data/config.yaml
+    sed -i "s/site_port/${site_port}/g" ${DASHBOARD_PATH}/docker-compose.yaml
     sed -i "s/grpc_port/${grpc_port}/g" ${DASHBOARD_PATH}/docker-compose.yaml
     sed -i "s/image_url/${Docker_IMG}/" ${DASHBOARD_PATH}/docker-compose.yaml
 

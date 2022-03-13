@@ -19,8 +19,8 @@ type geoIP struct {
 
 var (
 	geoIPApiList = []string{
-		"https://api.ip.sb/geoip",
 		"http://ip.qste.com/json",
+		"https://api.ip.sb/geoip",
 		"http://ip-api.com/json/",
 		"http://ip.nan.ge/json",
 	}

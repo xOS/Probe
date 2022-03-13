@@ -1,5 +1,5 @@
 debug: true
-httpport: 8080
+httpport: site_port
 grpcport: grpc_port
 grpchost: grpc_host
 oauth2:
