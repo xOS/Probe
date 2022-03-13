@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.4.2"
+VERSION="v2.4.3"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -341,7 +341,7 @@ modify_agent_config() {
         echo -e "${red}文件下载失败，请检查本机能否连接 ${GITHUB_RAW_URL}${plain}"
         return 0
     fi
-    if [[ $# != 3 ]]; then
+    if [[ $# -lt 3 ]]; then
         echo "请先在管理面板上添加探针服务，记录下密钥" &&
             read -ep "请输入一个解析到探针面板所在IP的域名: " grpc_host &&
             read -ep "请输入探针面板 GRPC 端口（默认：2222）: " grpc_port &&
@@ -422,7 +422,7 @@ modify_dashboard_config() {
         site_port=8008
     fi
     if [[ -z "${grpc_host}" ]]; then
-        grpc_host=''
+        # grpc_host=''
     fi
     if [[ -z "${grpc_port}" ]]; then
         grpc_port=2222
