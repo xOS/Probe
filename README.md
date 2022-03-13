@@ -3,8 +3,6 @@
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.8.0&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.4.4-brightgreen?style=for-the-badge&logo=linux)
 
-一款探针。支持系统状态、HTTP(SSL 证书变更、即将到期、到期)、TCP、Ping 监控报警，命令批量执行和计划任务。
-
 ## 注意：
 
 * 本项目与原项目不兼容！
@@ -16,7 +14,7 @@
 
 ## 安装脚本
 
-**推荐配置：** 安装前解析 _两个域名_ 到面板服务器，一个作为 _公开访问_ ，可以 **接入CDN**；另外一个作为安装 Agent 时连接 Dashboard 使用，**不能接入CDN** 直接暴露面板主机IP。
+**推荐配置：** 安装前解析 _两个域名_ 到面板服务器，一个作为 _公开访问_ ，可以 **接入CDN**；另外一个作为安装探针时连接面板使用，**不能接入CDN** 直接暴露面板主机IP。
 
 ```shell
 curl -L https://git.io/probe.sh -o probe.sh && chmod +x probe.sh
@@ -92,11 +90,11 @@ systemctl start probe-dashboard
 
 - `--report-delay` 系统信息上报的间隔，默认为 1 秒，可以设置为 3 来进一步降低 agent 端系统资源占用（配置区间 1-4）
 - `--skip-conn` 不监控连接数，机场/连接密集型机器推荐设置，不然比较占 CPU([shirou/gopsutil/issues#220](https://github.com/shirou/gopsutil/issues/220))
-- `--skip-procs` 不监控进程数，也可以降低 agent 占用
-- `--disable-auto-update` 禁止 **自动更新** Agent（安全特性）
-- `--disable-force-update` 禁止 **强制更新** Agent（安全特性）
-- `--disable-command-execute` 禁止在 Agent 机器上执行定时任务、打开在线终端（安全特性）
-- `--tls` 启用 SSL/TLS 加密（使用 nginx 反向代理 Agent 的 grpc 连接，并且 nginx 开启 SSL/TLS 时，需要启用该项配置）
+- `--skip-procs` 不监控进程数，也可以降低探针占用
+- `--disable-auto-update` 禁止 **自动更新** 探针（安全特性）
+- `--disable-force-update` 禁止 **强制更新** 探针（安全特性）
+- `--disable-command-execute` 禁止在探针机器上执行定时任务、打开在线终端（安全特性）
+- `--tls` 启用 SSL/TLS 加密（使用 nginx 反向代理探针的 grpc 连接，并且 nginx 开启 SSL/TLS 时，需要启用该项配置）
 
 ## 功能说明
 
@@ -271,13 +269,13 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 
 </details>
 
-
 <details>
-    <summary>Agent 启动/上线 问题自检流程</summary>
+    <summary>探针启动/上线 问题自检流程</summary>
 
-1. 直接执行 `/opt/probe/agent/probe-agent -s 面板IP或非CDN域名:面板RPC端口 -p Agent密钥 -d` 查看日志是否是 DNS 问题。
-2. `nc -v 域名/IP 面板RPC端口` 或者 `telnet 域名/IP 面板RPC端口` 检验是否是网络问题，检查本机与面板服务器出入站防火墙，如果单机无法判断可借助 https://port.ping.pe/ 提供的端口检查工具进行检测。
-3. 如果上面步骤检测正常，Agent 正常上线，尝试关闭 SELinux，[如何关闭 SELinux？](https://www.google.com/search?q=%E5%85%B3%E9%97%ADSELINUX)
+
+1. 直接执行 `/opt/probe/agent/probe-agent -s 面板IP或非CDN域名:面板GRPC端口 -p 探针密钥 -d` 查看日志是否是 DNS 问题。
+2. `nc -v 域名/IP 面板GRPC端口` 或者 `telnet 域名/IP 面板GRPC端口` 检验是否是网络问题，检查本机与面板服务器出入站防火墙，如果单机无法判断可借助 https://port.ping.pe/ 提供的端口检查工具进行检测。
+3. 如果上面步骤检测正常，探针正常上线，尝试关闭 SELinux，[如何关闭 SELinux？](https://www.google.com/search?q=%E5%85%B3%E9%97%ADSELINUX)
 </details>
 
 <details>
@@ -300,7 +298,7 @@ USE_PROCD=1
 
 start_service() {
 	procd_open_instance
-	procd_set_param command /root/probe-agent -s 面板网址:接收端口 -p 唯一秘钥 -d
+	procd_set_param command /root/probe-agent -s 面板域名:接收端口 -p 唯一秘钥 -d
 	procd_set_param respawn
 	procd_close_instance
 }
@@ -376,7 +374,7 @@ restart() {
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
-    server_name ip-to-dashboard.nai.ba; # 你的 Agent 连接 Dashboard 的域名
+    server_name ip-to-dashboard.nai.ba; # 你的探针连接面板的域名
 
     ssl_certificate          /data/letsencrypt/fullchain.pem; # 你的域名证书路径
     ssl_certificate_key      /data/letsencrypt/key.pem;       # 你的域名私钥路径
@@ -394,7 +392,7 @@ server {
 - Caddy 配置
 
 ```Caddyfile
-ip-to-dashboard.nai.ba:443 { # 你的 Agent 连接 Dashboard 的域名
+ip-to-dashboard.nai.ba:443 { # 你的探针连接面板的域名
     reverse_proxy {
         to localhost:5555
         transport http {
@@ -405,13 +403,13 @@ ip-to-dashboard.nai.ba:443 { # 你的 Agent 连接 Dashboard 的域名
 ```
 
 
-Dashboard 面板端配置
+面板端配置
 
 - 首先登录面板进入管理后台 打开设置页面，在 `未接入CDN的面板服务器域名/IP` 中填入上一步在 Nginx 或 Caddy 中配置的域名 比如 `ip-to-dashboard.nai.ba` ，并保存。
 - 然后在面板服务器中，打开 /opt/probe/dashboard/data/config.yaml 文件，将 `proxygrpcport` 修改为 Nginx 或 Caddy 监听的端口，比如上一步设置的 `443` ；因为我们在 Nginx 或 Caddy 中开启了 SSL/TLS，所以需要将 `tls` 设置为 `true` ；修改完成后重启面板。
 
 
-Agent 端配置
+探针端配置
 
 - 登录面板管理后台，复制一键安装命令，在对应的服务器上面执行一键安装命令重新安装 agent 端即可。
 
