@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.4.3"
+VERSION="v2.4.4"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -422,7 +422,7 @@ modify_dashboard_config() {
         site_port=8008
     fi
     if [[ -z "${grpc_host}" ]]; then
-        # grpc_host=''
+        grpc_host='grpc_host'
     fi
     if [[ -z "${grpc_port}" ]]; then
         grpc_port=2222
