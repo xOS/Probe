@@ -7,5 +7,5 @@ services:
     volumes:
       - ./data:/dashboard/data
     ports:
-      - site_port:80
+      - site_port:site_port
       - grpc_port:grpc_port
