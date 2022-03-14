@@ -576,11 +576,11 @@ i.arrow.alternate.circle.up.outline.icon {
 }
 
 .status.cards .outline.icon {
-    margin-right: -4px;
+    margin-right: -2px;
 }
 
 i.s {
-    margin-right: 0px !important;
+    margin-right: 2px !important;
 }
 
 .ui.progress .bar {
