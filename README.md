@@ -1,5 +1,5 @@
 # 探针
-本项目为原项目[哪吒探针](https://github.com/naiba/nezha)的修改版,目前使用的是自用[精简版](https://github.com/xOS/Probe-Lite)
+本项目为原项目[哪吒探针](https://github.com/naiba/nezha)的修改版,目前使用的是自用[精简版](https://github.com/xOS/ServerStatus)
 
 
 
