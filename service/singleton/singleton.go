@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"sync"
+	"time"
 
 	"github.com/patrickmn/go-cache"
 	"github.com/robfig/cron/v3"
@@ -14,12 +15,13 @@ import (
 	pb "github.com/xos/probe/proto"
 )
 
-var Version = "v2.8.3"
+var Version = "v2.8.4"
 
 var (
 	Conf  *model.Config
 	Cache *cache.Cache
 	DB    *gorm.DB
+	Loc   *time.Location
 
 	ServerList map[uint64]*model.Server
 	SecretToID map[string]uint64
@@ -28,6 +30,14 @@ var (
 	SortedServerList []*model.Server
 	SortedServerLock sync.RWMutex
 )
+
+func Init() {
+	var err error
+	Loc, err = time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		panic(err)
+	}
+}
 
 func ReSortServer() {
 	ServerLock.RLock()
