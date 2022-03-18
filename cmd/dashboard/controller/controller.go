@@ -13,8 +13,8 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 
-	"github.com/naiba/nezha/pkg/mygin"
-	"github.com/naiba/nezha/service/singleton"
+	"github.com/xos/probe/pkg/mygin"
+	"github.com/xos/probe/service/singleton"
 )
 
 func ServeWeb(port uint) *http.Server {
