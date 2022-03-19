@@ -86,7 +86,13 @@ systemctl start probe-dashboard
 
 
 
-### 增强配置
+### Agent 自定义
+
+#### 自定义监控的网卡和硬盘分区
+
+执行 `/opt/probe/agent/probe-agent --edit-agent-config` 来选择自定义的网卡和分区，然后重启探针即可
+
+#### 运行参数
 
 通过执行 `./probe-agent --help` 查看支持的参数，如果你使用一键脚本，可以编辑 `/etc/systemd/system/probe-agent.service`，在 `ExecStart=` 这一行的末尾加上
 
