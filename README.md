@@ -41,7 +41,7 @@ _\* 使用 WatchTower 可以自动更新面板，Windows 终端可以使用 nssm
 
 注意：
 
-* 需要安装`Golang`且版本需要1.17或以上。
+* 需要安装`Golang`且版本需要1.18或以上。
 * 默认安装路径 `/opt/probe/dashboard`。
 * 手动部署的面板暂无法通过脚本进行面板部分的控制操作。
 
@@ -85,8 +85,7 @@ systemctl start probe-dashboard
 ```
 
 
-
-### Agent 自定义
+### 探针 Agent 自定义
 
 #### 自定义监控的网卡和硬盘分区
 
