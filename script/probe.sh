@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.4.6"
+VERSION="v2.4.7"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -130,10 +130,10 @@ install_base() {
 }
 
 install_soft() {
-    (command -v yum >/dev/null 2>&1 && yum install $* -y) ||
-        (command -v apt >/dev/null 2>&1 && apt install $* -y) ||
+    (command -v yum >/dev/null 2>&1 && yum update && yum install $* -y) ||
+        (command -v apt >/dev/null 2>&1 && apt update && apt install $* -y) ||
         (command -v pacman >/dev/null 2>&1 && pacman -Syu $*) ||
-        (command -v apt-get >/dev/null 2>&1 && apt-get install $* -y)
+        (command -v apt-get >/dev/null 2>&1 && apt-get update && apt-get install $* -y)
 }
 
 install_dashboard() {
