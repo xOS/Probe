@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.4.7"
+VERSION="v2.4.8"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -536,7 +536,7 @@ uninstall_dashboard() {
 show_agent_log() {
     echo -e "> 获取探针日志"
 
-    systemctl status probe-agent.service
+    journalctl -xf -u probe-agent.service
 
     if [[ $# == 0 ]]; then
         before_show_menu
