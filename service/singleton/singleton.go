@@ -10,7 +10,7 @@ import (
 	"github.com/xos/probe/model"
 )
 
-var Version = "v2.9.0"
+var Version = "v2.9.1"
 
 var (
 	Conf  *model.Config
