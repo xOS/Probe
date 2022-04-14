@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/xos/probe/model"
+	"github.com/xos/probe/pkg/utils"
 )
 
 var Version = "v2.9.1"
