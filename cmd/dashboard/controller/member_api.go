@@ -549,6 +549,7 @@ type settingForm struct {
 	IgnoredIPNotification   string
 	IPChangeNotificationTag string // IP变更提醒的通知组
 	GRPCHost                string
+	GRPCPort              uint
 	Cover                   uint8
 
 	EnableIPChangeNotification  string
