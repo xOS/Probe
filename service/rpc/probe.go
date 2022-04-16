@@ -29,10 +29,10 @@ func (s *ProbeHandler) ReportTask(c context.Context, r *pb.TaskResult) (*pb.Rece
 			singleton.ServerLock.RLock()
 			defer singleton.ServerLock.RUnlock()
 			if cr.PushSuccessful && r.GetSuccessful() {
-				singleton.SendNotification(fmt.Sprintf("#探针通知" + "\n" + "[任务成功]" + "\n" + "%s " + "\n" + "服务器：%s，日志：\n%s", cr.Name, singleton.ServerList[clientID].Name, r.GetData()), false)
+				singleton.SendNotification(cr.NotificationTag, fmt.Sprintf("#探针通知" + "\n" + "[任务成功]" + "\n" + "%s " + "\n" + "服务器：%s，日志：\n%s", cr.Name, singleton.ServerList[clientID].Name, r.GetData()), false)
 			}
 			if !r.GetSuccessful() {
-				singleton.SendNotification(fmt.Sprintf("#探针通知" + "\n" + "[任务失败]" + "\n" + "%s " + "\n" + "服务器：%s，日志：\n%s", cr.Name, singleton.ServerList[clientID].Name, r.GetData()), false)
+				singleton.SendNotification(cr.NotificationTag, fmt.Sprintf("#探针通知" + "\n" + "[任务失败]" + "\n" + "%s " + "\n" + "服务器：%s，日志：\n%s", cr.Name, singleton.ServerList[clientID].Name, r.GetData()), false)
 			}
 			singleton.DB.Model(cr).Updates(model.Cron{
 				LastExecutedAt: time.Now().Add(time.Second * -1 * time.Duration(r.GetDelay())),
@@ -103,7 +103,7 @@ func (s *ProbeHandler) ReportSystemInfo(c context.Context, r *pb.Host) (*pb.Rece
 		singleton.ServerList[clientID].Host.IP != "" &&
 		host.IP != "" &&
 		singleton.ServerList[clientID].Host.IP != host.IP {
-		singleton.SendNotification(fmt.Sprintf(
+		singleton.SendNotification(singleton.Conf.IPChangeNotificationTag, fmt.Sprintf(
 			"#探针通知" + "\n" + "[IP 变更]" + "\n" + "%s " + "\n" + "旧 IP：%s" + "\n" + "新 IP：%s",
 			singleton.ServerList[clientID].Name, singleton.IPDesensitize(singleton.ServerList[clientID].Host.IP), singleton.IPDesensitize(host.IP)), true)
 	}
