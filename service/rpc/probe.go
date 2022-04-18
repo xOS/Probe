@@ -3,6 +3,7 @@ package rpc
 import (
 	"context"
 	"fmt"
+	"github.com/jinzhu/copier"
 	"time"
 
 	"github.com/xos/probe/model"
@@ -28,11 +29,14 @@ func (s *ProbeHandler) ReportTask(c context.Context, r *pb.TaskResult) (*pb.Rece
 		if cr != nil {
 			singleton.ServerLock.RLock()
 			defer singleton.ServerLock.RUnlock()
+			// 保存当前服务器状态信息
+			curServer := model.Server{}
+			copier.Copy(&curServer, singleton.ServerList[clientID])
 			if cr.PushSuccessful && r.GetSuccessful() {
-				singleton.SendNotification(cr.NotificationTag, fmt.Sprintf("#探针通知" + "\n" + "[任务成功]" + "\n" + "%s " + "\n" + "服务器：%s，日志：\n%s", cr.Name, singleton.ServerList[clientID].Name, r.GetData()), false)
+				singleton.SendNotification(cr.NotificationTag, fmt.Sprintf("#探针通知" + "\n" + "[任务成功]" + "\n" + "%s " + "\n" + "服务器：%s，日志：\n%s", cr.Name, singleton.ServerList[clientID].Name, r.GetData()), false, &curServer)
 			}
 			if !r.GetSuccessful() {
-				singleton.SendNotification(cr.NotificationTag, fmt.Sprintf("#探针通知" + "\n" + "[任务失败]" + "\n" + "%s " + "\n" + "服务器：%s，日志：\n%s", cr.Name, singleton.ServerList[clientID].Name, r.GetData()), false)
+				singleton.SendNotification(cr.NotificationTag, fmt.Sprintf("#探针通知" + "\n" + "[任务失败]" + "\n" + "%s " + "\n" + "服务器：%s，日志：\n%s", cr.Name, singleton.ServerList[clientID].Name, r.GetData()), false, &curServer)
 			}
 			singleton.DB.Model(cr).Updates(model.Cron{
 				LastExecutedAt: time.Now().Add(time.Second * -1 * time.Duration(r.GetDelay())),
