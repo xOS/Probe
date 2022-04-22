@@ -12,7 +12,7 @@ import (
 	"github.com/xos/probe/pkg/utils"
 )
 
-var Version = "v2.9.3"
+var Version = "v2.9.4"
 
 var (
 	Conf  *model.Config
