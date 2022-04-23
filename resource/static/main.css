@@ -4,12 +4,18 @@
     }
 }
 
+
 @media only screen and (max-width: 767px) {
 
     .ui.card>.content>.header:not(.ui),
     .ui.cards>.card>.content>.header:not(.ui) {
         margin-top: 0.5em;
     }
+}
+
+td {
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 /**背景**/
