@@ -1,125 +1,74 @@
-# 探针
-本项目为原项目[哪吒探针](https://github.com/naiba/nezha)的修改版,目前使用的是自用[精简版](https://github.com/xOS/ServerStatus)
-
-
-
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Dashboard%20image?label=管理面板%20v2.9.9&logo=github&style=for-the-badge) ![Agent release](https://img.shields.io/github/v/release/xOS/Probe?color=brightgreen&label=Agent&style=for-the-badge&logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/xOS/Probe/Agent%20release?label=Agent%20CI&logo=github&style=for-the-badge) ![shell](https://img.shields.io/badge/安装脚本-v2.4.9-brightgreen?style=for-the-badge&logo=linux)
-
-## 注意：
-
-* 本项目与原项目不兼容！
-* 本项目配置文件与原项目不通用！
-
-## 演示图
-
-![首页截图](https://i.cdn.ink/views/e6c1b8.png)
+<div align="center">
+  <br>
+  <img width="250" style="max-width:80%" src="../resource/static/brand.svg" title="哪吒监控 Nezha Monitoring">
+  <br>
+  <small><i>LOGO designed by <a href="https://xio.ng" target="_blank">熊大</a> .</i></small>
+  <br>
+  <br>
+  <p>:trollface: <b>哪吒监控</b> 一站式轻监控轻运维系统。支持系统状态、HTTP(SSL 证书变更、即将到期、到期)、TCP、Ping 监控报警，计划任务和在线终端。</p>
+</div>
 
 ## 安装脚本
 
-**推荐配置：** 安装前解析 _两个域名_ 到面板服务器，一个作为 _公开访问_ ，可以 **接入CDN**；另外一个作为安装探针时连接面板使用，**不能接入CDN** 直接暴露面板主机IP。
+**推荐配置：** 安装前准备 _两个域名_，一个可以 **接入 CDN** 作为 _公开访问_，比如 (status.nai.ba)；另外一个解析到面板服务器作为 Agent 连接 Dashboard 使用，**不能接入 CDN** 直接暴露面板主机 IP，比如（ip-to-dashboard.nai.ba）。
 
 ```shell
-curl -L https://git.io/probe.sh -o probe.sh && chmod +x probe.sh
-sudo ./probe.sh
+curl -L https://raw.githubusercontent.com/naiba/nezha/master/script/install.sh  -o nezha.sh && chmod +x nezha.sh
+sudo ./nezha.sh
 ```
 
-<details>
-    <summary>国内镜像加速：</summary>
+国内镜像加速：
 
 ```shell
-curl -L https://cdn.jsdelivr.net/gh/xos/probe@master/script/probe.sh -o probe.sh && chmod +x probe.sh
-CN=true sudo ./probe.sh
+curl -L https://fastly.jsdelivr.net/gh/naiba/nezha@master/script/install.sh -o nezha.sh && chmod +x nezha.sh
+CN=true sudo ./nezha.sh
 ```
 
-</details>
+_\* 使用 WatchTower 可以自动更新面板，Windows 终端可以使用 nssm 配置自启动_
 
-_\* 使用 WatchTower 可以自动更新面板，Windows 终端可以使用 nssm 配置自启动。_
+**Windows 一键安装 Agent （请使用 Powershell 管理员权限）**
 
-
-
-## 非Docker环境手动部署控制面板
-
-注意：
-
-* 需要安装`Golang`且版本需要1.18或以上。
-* 默认安装路径 `/opt/probe/dashboard`。
-* 手动部署的面板暂无法通过脚本进行面板部分的控制操作。
-
-1.克隆仓库
-
-```bash
-git clone https://github.com/xOS/Probe.git
+```powershell
+set-ExecutionPolicy RemoteSigned;Invoke-WebRequest https://raw.githubusercontent.com/naiba/nezha/master/script/install.ps1 -OutFile C:\install.ps1;powershell.exe C:\install.ps1 dashboard_host:grpc_port secret
 ```
 
-2.下载依赖
+_如遇到确认「执行策略变更」请选择 Y_
 
-```bash
-cd Probe/
-go mod tidy -v
-```
-
-3.编译，以`AMD64`架构为例
-
-```bash
-cd cmd/dashboard/
-CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o probe-dashboard -ldflags="-s -w"
-```
-
-4.部署面板为系统服务
-
-```bash
-mkdir -p /opt/probe/dashboard
-mv probe-dashboard /opt/probe/dashboard/
-cp /root/Probe/resource/ /opt/probe/dashboard/ -r
-cd ../..
-mkdir -p /opt/probe/dashboard/data
-cp script/config.yaml /opt/probe/dashboard/data
-cp script/probe-dashboard.service /etc/systemd/system
-```
-
-5.修改配置文件`/opt/probe/dashboard/data/config.yaml`，注册服务并启动
-
-```bash
-systemctl enable probe-dashboard
-systemctl start probe-dashboard
-```
-
-
-### 探针 Agent 自定义
+### Agent 自定义
 
 #### 自定义监控的网卡和硬盘分区
 
-执行 `/opt/probe/agent/probe-agent --edit-agent-config` 来选择自定义的网卡和分区，然后重启探针即可
+执行 `/opt/nezha/agent/nezha-agent --edit-agent-config` 来选择自定义的网卡和分区，然后重启 Agent 即可
 
 #### 运行参数
 
-通过执行 `./probe-agent --help` 查看支持的参数，如果你使用一键脚本，可以编辑 `/etc/systemd/system/probe-agent.service`，在 `ExecStart=` 这一行的末尾加上
+通过执行 `./nezha-agent --help` 查看支持的参数，如果你使用一键脚本，可以编辑 `/etc/systemd/system/nezha-agent.service`，在 `ExecStart=` 这一行的末尾加上
 
 - `--report-delay` 系统信息上报的间隔，默认为 1 秒，可以设置为 3 来进一步降低 agent 端系统资源占用（配置区间 1-4）
-- `--skip-conn` 不监控连接数，机场/连接密集型机器推荐设置，不然比较占 CPU([shirou/gopsutil/issues#220](https://github.com/shirou/gopsutil/issues/220))
-- `--skip-procs` 不监控进程数，也可以降低探针占用
-- `--disable-auto-update` 禁止 **自动更新** 探针（安全特性）
-- `--disable-force-update` 禁止 **强制更新** 探针（安全特性）
-- `--disable-command-execute` 禁止在探针机器上执行定时任务、打开在线终端（安全特性）
-- `--tls` 启用 SSL/TLS 加密（使用 nginx 反向代理探针的 grpc 连接，并且 nginx 开启 SSL/TLS 时，需要启用该项配置）
+- `--skip-conn` 不监控连接数，如果 机场/连接密集型机器 CPU占用较高，推荐设置
+- `--skip-procs` 不监控进程数，也可以降低 agent 占用
+- `--disable-auto-update` 禁止 **自动更新** Agent（安全特性）
+- `--disable-force-update` 禁止 **强制更新** Agent（安全特性）
+- `--disable-command-execute` 禁止在 Agent 机器上执行定时任务、打开在线终端（安全特性）
+- `--tls` 启用 SSL/TLS 加密（使用 nginx 反向代理 Agent 的 grpc 连接，并且 nginx 开启 SSL/TLS 时，需要启用该项配置）
 
 ## 功能说明
 
 <details>
     <summary>计划任务：备份脚本、服务重启，等定期运维任务。</summary>
 
-使用此功能可以定期结合 restic、rclone 给服务器备份，或者定期某项重启服务来重置网络连接。
+使用此功能可以定期结合 restic、rclone 给服务器备份，或者定期重启某项服务来重置网络连接。
 
 </details>
 
 <details>
     <summary>报警通知：负载、CPU、内存、硬盘、带宽、流量、月流量、进程数、连接数实时监控。</summary>
 
-#### 灵活通知方式
+#### 灵活的通知方式
 
-`#NG#` 是面板消息占位符，面板触发通知时会自动替换占位符到实际消息
+`#NEZHA#` 是面板消息占位符，面板触发通知时会自动替换占位符到实际消息
 
-Body 内容是`JSON` 格式的：**当请求类型为 FORM 时**，值为 `key:value` 的形式，`value` 里面可放置占位符，通知时会自动替换。**当请求类型为 JSON 时** 只会简进行字符串替换后直接提交到`URL`。
+Body 内容是`JSON` 格式的：**当请求类型为 FORM 时**，值为 `key:value` 的形式，`value` 里面可放置占位符，通知时会自动替换。**当请求类型为 JSON 时** 只会简单进行字符串替换后直接提交到`URL`。
 
 URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 
@@ -130,7 +79,7 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
    - server 酱示例
 
      - 名称：server 酱
-     - URL：<https://sc.ftqq.com/SCUrandomkeys.send?text=#NG>#
+     - URL：<https://sc.ftqq.com/SCUrandomkeys.send?text=#NEZHA>#
      - 请求方式: GET
      - 请求类型: 默认
      - Body: 空
@@ -141,12 +90,12 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
      - URL：<http://wxpusher.zjiecode.com/api/send/message>
      - 请求方式: POST
      - 请求类型: JSON
-     - Body: `{"appToken":"你的appToken","topicIds":[],"content":"#NG#","contentType":"1","uids":["你的uid"]}`
+     - Body: `{"appToken":"你的appToken","topicIds":[],"content":"#NEZHA#","contentType":"1","uids":["你的uid"]}`
 
    - telegram 示例 [@haitau](https://github.com/haitau) 贡献
 
      - 名称：telegram 机器人消息通知
-     - URL：<https://api.telegram.org/botXXXXXX/sendMessage?chat_id=YYYYYY&text=#NG>#
+     - URL：<https://api.telegram.org/botXXXXXX/sendMessage?chat_id=YYYYYY&text=#NEZHA>#
      - 请求方式: GET
      - 请求类型: 默认
      - Body: 空
@@ -175,7 +124,7 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
   - `load1`、`load5`、`load15` 负载
   - `process_count` 进程数 _目前取线程数占用资源太多，暂时不支持_
   - `tcp_conn_count`、`udp_conn_count` 连接数
-- duration：持续秒数，秒数内采样记录 30% 以上触发阈值才会报警（防数据插针）
+- duration：持续数秒，数秒内采样记录 30% 以上触发阈值才会报警（防数据插针）
 - min/max
   - 流量、网速类数值 为字节（1KB=1024B，1MB = 1024\*1024B）
   - 内存、硬盘、CPU 为占用百分比
@@ -183,7 +132,7 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 - cover `[{"type":"offline","duration":10, "cover":0, "ignore":{"5": true}}]`
   - `0` 监控所有，通过 `ignore` 忽略特定服务器
   - `1` 忽略所有，通过 `ignore` 监控特定服务器
-- ignore: `{"1": true, "2":false}` 特定服务器，搭配 `cover` 使用
+- ignore: `{"1": true, "2":false}` 选择忽略特定服务器，搭配 `cover` 使用
 
 ##### 特殊：任意周期流量报警
 
@@ -197,7 +146,7 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 - cycle_interval 每隔多少个周期单位（例如，周期单位为天，该值为 7，则代表每隔 7 天统计一次）
 - cycle_unit 统计周期单位，默认`hour`,可选(`hour`, `day`, `week`, `month`, `year`)
 - min/max、cover、ignore 参考基本规则配置
-- 示例: ID 为 3 的机器（ignore 里面定义）的每月 15 号计费的出站月流量 1T 报警 `[{"type":"transfer_out_cycle","max":1000000000000,"cycle_start":"2022-01-11T08:00:00.00+08:00","cycle_interval":1,"cycle_unit":"month","cover":1,"ignore":{"3":true}}]`
+- 示例: ID 为 3 的服务器（ignore 里面定义），以每月 15 号为统计周期，周期内统计的出站月流量 达到 1TB 时报警 `[{"type":"transfer_out_cycle","max":1000000000000,"cycle_start":"2022-01-11T08:00:00.00+08:00","cycle_interval":1,"cycle_unit":"month","cover":1,"ignore":{"3":true}}]`
   ![7QKaUx.md.png](https://s4.ax1x.com/2022/01/13/7QKaUx.md.png)
 
 </details>
@@ -205,12 +154,14 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 <details>
     <summary>服务监控：HTTP、SSL证书、ping、TCP 端口等。</summary>
 
-进入 `/monitor` 页面点击新建监控即可，表单下面有相关说明。
+进入 `/服务` 页面点击新建监控即可，表单下面有相关说明。
 
 </details>
 
 <details>
   <summary>自定义代码：改LOGO、改色调、加统计代码等。</summary>
+
+**仅在游客首页生效。**
 
 - 默认主题更改进度条颜色示例
 
@@ -220,6 +171,23 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
       background-color: pink !important;
   }
   </style>
+  ```
+
+- DayNight 主题更改进度条颜色、修改页脚示例（来自 [@hyt-allen-xu](https://github.com/hyt-allen-xu)）
+
+  ```html
+  <style>
+  .ui.fine.progress> .progress-bar {
+    background-color: #00a7d0 !important;
+  }
+  </style>
+  <script>
+  window.onload = function(){
+  var footer=document.querySelector("div.footer-container")
+  footer.innerHTML="©2021 你的名字 & Powered by 你的名字"
+  footer.style.visibility="visible"
+  }
+  </script>
   ```
 
 - 默认主题修改 LOGO、修改页脚示例（来自 [@iLay1678](https://github.com/iLay1678)）
@@ -248,12 +216,12 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
   </script>
   ```
 
-- 默认主题更改背景图片示例
+- hotaru 主题更改背景图片示例
 
   ```html
   <style>
-  #bg {
-    background-image: url(bg/background.jpeg) !important;
+  .hotaru-cover {
+     background: url(https://s3.ax1x.com/2020/12/08/DzHv6A.jpg) center;
   }
   </style>
   ```
@@ -262,23 +230,22 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 
 ## 常见问题
 
-
 <details>
     <summary>如何进行数据迁移、备份恢复？</summary>
 
 1. 先使用一键脚本 `停止面板`
-2. 打包 `/opt/probe/dashboard` 文件夹，到新环境相同位置
+2. 打包 `/opt/nezha` 文件夹，到新环境相同位置
 3. 使用一键脚本 `启动面板`
 
 </details>
 
 <details>
-    <summary>探针启动/上线 问题自检流程</summary>
+    <summary>Agent 启动/上线 问题自检流程</summary>
 
+1. 直接执行 `/opt/nezha/agent/nezha-agent -s 面板IP或非CDN域名:面板RPC端口 -p Agent密钥 -d` 查看日志是否是因为 DNS、网络不佳导致超时（timeout）
+2. `nc -v 域名/IP 面板RPC端口` 或者 `telnet 域名/IP 面板RPC端口` 来检验是否是网络问题，检查本机与面板服务器的出入站防火墙，如果无法判断问题可借助 <https://port.ping.pe/> 提供的端口检查工具进行检测。
+3. 如果上面步骤检测正常，Agent 正常上线，尝试关闭 SELinux，[如何关闭 SELinux？](https://www.google.com/search?q=%E5%85%B3%E9%97%ADSELINUX)
 
-1. 直接执行 `/opt/probe/agent/probe-agent -s 面板IP或非CDN域名:面板GRPC端口 -p 探针密钥 -d` 查看日志是否是 DNS 问题。
-2. `nc -v 域名/IP 面板GRPC端口` 或者 `telnet 域名/IP 面板GRPC端口` 检验是否是网络问题，检查本机与面板服务器出入站防火墙，如果单机无法判断可借助 https://port.ping.pe/ 提供的端口检查工具进行检测。
-3. 如果上面步骤检测正常，探针正常上线，尝试关闭 SELinux，[如何关闭 SELinux？](https://www.google.com/search?q=%E5%85%B3%E9%97%ADSELINUX)
 </details>
 
 <details>
@@ -291,7 +258,7 @@ URL 里面也可放置占位符，请求时会进行简单的字符串替换。
 <details>
     <summary>如何使 新版OpenWRT 自启动？来自 @艾斯德斯</summary>
 
-首先在 release 下载对应的二进制解压 tar.gz 包后放置到 `/root`，然后 `chmod +x /root/probe-agent` 赋予执行权限，然后创建 `/etc/init.d/probe-service`：
+首先在 release 下载对应的二进制解压 zip 包后放置到 `/root`，然后 `chmod +x /root/nezha-agent` 赋予执行权限，然后创建 `/etc/init.d/nezha-service`：
 
 ```shell
 #!/bin/sh /etc/rc.common
@@ -300,14 +267,14 @@ START=99
 USE_PROCD=1
 
 start_service() {
-	procd_open_instance
-	procd_set_param command /root/probe-agent -s 面板域名:接收端口 -p 唯一秘钥 -d
-	procd_set_param respawn
-	procd_close_instance
+ procd_open_instance
+ procd_set_param command /root/nezha-agent -s 面板网址:接收端口 -p 唯一秘钥 -d
+ procd_set_param respawn
+ procd_close_instance
 }
 
 stop_service() {
-    killall probe-agent
+    killall nezha-agent
 }
 
 restart() {
@@ -317,7 +284,7 @@ restart() {
 }
 ```
 
-赋予执行权限 `chmod +x /etc/init.d/probe-service` 然后启动服务 `/etc/init.d/probe-service enable && /etc/init.d/probe-service start`
+赋予执行权限 `chmod +x /etc/init.d/nezha-service` 然后启动服务 `/etc/init.d/nezha-service enable && /etc/init.d/nezha-service start`
 
 </details>
 
@@ -377,7 +344,7 @@ restart() {
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
-    server_name ip-to-dashboard.nai.ba; # 你的探针连接面板的域名
+    server_name ip-to-dashboard.nai.ba; # 你的 Agent 连接 Dashboard 的域名
 
     ssl_certificate          /data/letsencrypt/fullchain.pem; # 你的域名证书路径
     ssl_certificate_key      /data/letsencrypt/key.pem;       # 你的域名私钥路径
@@ -395,7 +362,7 @@ server {
 - Caddy 配置
 
 ```Caddyfile
-ip-to-dashboard.nai.ba:443 { # 你的探针连接面板的域名
+ip-to-dashboard.nai.ba:443 { # 你的 Agent 连接 Dashboard 的域名
     reverse_proxy {
         to localhost:5555
         transport http {
@@ -405,23 +372,29 @@ ip-to-dashboard.nai.ba:443 { # 你的探针连接面板的域名
 }
 ```
 
-
-面板端配置
+Dashboard 面板端配置
 
 - 首先登录面板进入管理后台 打开设置页面，在 `未接入CDN的面板服务器域名/IP` 中填入上一步在 Nginx 或 Caddy 中配置的域名 比如 `ip-to-dashboard.nai.ba` ，并保存。
-- 然后在面板服务器中，打开 /opt/probe/dashboard/data/config.yaml 文件，将 `proxygrpcport` 修改为 Nginx 或 Caddy 监听的端口，比如上一步设置的 `443` ；因为我们在 Nginx 或 Caddy 中开启了 SSL/TLS，所以需要将 `tls` 设置为 `true` ；修改完成后重启面板。
+- 然后在面板服务器中，打开 /opt/nezha/dashboard/data/config.yaml 文件，将 `proxygrpcport` 修改为 Nginx 或 Caddy 监听的端口，比如上一步设置的 `443` ；因为我们在 Nginx 或 Caddy 中开启了 SSL/TLS，所以需要将 `tls` 设置为 `true` ；修改完成后重启面板。
 
-
-探针端配置
+Agent 端配置
 
 - 登录面板管理后台，复制一键安装命令，在对应的服务器上面执行一键安装命令重新安装 agent 端即可。
-
 
 开启 Cloudflare CDN（可选）
 
 根据 Cloudflare gRPC 的要求：gRPC 服务必须侦听 443 端口 且必须支持 TLS 和 HTTP/2。
 所以如果需要开启 CDN，必须在配置 Nginx 或者 Caddy 反向代理 gRPC 时使用 443 端口，并配置证书（Caddy 会自动申请并配置证书）。
 
-- 登录 Cloudflare，选择使用的域名。打开 `网络` 选项将 `gRPC` 开关打开，打开 `DNS` 选项，找到 Nginx 或 Caddy 反代 gRPC 配置的域名的解析记录，打开橙色云启用CDN。
+- 登录 Cloudflare，选择使用的域名。打开 `网络` 选项将 `gRPC` 开关打开，打开 `DNS` 选项，找到 Nginx 或 Caddy 反代 gRPC 配置的域名的解析记录，打开橙色云启用 CDN。
 
 </details>
+
+## 社区文章
+
+- [哪吒探针 - Windows 客户端安装](https://nyko.me/2020/12/13/nezha-windows-client.html)
+- [哪吒监控，一个便携服务器状态监控面板搭建教程，不想拥有一个自己的探针吗？](https://haoduck.com/644.html)
+- [哪吒监控：小鸡们的最佳探针](https://www.zhujizixun.com/2843.html) _（已过时）_
+- [>>更多教程](https://www.google.com/search?q="哪吒监控"+"教程") (Google)
+
+SEO **云探针 多服务器探针 云监控 多服务器云监控**

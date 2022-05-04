@@ -12,7 +12,7 @@ import (
 	"github.com/xos/probe/pkg/utils"
 )
 
-var Version = "v2.9.8"
+var Version = "v2.9.9"
 
 var (
 	Conf  *model.Config
@@ -30,7 +30,6 @@ func Init() {
 		panic(err)
 	}
 
-	Conf = &model.Config{}
 	Cache = cache.New(5*time.Minute, 10*time.Minute)
 }
 
@@ -43,6 +42,7 @@ func LoadSingleton() {
 
 // InitConfigFromPath 从给出的文件路径中加载配置
 func InitConfigFromPath(path string) {
+	Conf = &model.Config{}
 	err := Conf.Read(path)
 	if err != nil {
 		panic(err)

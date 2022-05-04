@@ -551,6 +551,7 @@ func (ma *memberAPI) logout(c *gin.Context) {
 type settingForm struct {
 	Title                   string
 	Admin                   string
+	Language                string
 	Theme                   string
 	CustomCode              string
 	ViewPassword            string
@@ -573,6 +574,7 @@ func (ma *memberAPI) updateSetting(c *gin.Context) {
 		})
 		return
 	}
+	singleton.Conf.Language = sf.Language
 	singleton.Conf.EnableIPChangeNotification = sf.EnableIPChangeNotification == "on"
 	singleton.Conf.EnablePlainIPInNotification = sf.EnablePlainIPInNotification == "on"
 	singleton.Conf.Cover = sf.Cover
@@ -596,6 +598,8 @@ func (ma *memberAPI) updateSetting(c *gin.Context) {
 		})
 		return
 	}
+	// 更新系统语言
+	singleton.InitLocalizer()
 	c.JSON(http.StatusOK, model.Response{
 		Code: http.StatusOK,
 	})
