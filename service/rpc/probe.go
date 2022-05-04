@@ -3,9 +3,10 @@ package rpc
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/jinzhu/copier"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"time"
 
 	"github.com/xos/probe/model"
 	pb "github.com/xos/probe/proto"
@@ -34,14 +35,14 @@ func (s *ProbeHandler) ReportTask(c context.Context, r *pb.TaskResult) (*pb.Rece
 			curServer := model.Server{}
 			copier.Copy(&curServer, singleton.ServerList[clientID])
 			if cr.PushSuccessful && r.GetSuccessful() {
-				singleton.SendNotification(cr.NotificationTag, fmt.Sprintf("#探针通知" + "\n" + "[任务成功]" + "\n" + "%s " + "\n" + "服务器：%s，日志：\n%s", singleton.Localizer.MustLocalize(
+				singleton.SendNotification(cr.NotificationTag, fmt.Sprintf("#探针通知"+"\n"+"[%s]"+"\n"+"%s "+"\n"+"服务器：%s，日志：\n%s", singleton.Localizer.MustLocalize(
 					&i18n.LocalizeConfig{
 						MessageID: "ScheduledTaskExecutedSuccessfully",
 					},
 				), cr.Name, singleton.ServerList[clientID].Name, r.GetData()), false, &curServer)
 			}
 			if !r.GetSuccessful() {
-				singleton.SendNotification(cr.NotificationTag, fmt.Sprintf("#探针通知" + "\n" + "[任务失败]" + "\n" + "%s " + "\n" + "服务器：%s，日志：\n%s", singleton.Localizer.MustLocalize(
+				singleton.SendNotification(cr.NotificationTag, fmt.Sprintf("#探针通知"+"\n"+"[%s]"+"\n"+"%s "+"\n"+"服务器：%s，日志：\n%s", singleton.Localizer.MustLocalize(
 					&i18n.LocalizeConfig{
 						MessageID: "ScheduledTaskExecutedFailed",
 					},
@@ -117,7 +118,7 @@ func (s *ProbeHandler) ReportSystemInfo(c context.Context, r *pb.Host) (*pb.Rece
 		host.IP != "" &&
 		singleton.ServerList[clientID].Host.IP != host.IP {
 		singleton.SendNotification(singleton.Conf.IPChangeNotificationTag, fmt.Sprintf(
-			"#探针通知" + "\n" + "[IP 变更]" + "\n" + "%s " + "\n" + "旧 IP：%s" + "\n" + "新 IP：%s",
+			"#探针通知"+"\n"+"[%s]"+"\n"+"%s"+"\n"+"旧 IP：%s"+"\n"+"新 IP：%s",
 			singleton.Localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "IPChanged",
 			}),
