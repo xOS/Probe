@@ -38,7 +38,7 @@
                     <td>{{$server.Secret}}</td>
                     <td>
                         <div class="ui mini icon buttons">
-                        <button class="ui icon mini button" data-clipboard-text="{{if $.Conf.GRPCHost}}curl -L https://cdn.jsdelivr.net/gh/xos/probe@master/script/probe.sh -o probe.sh && chmod +x probe.sh && chmod +x probe.sh && ./probe.sh install_agent {{$.Conf.GRPCHost}} {{if $.Conf.ProxyGRPCPort}}{{$.Conf.ProxyGRPCPort}}{{else}}{{$.Conf.GRPCPort}}{{end}} {{$server.Secret}}{{if $.Conf.TLS}} --tls{{end}}{{else}}{{tr "NoDomainAlert"}}{{end}}"
+                        <button class="ui icon mini button" data-clipboard-text="{{if $.Conf.GRPCHost}}curl -L https://cdn.jsdelivr.net/gh/xos/probe@master/script/probe.sh -o probe.sh && chmod +x probe.sh && ./probe.sh install_agent {{$.Conf.GRPCHost}} {{if $.Conf.ProxyGRPCPort}}{{$.Conf.ProxyGRPCPort}}{{else}}{{$.Conf.GRPCPort}}{{end}} {{$server.Secret}}{{if $.Conf.TLS}} --tls{{end}}{{else}}{{tr "NoDomainAlert"}}{{end}}"
                             data-tooltip="{{tr "ClickToCopyTheInstallationCommand"}}">
                             <i class="linux icon"></i>
                         </button>

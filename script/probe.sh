@@ -619,14 +619,14 @@ show_menu() {
     —————————————————————————
     ${green}13.${plain} 修改探针配置
     —————————————————————————
-    ${green}00.${plain} 更新脚本
-    ${green}0.${plain}  退出脚本
+    ${green}0.${plain} 更新脚本
+    ${green}00.${plain} 退出脚本
     =========================
     "
     echo && read -ep "请输入选择 [0-13]: " num
 
     case "${num}" in
-    0)
+    00)
         exit 0
         ;;
     1)
@@ -668,7 +668,7 @@ show_menu() {
     13)
         set_agent
         ;;
-    00)
+    0)
         update_script
         ;;
     *)
@@ -709,6 +709,9 @@ if [[ $# > 0 ]]; then
         else
             install_agent 0
         fi
+        ;;
+    "update_agent")
+        update_agent 0
         ;;
     "modify_agent_config")
         modify_agent_config 0
