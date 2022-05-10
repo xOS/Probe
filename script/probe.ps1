@@ -10,7 +10,15 @@ else {
     $file = "probe-agent_windows_386.zip"
 }
 $releases = "https://api.github.com/repos/$repo/releases"
-Write-Host "Determining latest probe release" -BackgroundColor DarkGreen -ForegroundColor White
+#重复运行自动更新
+if (Test-Path "C:\probe") {
+    Write-Host "Probe monitoring already exists, delete and reinstall" -BackgroundColor DarkGreen -ForegroundColor White
+    C:/probe/nssm.exe stop probe
+    C:/probe/nssm.exe remove probe
+    Remove-Item "C:\probe" -Recurse
+}
+#TLS/SSL
+Write-Host "Determining latest Probe release" -BackgroundColor DarkGreen -ForegroundColor White
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $tag = (Invoke-WebRequest -Uri $releases -UseBasicParsing | ConvertFrom-Json)[0].tag_name
 #Region判断
@@ -39,7 +47,7 @@ Expand-Archive "C:\probe.zip" -DestinationPath "C:\temp" -Force
 Expand-Archive "C:\nssm.zip" -DestinationPath "C:\temp" -Force
 if (!(Test-Path "C:\probe")) { New-Item -Path "C:\probe" -type directory }
 #整理文件
-Move-Item -Path "C:\temp\probe-agent.exe" -Destination "C:\probe\probe.exe"
+Move-Item -Path "C:\temp\probe-agent.exe" -Destination "C:\probe\probe-agent.exe"
 if ($file = "probe-agent_windows_amd64.zip") {
     Move-Item -Path "C:\temp\nssm-2.24\win64\nssm.exe" -Destination "C:\probe\nssm.exe"
 }
@@ -51,7 +59,7 @@ Remove-Item "C:\probe.zip"
 Remove-Item "C:\nssm.zip"
 Remove-Item "C:\temp" -Recurse
 #安装部分
-C:\probe\nssm.exe install probe C:\probe\probe.exe -s $server -p $key -d 
+C:\probe\nssm.exe install probe C:\probe\probe-agent.exe -s $server -p $key -d 
 C:\probe\nssm.exe start probe
 #enjoy
 Write-Host "Enjoy It!" -BackgroundColor DarkGreen -ForegroundColor Red
