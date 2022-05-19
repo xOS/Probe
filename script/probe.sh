@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.5.0"
+VERSION="v2.5.1"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -125,15 +125,16 @@ before_show_menu() {
 }
 
 install_base() {
-    (command -v git >/dev/null 2>&1 && command -v curl >/dev/null 2>&1 && command -v wget >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1) ||
+    (command -v git >/dev/null 2>&1 && command -v curl >/dev/null 2>&1 && command -v wget >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1 && command -v getenforce >/dev/null 2>&1) ||
         (install_soft curl wget git unzip)
 }
 
 install_soft() {
-    (command -v yum >/dev/null 2>&1 && yum update && yum install $* -y) ||
-        (command -v apt >/dev/null 2>&1 && apt update && apt install $* -y) ||
+	# Arch官方库不包含selinux等组件
+    (command -v yum >/dev/null 2>&1 && yum update && yum install $* selinux-policy -y) ||
+        (command -v apt >/dev/null 2>&1 && apt update && apt install $* selinux-utils -y) ||
         (command -v pacman >/dev/null 2>&1 && pacman -Syu $*) ||
-        (command -v apt-get >/dev/null 2>&1 && apt-get update && apt-get install $* -y)
+        (command -v apt-get >/dev/null 2>&1 && apt-get update && apt-get install $* selinux-utils -y)
 }
 
 install_dashboard() {
@@ -196,8 +197,20 @@ install_dashboard() {
     fi
 }
 
+selinux(){
+    #判断当前的状态
+    getenforce | grep '[Ee]nfor'
+    if [ $? -eq 0 ];then
+        echo -e "SELinux是开启状态，正在关闭！" 
+        setenforce 0 &>/dev/null
+        find_key="SELINUX="
+        sed -ri "/^$find_key/c${find_key}disabled" /etc/selinux/config
+    fi
+}
+
 install_agent() {
     install_base
+    selinux
 
     echo -e "> 安装探针"
 

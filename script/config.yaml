@@ -1,5 +1,6 @@
 debug: true
 httpport: site_port
+language: zh-CN
 grpcport: grpc_port
 grpchost: grpc_host
 oauth2:

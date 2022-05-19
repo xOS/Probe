@@ -1,5 +1,5 @@
 #Get server and key
-param($server, $key)
+param($server, $key, $tls)
 # Download latest release from github
 $repo = "xos/probe"
 #  x86 or x64
@@ -59,7 +59,7 @@ Remove-Item "C:\probe.zip"
 Remove-Item "C:\nssm.zip"
 Remove-Item "C:\temp" -Recurse
 #安装部分
-C:\probe\nssm.exe install probe C:\probe\probe-agent.exe -s $server -p $key -d 
+C:\probe\nssm.exe install probe C:\probe\probe-agent.exe -s $server -p $key $tls -d 
 C:\probe\nssm.exe start probe
 #enjoy
 Write-Host "Enjoy It!" -BackgroundColor DarkGreen -ForegroundColor Red
