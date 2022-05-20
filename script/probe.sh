@@ -11,7 +11,7 @@ BASE_PATH="/opt/probe"
 DASHBOARD_PATH="${BASE_PATH}/dashboard"
 AGENT_PATH="${BASE_PATH}/agent"
 AGENT_SERVICE="/etc/systemd/system/probe-agent.service"
-VERSION="v2.5.1"
+VERSION="v2.5.2"
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -75,7 +75,7 @@ pre_check() {
         Get_Docker_Argu=" "
         Docker_IMG="ghcr.io\/xos\/probe-dashboard"
     else
-        GITHUB_RAW_URL="cdn.jsdelivr.net/gh/xos/probe@master"
+        GITHUB_RAW_URL="fastly.jsdelivr.net/gh/xos/probe@master"
         GITHUB_URL="dn-dao-github-mirror.daocloud.io"
         Get_Docker_URL="get.daocloud.io/docker"
         Get_Docker_Argu=" -s docker --mirror Aliyun"
@@ -218,7 +218,7 @@ install_agent() {
 
     local version=$(curl -m 10 -sL "https://api.github.com/repos/xos/probe/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
     if [ ! -n "$version" ]; then
-        version=$(curl -m 10 -sL "https://cdn.jsdelivr.net/gh/xos/probe/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/xos\/probe@/v/g')
+        version=$(curl -m 10 -sL "https://fastly.jsdelivr.net/gh/xos/probe/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/xos\/probe@/v/g')
     fi
     if [ ! -n "$version" ]; then
         version=$(curl -m 10 -sL "https://gcore.jsdelivr.net/gh/xos/probe/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/xos\/probe@/v/g')
@@ -265,7 +265,7 @@ update_agent() {
 
     local version=$(curl -m 10 -sL "https://api.github.com/repos/xos/probe/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
     if [ ! -n "$version" ]; then
-        version=$(curl -m 10 -sL "https://cdn.jsdelivr.net/gh/xos/probe/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/xos\/probe@/v/g')
+        version=$(curl -m 10 -sL "https://fastly.jsdelivr.net/gh/xos/probe/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/xos\/probe@/v/g')
     fi
     if [ ! -n "$version" ]; then
         version=$(curl -m 10 -sL "https://gcore.jsdelivr.net/gh/xos/probe/" | grep "option\.value" | awk -F "'" '{print $2}' | sed 's/xos\/probe@/v/g')
