@@ -1,5 +1,5 @@
 [ProbeMonitoring]
-other = "Probe Monitoring"
+other = "Server Monitoring"
 
 [Server]
 other = "Servers"
@@ -545,7 +545,7 @@ other = "Task Failed"
 other = "IP Changed"
 
 [Notify]
-other = "Porbe Notify"
+other = "Server Notify"
 
 [OldIP]
 other = "Old IP:"
