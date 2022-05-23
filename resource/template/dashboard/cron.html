@@ -48,7 +48,7 @@
                                 <i class="edit icon"></i>
                             </button>
                             <button class="ui button"
-                                onclick="showConfirm('{{tr "DeleteScheduledTask"}}','{{tr "ConfirmToDeleteThisScheduledTask"}}',deleteRequest,'/api/cron/'+{{$cron.ID}})">
+                                onclick="showConfirm('{{tr "DeleteScheduledTask"}}'+'[{{$cron.Name}}]','{{tr "ConfirmToDeleteThisScheduledTask"}}',deleteRequest,'/api/cron/'+{{$cron.ID}})">
                                 <i class="trash alternate outline icon"></i>
                             </button>
                         </div>

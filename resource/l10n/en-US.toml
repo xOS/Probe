@@ -232,6 +232,12 @@ other = "Confirm Delete?"
 [DeleteNotificationMethod]
 other = "Delete Notification Method"
 
+[DeleteNotificationRule]
+other = "Delete Notification Rule"
+
+[ConfirmToDeleteThisNotificationRule]
+other = "Confirm Delete?"
+
 [ConfirmToDeleteThisNotificationMethod]
 other = "Confirm Delete?"
 
