@@ -14,11 +14,11 @@
 
 ### 前台
 
-![首页截图](https://i.cdn.ink/views/e6c1b8.png)
+![首页截图](https://i.cdn.ink/views/2022/05/25/b168b1.png)
 
 ### 后台
 
-![后台截图](https://i.cdn.ink/views/dab12c.png)
+![后台截图](https://i.cdn.ink/views/2022/05/25/fd1b7d.png)
 
 ## 安装脚本
 
