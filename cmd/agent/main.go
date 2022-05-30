@@ -418,7 +418,7 @@ type WindowSize struct {
 
 func handleTerminalTask(task *pb.Task) {
 	if agentCliParam.DisableCommandExecute {
-		println("此 Agent 已禁止命令执行")
+		println("该节点已禁止命令执行")
 		return
 	}
 	var terminal model.TerminalTask

@@ -12,7 +12,7 @@ import (
 	"github.com/xos/probe/pkg/utils"
 )
 
-var Version = "v2.10.2"
+var Version = "v2.10.3"
 
 var (
 	Conf  *model.Config
@@ -94,7 +94,7 @@ func RecordTransferHourlyUsage() {
 	if len(txs) == 0 {
 		return
 	}
-	log.Println("NEZHA>> Cron 流量统计入库", len(txs), DB.Create(txs).Error)
+	log.Println("NG>> Cron 流量统计入库", len(txs), DB.Create(txs).Error)
 }
 
 // CleanMonitorHistory 清理无效或过时的 监控记录 和 流量记录

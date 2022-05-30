@@ -1,4 +1,4 @@
-[ProbeMonitoring]
+[ServerMonitoring]
 other = "Server Monitoring"
 
 [Server]
@@ -368,7 +368,7 @@ other = "Last Active"
 other = "Version"
 
 [NetSpeed]
-other = "Network Speed"
+other = "Network"
 
 [Uptime]
 other = "Uptime"
@@ -561,3 +561,9 @@ other = "TaskServer:"
 
 [TaskLog]
 other = "TaskLog:"
+
+[Traffic]
+other = "Traffic"
+
+[Transleft]
+other = "Data remaining"

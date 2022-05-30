@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/xos/probe/model"
 	pb "github.com/xos/probe/proto"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 const (
@@ -392,7 +392,7 @@ func (ss *ServiceSentinel) worker() {
 				expiresNew, _ := time.Parse("2006-01-02 15:04:05 -0700 MST", newCert[1])
 				// 证书过期提醒
 				if expiresNew.Before(time.Now().AddDate(0, 0, 7)) {
-					errMsg = fmt.Sprintf("\n" + "[SSL证书过期提醒]" + "\n" + "SSL证书将在七天内过期，过期时间：%s。",
+					errMsg = fmt.Sprintf("\n"+"[SSL证书过期提醒]"+"\n"+"SSL证书将在七天内过期，过期时间：%s。",
 						expiresNew.Format("2006-01-02 15:04:05"))
 				}
 				// 证书变更提醒
@@ -403,7 +403,7 @@ func (ss *ServiceSentinel) worker() {
 				}
 				if oldCert[0] != newCert[0] && !expiresNew.Equal(expiresOld) {
 					ss.sslCertCache[mh.MonitorID] = mh.Data
-					errMsg = fmt.Sprintf("\n" + "[SSL证书变更]" + "\n" + "旧证书：%s, %s 过期；" + "\n" + "新证书：%s, %s 过期。",
+					errMsg = fmt.Sprintf("\n"+"[SSL证书变更]"+"\n"+"旧证书：%s, %s 过期；"+"\n"+"新证书：%s, %s 过期。",
 						oldCert[0], expiresOld.Format("2006-01-02 15:04:05"), newCert[0], expiresNew.Format("2006-01-02 15:04:05"))
 				}
 			}
@@ -411,7 +411,7 @@ func (ss *ServiceSentinel) worker() {
 		if errMsg != "" {
 			ss.monitorsLock.RLock()
 			if ss.monitors[mh.MonitorID].Notify {
-				go SendNotification(ss.monitors[mh.MonitorID].NotificationTag, fmt.Sprintf("#探针通知" + "\n" + "SSL证书监控：%s %s", ss.monitors[mh.MonitorID].Name, errMsg), true)
+				go SendNotification(ss.monitors[mh.MonitorID].NotificationTag, fmt.Sprintf("#探针通知"+"\n"+"SSL证书监控：%s %s", ss.monitors[mh.MonitorID].Name, errMsg), true)
 			}
 			ss.monitorsLock.RUnlock()
 		}

@@ -151,7 +151,7 @@ func SendNotification(notificationTag string, desc string, mutable bool, ext ...
 			ns.Server = ext[0]
 		}
 		if err := ns.Send(desc); err != nil {
-			log.Println("NEZHA>> 向 ", n.Name, " 发送通知失败：", err)
+			log.Println("NG>> 向 ", n.Name, " 发送通知失败：", err)
 		} else {
 			log.Println("NG>> 向 ", n.Name, " 发送通知成功：")
 		}

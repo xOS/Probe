@@ -53,6 +53,7 @@
                         <th class="ui center aligned">MIN</th>
                         <th class="ui center aligned">{{tr "NextCheck"}}</th>
                         <th class="ui center aligned">{{tr "CurrentUsage"}}</th>
+                        <th class='ui center aligned' style='padding: 0px 31px 0px 31px;'>{{tr "Transleft"}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,6 +69,7 @@
                             <td class="ui center aligned">{{$stats.Min|bf}}</td>
                             <td class="ui center aligned">{{(index $stats.NextUpdate $innerId)|sft}}</td>
                             <td class="ui center aligned">{{$transfer|bf}}</td>
+                            <td class="ui center aligned" style="padding: 14px 0px 0px 0px; position: relative;"><div class="thirteen wide column"><div class="ui progress fine"><div class="bar" style="transition-duration: 300ms; width: {{Transleft (UintToFloat $transfer) (UintToFloat $stats.Max)}}% !important;"></div><small style="position: absolute; top: 4px; margin-left: -20px;">{{Transleft (UintToFloat $transfer) (UintToFloat $stats.Max)}}%</small></div></div></td>
                         </tr>
                     {{end}}
                     {{end}}

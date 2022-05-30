@@ -9,7 +9,7 @@ import (
 	"github.com/xos/probe/model"
 	pb "github.com/xos/probe/proto"
 	rpcService "github.com/xos/probe/service/rpc"
-	
+
 	"github.com/xos/probe/service/singleton"
 )
 
