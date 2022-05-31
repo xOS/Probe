@@ -238,7 +238,7 @@ a {
 }
 
 .ui.segment {
-    background: #ffffff45 !important;
+    background: rgb(255 255 255 / 55%) !important;
 }
 
 .ui.form input:not([type]),
@@ -737,7 +737,6 @@ i.s {
     min-width: 1.75em !important;
     text-align: right;
     padding-right: 0.4em;
-    line-height: 1.75em;
     color: rgba(255, 255, 255, 0.7);
     font-weight: 700;
     max-width: 100% !important;
@@ -774,7 +773,7 @@ i.s {
 .ui.table {
     font-size: 1em;
     position: relative;
-    border-radius: 10px;
+    border-radius: 5px 5px 10px 10px;
     margin-right: .5em;
     margin-bottom: .5em;
     border: 1px solid transparent;
